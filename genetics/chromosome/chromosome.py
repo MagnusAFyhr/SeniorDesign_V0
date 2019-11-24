@@ -18,14 +18,14 @@ Development :
     - as_string     : DONE
 
 Testing :
-    - init          :
-    - hydrate       :
-    - dehydrate     :
-    - verify        :
-    - mutate        :
-    - crossover     :
-    - react         :
-    - as_string     :
+    - init          : DONE
+    - hydrate       : DONE
+    - dehydrate     : DONE
+    - verify        : DONE
+    - mutate        : DONE
+    - crossover     : DONE
+    - react         : DONE
+    - as_string     : DONE
 
 """
 import random
@@ -53,9 +53,12 @@ class Chromosome(object):
     Initialize & Verify The Chromosome
     """
     def __init__(self, encoding=None):
+
+        # Verify Encoding
         if encoding is None:
             encoding = chr_bui.random_encoding()
 
+        # Initialize The Chromosome With Default Values
         self.initialized = False
         self.encoding = encoding
         self.buy_limit = None
@@ -64,12 +67,12 @@ class Chromosome(object):
 
         # Hydrate The Chromosome (Initialize)
         if self.hydrate() is None:
-            print("< ERR > : Failed to hydrate chromosome, invalid encoding!\n{}".format(encoding))
+            print("< ERR > : Failed to hydrate chromosome, invalid encoding!\n{}\n".format(encoding))
             return
 
         # Verify The Chromosome
         if self.verify() is False:
-            print("< ERR > : Failed to verify chromosome, invalid encoding!\n{}".format(encoding))
+            print("< ERR > : Failed to verify chromosome, invalid encoding!\n{}\n".format(encoding))
             return
 
         # Done Initializing
@@ -243,7 +246,7 @@ class Chromosome(object):
         return mut_encoding
 
     """
-    Returns Two Offspring Encodings From Crossover(s) Between Two Parent Chromosomes
+    Returns Two Offspring Encodings From Crossovers Between Two Parent Chromosomes
     """
     def crossover(self, mate_chrom):
 
