@@ -13,8 +13,11 @@ from test import chromosome_test as chrm_tst
 
 
 def run():
-    # ale_tst.test_allele()
 
+    # Test Allele Integrity
+    ale_tst.test_allele()
+
+    # Test Chromosome Integrity
     chrm_tst.test_chromosome()
 
 

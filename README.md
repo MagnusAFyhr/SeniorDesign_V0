@@ -6,6 +6,8 @@
 - How to install the project?
 - Licensing
 ## What is the project?
+- Abstract
+- Introduction
 ## What does it do?
 ## How does it work?
 ## How to install the project?

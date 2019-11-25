@@ -67,12 +67,12 @@ class Chromosome(object):
 
         # Hydrate The Chromosome (Initialize)
         if self.hydrate() is None:
-            print("< ERR > : Failed to hydrate chromosome, invalid encoding!\n{}\n".format(encoding))
+            print("< ERR > : Failed to hydrate Chromosome, invalid encoding!\n{}\n".format(encoding))
             return
 
         # Verify The Chromosome
         if self.verify() is False:
-            print("< ERR > : Failed to verify chromosome, invalid encoding!\n{}\n".format(encoding))
+            print("< ERR > : Failed to verify Chromosome, invalid encoding!\n{}\n".format(encoding))
             return
 
         # Done Initializing
@@ -117,7 +117,7 @@ class Chromosome(object):
 
             # Check allele was properly encoded
             if allele_encoding is None:
-                print("< ERR > : Failed to dehydrate chromosome, invalid allele state!")
+                print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
                 return None
 
             # Append allele encoding to list
@@ -125,7 +125,7 @@ class Chromosome(object):
 
         # Check That All Passed Encoding
         if buy_limit is None or sell_limit is None or len(allele_encodings) != chrom_structure.ALLELE_COUNT:
-            print("< ERR > : Failed to dehydrate chromosome, invalid allele state!")
+            print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
             return None
 
         # Concatenate items for random encoding
@@ -148,7 +148,7 @@ class Chromosome(object):
 
         # Verify Buy Limit
         if self.buy_limit is None:
-            print("< ERR > : Failed to verify chromosome : Buy Limit : {}.".format(self.buy_limit))
+            print("< ERR > : Failed to verify Chromosome : Buy Limit : {}.".format(self.buy_limit))
             return False
 
         else:
@@ -156,12 +156,12 @@ class Chromosome(object):
                 int(self.buy_limit)
 
             except ValueError:
-                print("< ERR > : Failed to verify chromosome : Buy Limit : ({}){}."
+                print("< ERR > : Failed to verify Chromosome : Buy Limit : ({}){}."
                       .format(type(self.buy_limit), self.buy_limit))
 
         # Verify Sell Limit
         if self.sell_limit is None:
-            print("< ERR > : Failed to verify chromosome : Sell Limit : {}.".format(self.sell_limit))
+            print("< ERR > : Failed to verify Chromosome : Sell Limit : {}.".format(self.sell_limit))
             return False
 
         else:
@@ -169,19 +169,19 @@ class Chromosome(object):
                 int(self.buy_limit)
 
             except ValueError:
-                print("< ERR > : Failed to verify chromosome : Sell Limit : ({}){}."
+                print("< ERR > : Failed to verify Chromosome : Sell Limit : ({}){}."
                       .format(type(self.sell_limit), self.sell_limit))
 
         # Verify Alleles
         if len(self.alleles) != chrom_structure.ALLELE_COUNT:
-            print("< ERR > : Failed to verify chromosome : Allele Count Invalid : {}.".format(len(self.alleles)))
+            print("< ERR > : Failed to verify Chromosome : Allele Count Invalid : {}.".format(len(self.alleles)))
             return False
 
         else:
             for allele in self.alleles:
                 # Verify Each Allele
                 if not allele.initialized:
-                    print("< ERR > : Failed to verify chromosome : Contains Invalid Allele : {}.".format(allele))
+                    print("< ERR > : Failed to verify Chromosome : Contains Invalid Allele : {}.".format(allele))
                     return False
 
         # Passed Verification
@@ -212,12 +212,12 @@ class Chromosome(object):
 
         # Check That All Passed Mutation
         if mut_buy_limit is None or mut_sell_limit is None:
-            print("< ERR > : Failed to verify chromosome : Contains Invalid Buy/Sell Limit.")
+            print("< ERR > : Failed to verify Chromosome : Contains Invalid Buy/Sell Limit.")
             return None
         for mut_allele in mut_alleles:
             # Check That Allele Passed Mutation
             if mut_allele is None:
-                print("< ERR > : Failed to verify chromosome : Contains Invalid Allele.")
+                print("< ERR > : Failed to verify Chromosome : Contains Invalid Allele.")
                 return None
 
         # Fix potential buy/sell limit overlap
@@ -279,7 +279,7 @@ class Chromosome(object):
             # Verify data
             if value is None:
                 # Data corrupted
-                print("< ERR > : Error in chromosome reaction, data corrupted!"
+                print("< ERR > : Error in Chromosome reaction, data corrupted!"
                       "\n\tCould not find key {}.".format(allele.tech_id))
 
                 return None
@@ -297,7 +297,7 @@ class Chromosome(object):
         return "Hold"
 
     """
-    Returns String Representation Of The Genome
+    Returns String Representation Of The Chromosome
     """
     def as_string(self):
         # Create string representations of Chromosome variables
