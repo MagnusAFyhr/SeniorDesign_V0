@@ -9,8 +9,8 @@ Purpose : The Account class object, responsible for providing proper
             given stock.
 
 Development :
-    - init          :
-    - verify        :
+    - init          : DONE
+    - verify        : DONE (Add function from data manager, to check if ticker is supported)
     - do            : DONE
     - long          : DONE
     - short         : DONE
@@ -20,6 +20,7 @@ Development :
     - net_worth     : DONE
     - performance   : DONE
     - statistics    :
+    - as_json       : DONE
 
 Testing :
     - init          :
@@ -31,6 +32,7 @@ Testing :
     - history       :
     - performance   :
     - statistics    :
+    - as_json       :
 
 
 Need to add streak along with cool down
@@ -42,10 +44,14 @@ class Account(object):
 
     initialized = False
 
+    ticker = None
+
     trade_history = list([])
     curr_position = None
+    curr_balance = 0
 
     curr_cool_down = 0
+    curr_streak = 0
 
     last_update = None
     last_price = None
@@ -60,7 +66,7 @@ class Account(object):
     def __init__(self, ticker):
 
         # Initialize The Account
-        self.asset = ticker
+        self.ticker = ticker
         self.curr_balance = self.def_balance
 
         # Make Default Current Position As A JSON Object
@@ -85,8 +91,10 @@ class Account(object):
     def verify(self):
 
         # Verify The Ticker
-        # if ticker is a supported ticker
-        return False
+        if self.ticker is None:
+            return False
+
+        return True
 
     """
     Attempts To Execute The Specified Action
@@ -113,7 +121,7 @@ class Account(object):
             return True
 
         # Handle Unrecognized Action
-        print("< WRN> : Unrecognized Action for Account to do() : {}.".format(action))
+        print("< WRN > : Unrecognized Action for Account to do() : {}.".format(action))
         return False
 
     """
@@ -128,8 +136,9 @@ class Account(object):
             revenue = (self.curr_position["price"] * self.curr_position["quantity"]) \
                       - (price * self.curr_position["quantity"])
 
-            # Update Current Balance
+            # Update Current Balance & Streak
             self.curr_balance += revenue
+            self.curr_streak = 0
 
             # Log Trade
             self.log_trade(timestamp, "EXIT_SHORT", price, self.curr_position["quantity"],
@@ -143,6 +152,7 @@ class Account(object):
         # Determine if account can buy 'volume' of asset at 'price'
         if self.curr_cool_down > 0:
             # Do not allow account to long if cool down active
+            self.curr_cool_down -= 1
             return False
 
         elif self.curr_balance < volume:
@@ -168,8 +178,10 @@ class Account(object):
                 self.curr_position["price"] = avg_price
                 self.curr_position["quantity"] += sum_quantity
 
-            # Update Current Balance
+            # Update Current Balance, Streak & Cool Down
             self.curr_balance -= volume
+            self.curr_streak += 1
+            self.curr_cool_down = self.def_trade_cool_down
 
             # Log Trade
             self.log_trade(timestamp, "LONG", price, volume / price, volume)
@@ -188,8 +200,9 @@ class Account(object):
             # Calculate it
             revenue = price * self.curr_position["quantity"]
 
-            # Update it
+            # Update Current Balance & Streak
             self.curr_balance += revenue
+            self.curr_streak = 0
 
             # Log it
             self.log_trade(timestamp, "EXIT_LONG", price, volume / price, volume)
@@ -202,6 +215,7 @@ class Account(object):
         # Determine if account can buy 'volume' of asset at 'price'
         if self.curr_cool_down > 0:
             # Do not allow account to short if cool down active
+            self.curr_cool_down -= 1
             return False
 
         elif self.curr_balance < volume:
@@ -222,8 +236,10 @@ class Account(object):
                 self.curr_position["quantity"] += volume / price
                 self.curr_position["volume"] += volume
 
-            # Update Current Balance
-                # no need to update current balance since short is borrowing
+            # Update Current Balance, Streak & Cool Down
+            # no need to update current balance since short is borrowing
+            self.curr_streak += 1
+            self.curr_cool_down = self.def_trade_cool_down
 
             # Log the trade
             self.log_trade(timestamp, "SHORT", price, volume / price, volume)
@@ -315,7 +331,7 @@ class Account(object):
         # Format Account object into JSON object
         json = {
             "init": self.initialized,
-            "asset": self.asset,
+            "stock": self.ticker,
             "start_balance": self.def_balance,
             "end_balance": self.curr_balance,
             "net_worth": self.net_worth(),
