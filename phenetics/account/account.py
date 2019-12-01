@@ -131,7 +131,9 @@ class Account(object):
         # If need to exit short position; calculate, update, log and remove it
         if self.curr_position["action"] == "SHORT":
             # Calculate Revenue
-            revenue = price * self.curr_position["quantity"]
+            revenue = self.curr_position["price"] * self.curr_position["quantity"]
+            revenue += (self.curr_position["price"] * self.curr_position["quantity"]) -\
+                       (price * self.curr_position["quantity"])
 
             # Update Current Balance & Streak
             self.curr_balance += revenue

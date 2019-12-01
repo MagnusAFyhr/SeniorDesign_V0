@@ -366,6 +366,7 @@ def test_accounting(difficulty):
         # Crosscheck balance changes with logged trade history
         trade_history = account.history()
         last_trade_index = 0
+        active_shorts = list([])
         for b in range(len(balance_history)):
             trades = list([])
 
@@ -387,18 +388,33 @@ def test_accounting(difficulty):
             balance = balance_history[b][1]
             for trade in trades:
                 # if entering a position; should deduct trade volume from balance
-                if trade["action"] == "LONG" or trade["action"] == "SHORT":
+                if trade["action"] == "LONG":
                     balance -= trade["volume"]
+                elif trade["action"] == "SHORT":
+                    balance -= trade["volume"]
+                    active_shorts.append(trade)
 
                 # if exiting a position; should increment balance by trade volume
-                elif trade["action"] == "EXIT_LONG" or trade["action"] == "EXIT_SHORT":
+                elif trade["action"] == "EXIT_LONG":
                     balance += trade["volume"]
+                elif trade["action"] == "EXIT_SHORT":
+                    sum_quantity = 0
+                    sum_volume = 0
+                    for active_short in active_shorts:
+                        sum_quantity += active_short["quantity"]
+                        sum_volume += active_short["volume"]
+                    avg_price = sum_volume / sum_quantity
+                    balance += (avg_price * trade["quantity"])
+                    balance += (avg_price * trade["quantity"]) - (trade["price"] * trade["quantity"])
+                    active_shorts.clear()
 
             # check if accounting ending balance matches derived ending balance
-            if balance != balance_history[b][2]:
+            upperbound = balance_history[b][2] + 0.0001 * balance_history[b][2]
+            lowerbound = balance_history[b][2] - 0.0001 * balance_history[b][2]
+            if balance < lowerbound or balance > upperbound:
                 accounting_test = False
                 fail_type = "BALANCE_MISMATCH"
-                fail_data = [account.trade_history, balance_history]
+                fail_data = [account.trade_history, balance_history, b, balance]
                 break
 
             # Check that test has not already failed
@@ -414,6 +430,8 @@ def test_accounting(difficulty):
         print("< PASS > : Account Trade Revenue & Balance Accounting.")
     else:
         print("< FAIL > : Account Trade Revenue & Balance Accounting : {}.".format(fail_type))
+        if fail_type == "BALANCE_MISMATCH":
+            print("<      > : [{}]{}.".format(fail_data[2], fail_data[3]))
         print("<      > : Trade History : {} Trades.".format(len(fail_data[0])))
         for trade in fail_data[0]:
             print("<      > : {}.".format(trade))
