@@ -8,21 +8,21 @@ Purpose : To verify the functionality and consistency of the allele class.
 
 Development :
     - test_allele       : DONE
-    - init_test         : DONE
-    - dehydrate_test    : DONE
-    - verify_test       : DONE
-    - mutate_test       : DONE
-    - crossover_test    : DONE
-    - react_test        : DONE
+    - test_init         : DONE
+    - test_dehydrate    : DONE
+    - test_verify       : DONE
+    - test_mutate       : DONE
+    - test_crossover    : DONE
+    - test_react        : DONE
 
 Testing :
     - test_allele       : DONE
-    - init_test         : DONE
-    - dehydrate_test    : DONE
-    - verify_test       : DONE
-    - mutate_test       : DONE
-    - crossover_test    : DONE
-    - react_test        : DONE
+    - test_init         : DONE
+    - test_dehydrate    : DONE
+    - test_verify       : DONE
+    - test_mutate       : DONE
+    - test_crossover    : DONE
+    - test_react        : DONE
 
 """
 
@@ -69,7 +69,7 @@ def test_init(difficulty):
     init_test = True
     allele = None
     for i in range(difficulty):
-        # Execute Dehydration, Log Runtime
+        # Execute Initialization, Log Runtime
         start_t = time.time_ns()
         allele = ale.Allele()
         end_t = time.time_ns()

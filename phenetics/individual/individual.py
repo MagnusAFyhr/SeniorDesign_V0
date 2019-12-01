@@ -44,8 +44,8 @@ class Individual(object):
         if chromosome is None:
             chromosome = chrm.Chromosome()
 
-        elif not chromosome.initialized:
-            print("< ERR > : Failed to initialize Individual, invalid Chromosome!")
+        if not chromosome.initialized:
+            print("< ERR > : Failed to initialize Individual, used invalid Chromosome!")
             self.initialized = False
             return
 

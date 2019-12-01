@@ -294,7 +294,7 @@ class Chromosome(object):
             return "SELL"
 
         # Otherwise, Return Hold
-        return "Hold"
+        return "HOLD"
 
     """
     Returns String Representation Of The Chromosome

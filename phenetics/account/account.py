@@ -42,20 +42,6 @@ Need to add streak along with cool down
 
 class Account(object):
 
-    initialized = False
-
-    ticker = None
-
-    trade_history = list([])
-    curr_position = None
-    curr_balance = 0
-
-    curr_cool_down = 0
-    curr_streak = 0
-
-    last_update = None
-    last_price = None
-
     def_volume = 1000
     def_balance = 10000.00
     def_trade_cool_down = 3
@@ -66,8 +52,20 @@ class Account(object):
     def __init__(self, ticker):
 
         # Initialize The Account
+        self.initialized = False
+
         self.ticker = ticker
+
+        self.trade_history = list([])
+        self.curr_position = None
         self.curr_balance = self.def_balance
+        # trade_volume = 0
+
+        self.curr_cool_down = 0
+        self.curr_streak = 0
+
+        self.last_update = None
+        self.last_price = None
 
         # Make Default Current Position As A JSON Object
         self.curr_position = {
@@ -121,8 +119,8 @@ class Account(object):
             return True
 
         # Handle Unrecognized Action
-        print("< WRN > : Unrecognized Action for Account to do() : {}.".format(action))
-        return False
+        print("< ERR > : Unrecognized Action for Account to do() : {}.".format(action))
+        return None
 
     """
     Attempt To Enter A Long Position
@@ -132,9 +130,8 @@ class Account(object):
 
         # If need to exit short position; calculate, update, log and remove it
         if self.curr_position["action"] == "SHORT":
-            # Calculate it
-            revenue = (self.curr_position["price"] * self.curr_position["quantity"]) \
-                      - (price * self.curr_position["quantity"])
+            # Calculate Revenue
+            revenue = price * self.curr_position["quantity"]
 
             # Update Current Balance & Streak
             self.curr_balance += revenue
@@ -176,12 +173,12 @@ class Account(object):
                 avg_price = sum_volume / sum_quantity
 
                 self.curr_position["price"] = avg_price
-                self.curr_position["quantity"] += sum_quantity
+                self.curr_position["quantity"] = sum_quantity
 
             # Update Current Balance, Streak & Cool Down
             self.curr_balance -= volume
             self.curr_streak += 1
-            self.curr_cool_down = self.def_trade_cool_down
+            # self.curr_cool_down = self.def_trade_cool_down
 
             # Log Trade
             self.log_trade(timestamp, "LONG", price, volume / price, volume)
@@ -197,17 +194,18 @@ class Account(object):
 
         # If any current long positions; calculate, update, log and remove them
         if self.curr_position["action"] == "LONG":
-            # Calculate it
+            # Calculate Revenue
             revenue = price * self.curr_position["quantity"]
 
             # Update Current Balance & Streak
             self.curr_balance += revenue
             self.curr_streak = 0
 
-            # Log it
-            self.log_trade(timestamp, "EXIT_LONG", price, volume / price, volume)
+            # Log Trade
+            self.log_trade(timestamp, "EXIT_LONG", price, self.curr_position["quantity"],
+                           price * self.curr_position["quantity"])
 
-            # Remove it
+            # Remove Position
             self.curr_position["action"] = ""
             self.curr_position["price"] = 0
             self.curr_position["quantity"] = 0
@@ -228,18 +226,23 @@ class Account(object):
             if self.curr_position["action"] == "":
                 # No current position; take long
                 self.curr_position["action"] = "SHORT"
-                self.curr_position["price"] = volume
+                self.curr_position["price"] = price
                 self.curr_position["quantity"] = volume / price
 
             elif self.curr_position["action"] == "SHORT":
-                # Current position is long; sum with current long
-                self.curr_position["quantity"] += volume / price
-                self.curr_position["volume"] += volume
+                # Current position is short; sum with current short
+                sum_volume = (self.curr_position["price"] * self.curr_position["quantity"]) + volume
+                sum_quantity = self.curr_position["quantity"] + (volume / price)
+                avg_price = sum_volume / sum_quantity
+
+                self.curr_position["price"] = avg_price
+                self.curr_position["quantity"] = sum_quantity
 
             # Update Current Balance, Streak & Cool Down
-            # no need to update current balance since short is borrowing
+            # a short is technically borrowing, but volume will be deducted since the bot owes the volume to the lender
+            self.curr_balance -= volume
             self.curr_streak += 1
-            self.curr_cool_down = self.def_trade_cool_down
+            # self.curr_cool_down = self.def_trade_cool_down
 
             # Log the trade
             self.log_trade(timestamp, "SHORT", price, volume / price, volume)
@@ -298,10 +301,9 @@ class Account(object):
             revenue = self.last_price * self.curr_position["quantity"]
             curr_net_worth += revenue
 
-        elif self.curr_position["action"] == "LONG":
+        elif self.curr_position["action"] == "SHORT":
             # Calculate current value of long position
-            revenue = (self.curr_position["price"] * self.curr_position["quantity"]) \
-                      - (self.last_price * self.curr_position["quantity"])
+            revenue = self.last_price * self.curr_position["quantity"]
             curr_net_worth += revenue
 
         # Return Account's Current Net Worth

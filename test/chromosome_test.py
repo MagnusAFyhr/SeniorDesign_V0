@@ -303,7 +303,7 @@ def test_react(difficulty):
         # Verify Response Content
         if reaction != "BUY" and reaction != "SELL" and reaction != "HOLD":
             react_test = False
-            fail_type = "INVALID"
+            fail_type = "INVALID:" + reaction
             break
 
     # Calculate Average Runtime
