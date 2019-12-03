@@ -23,16 +23,18 @@ Development :
     - as_json       : DONE
 
 Testing :
-    - init          :
-    - verify        :
-    - long          :
-    - short         :
-    - balance       :
-    - net_worth     :
-    - history       :
-    - performance   :
+    - init          : DONE
+    - verify        : DONE (Add function from data manager, to check if ticker is supported)
+    - do            : DONE
+    - long          : DONE
+    - short         : DONE
+    - log_trade     : DONE
+    - history       : DONE
+    - balance       : DONE
+    - net_worth     : DONE
+    - performance   : DONE
     - statistics    :
-    - as_json       :
+    - as_json       : DONE
 
 
 Need to add streak along with cool down
@@ -104,7 +106,11 @@ class Account(object):
         self.last_price = price
 
         # Determine Action
-        if action == "BUY":
+        if action is None:
+            print("< ERR > : NoneType Action Received For Account do().")
+            return None
+
+        elif action == "BUY":
             # Enter long position, if possible
             success = self.long(timestamp, price, self.def_volume)
             return success
@@ -119,7 +125,7 @@ class Account(object):
             return True
 
         # Handle Unrecognized Action
-        print("< ERR > : Unrecognized Action for Account to do() : {}.".format(action))
+        print("< ERR > : Unrecognized Action For Account do() : {}.".format(action))
         return None
 
     """

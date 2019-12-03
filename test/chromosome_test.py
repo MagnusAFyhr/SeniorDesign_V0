@@ -69,7 +69,7 @@ def test_init(difficulty):
     init_test = True
     chromosome = None
     for i in range(difficulty):
-        # Execute Dehydration, Log Runtime
+        # Execute Initialization, Log Runtime
         start_t = time.time_ns()
         chromosome = chrm.Chromosome()
         end_t = time.time_ns()

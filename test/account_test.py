@@ -2,7 +2,7 @@
 
 Title : account_test.py
 Author : Magnus Fyhr
-Created : 11/24/2019
+Created : 12/1/2019
 
 Purpose : To verify the functionality and consistency of the Account class.
 
@@ -100,7 +100,7 @@ def test_init(difficulty):
 def test_do(difficulty):
     sum_time = 0
 
-    # Create Sample Size Based On Difficulty & Trade Count Per Sample
+    # Create Number Of Trades To Be Executed Per Sample (Iterations = difficulty * trade_count)
     trade_count = 20
 
     # Make Dummy Data
@@ -146,7 +146,7 @@ def test_do(difficulty):
 
     # Print Test Result
     if do_test:
-        print("< PASS > : Account Do : Average {} ns per react().".format(per))
+        print("< PASS > : Account Do : Average {} ns per do().".format(per))
     else:
         print("< FAIL > : Account Do : {}.".format(fail_type))
         print("<      > : Trade History : {} Trades.".format(len(fail_data)))

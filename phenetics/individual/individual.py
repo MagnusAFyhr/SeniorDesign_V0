@@ -11,7 +11,6 @@ Development :
     - init          : DONE
     - verify        : DONE
     - step          : DONE
-    - do            : DONE
     - fitness       : DONE
     - mate          : DONE
     - clone         : DONE
@@ -21,7 +20,6 @@ Testing :
     - init          :
     - verify        :
     - step          :
-    - do            :
     - fitness       :
     - mate          :
     - clone         :
@@ -80,7 +78,7 @@ class Individual(object):
         if self.account is None:
             return False
 
-        elif self.account.initialized:
+        elif not self.account.initialized:
             return False
 
         # Otherwise, Individual Is Verified
@@ -94,14 +92,18 @@ class Individual(object):
         price = row_dict["PRICE"]
         timestamp = row_dict["TIMESTAMP"]
 
+        if price is None or timestamp is None:
+            print("< ERR > : Error in Individual step(), Invalid Data Dictionary.")
+            return None
+
         # Get the reaction from the chromosome
         reaction = self.chromosome.react(row_dict)
 
         # Use the reaction to take action via do()
-        self.account.do(reaction, timestamp, price)
+        feedback = self.account.do(reaction, timestamp, price)
 
         # Done
-        return
+        return feedback
 
     """
     Calculates The Fitness Of An Individual
@@ -116,11 +118,19 @@ class Individual(object):
         return fitness
 
     """
-    Returns Two Offspring Encodings From Mating Two Individuals
+    Returns Two Offspring Chromosomes From Mating Two Individuals
     """
     def mate(self, mate):
-        # Obtain two chromosomes from mating two individuals, and return them
-        return self.chromosome.crossover(mate.chromosome)
+        # Obtain two chromosomes from mating two individuals
+        chrom_encodings = self.chromosome.crossover(mate.chromosome)
+
+        # Create chromosomes from encoding
+        offspring = list([])
+        for encoding in chrom_encodings:
+            offspring.append(chrm.Chromosome(encoding))
+
+        # Return Chromosome Objects
+        return offspring
 
     """
     Returns A Copy Of The Current Individual’s Chromosome
