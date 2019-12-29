@@ -1,6 +1,6 @@
 """
 
-Title : chromosome.py
+Title : individual.py
 Author : Magnus Fyhr
 Created : 11/22/2019
 
@@ -17,13 +17,13 @@ Development :
     - as_json       : DONE
 
 Testing :
-    - init          :
-    - verify        :
-    - step          :
-    - fitness       :
-    - mate          :
-    - clone         :
-    - as_json       :
+    - init          : DONE
+    - verify        : DONE
+    - step          : DONE
+    - fitness       : DONE
+    - mate          : DONE
+    - clone         : DONE
+    - as_json       : DONE
 
 """
 
@@ -31,7 +31,7 @@ import genetics.chromosome.chromosome as chrm
 import phenetics.account.account as acco
 
 
-class Individual(object):
+class Individual:
 
     """
     Initialize & Verify The Individual

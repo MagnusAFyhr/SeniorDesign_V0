@@ -38,6 +38,7 @@ Testing :
 
 
 Need to add streak along with cool down
+SHARPE RATIO FOR FITNESS
 
 """
 

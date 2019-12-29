@@ -1,10 +1,10 @@
 """
 
-Title : main.py
-Author : Magnus Fyhr
-Created : 11/22/2019
+title : main.py
+author : magnus fyhr
+created : 11/22/2019
 
-Purpose :
+purpose :
 
 """
 
@@ -12,23 +12,27 @@ from test import allele_test as ale_tst
 from test import chromosome_test as chr_tst
 from test import account_test as acc_tst
 from test import individual_test as ind_tst
+from test import population_test as pop_tst
 
 
 def run():
 
-    # Test Allele Integrity
-    ale_tst.test_allele()
+    # test allele integrity
+    # ale_tst.test_allele()
 
-    # Test Chromosome Integrity
-    chr_tst.test_chromosome()
+    # test chromosome integrity
+    # chr_tst.test_chromosome()
 
-    # Test Account Integrity
-    acc_tst.test_account()
+    # test account integrity
+    # acc_tst.test_account()
 
-    # Test Individual Integrity
-    ind_tst.test_individual()
+    # test individual integrity
+    # ind_tst.test_individual()
 
-    # Test Data Manager Integrity
+    # test population integrity
+    pop_tst.test_population()
+
+    # test data manager integrity
 
 
 run()
