@@ -16,16 +16,17 @@ Development :
     - modify                        : DONE
     - evaluate                      : DONE
     - statistics                    : DONE
-    - initialize_rand_population    :
+    - initialize_rand_population    : DONE
 
 Testing :
-    - init              :
-    - step              :
-    - next_generation   :
-    - reproduce         :
-    - modify            :
-    - evaluate          :
-    - statistics        :
+    - init                          : DONE
+    - step                          : DONE
+    - next_generation               : DONE
+    - reproduce                     : DONE
+    - modify                        : DONE
+    - evaluate                      : DONE
+    - statistics                    : DONE
+    - initialize_rand_population    : DONE
 
 
 """

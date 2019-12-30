@@ -52,7 +52,7 @@ def population_statistics(population):
 def population_stand_dev(population, mean_fitness):
     sum_sq_var = 0
     for citizen in population:
-        variance = citizen.fitness - mean_fitness
+        variance = citizen.fitness() - mean_fitness
         sq_var = pow(variance, 2)
         sum_sq_var += sq_var
 

@@ -196,13 +196,13 @@ class Chromosome(object):
         buy_mut_size = self.buy_limit * LIMIT_VOLATILITY
         mut_buy_limit = chr_mut.mutate_limit(self.buy_limit,
                                              LIMIT_MUT_PROB * radiation,
-                                             buy_mut_size * radiation)
+                                             int(buy_mut_size * radiation))
 
         # Mutate Sell Limit
         sell_mut_size = self.sell_limit * LIMIT_VOLATILITY
         mut_sell_limit = chr_mut.mutate_limit(self.sell_limit,
                                               LIMIT_MUT_PROB * radiation,
-                                              sell_mut_size * radiation)
+                                              int(sell_mut_size * radiation))
 
         # Mutate Alleles
         mut_alleles = []

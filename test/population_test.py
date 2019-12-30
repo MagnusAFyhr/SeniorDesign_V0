@@ -7,24 +7,24 @@ Created : 12/18/2019
 Purpose : To verify the functionality and consistency of the population class.
 
 Development :
-    - test_population       :
+    - test_population       : DONE
     - init_test             : DONE
     - step_test             : DONE
     - evaluate_test         : DONE
     - reproduce_test        : DONE
-    - modify_test           :
-    - next_generation_test  :
-    - metrics_test          :
+    - modify_test           : DONE
+    - next_generation_test  : DONE
+    - metrics_test          : DONE
 
 Testing :
-    - test_population       :
-    - init_test             :
-    - step_test             :
-    - next_generation_test  :
-    - evaluate_test         :
-    - reproduce_test        :
-    - modify_test           :
-    - statistics_test       :
+    - test_population       : DONE
+    - init_test             : DONE
+    - step_test             : DONE
+    - next_generation_test  : DONE
+    - evaluate_test         : DONE
+    - reproduce_test        : DONE
+    - modify_test           : DONE
+    - statistics_test       : DONE
 
 """
 
@@ -34,15 +34,18 @@ import time
 import random
 from datetime import datetime
 
-pop_test_size = 100
-pop_test_iters = 50
+pop_test_size = 1000
+pop_test_gens = 50
+
 
 def test_population():
 
-    test_difficulty = 1000
+    test_difficulty = 10
 
     print()
     print("< TEST > : Testing Population : Difficulty = {}.".format(test_difficulty))
+    print("<      > :                    : Pop. Test Size  = {}.".format(pop_test_size))
+    print("<      > :                    : Pop. Test Gens = {}.".format(pop_test_gens))
     print()
 
     init_test = test_init(test_difficulty)
@@ -114,11 +117,11 @@ def test_init(difficulty):
 def test_step(difficulty):
     sum_time = 0
 
-    population = popu.Population(difficulty)
+    population = popu.Population(pop_test_size)
 
     # Test Step
     step_test = True
-    for i in range(difficulty):
+    for i in range(1, difficulty + 1):
         if not step_test:
             break
 
@@ -126,9 +129,7 @@ def test_step(difficulty):
 
         # Execute Initialization, Log Runtime
         start_t = time.time_ns()
-
         population.step(observation)
-
         end_t = time.time_ns()
         elapsed = end_t - start_t
         sum_time += elapsed
@@ -136,7 +137,7 @@ def test_step(difficulty):
         # Verify Step
         if population.step_count != i:
             step_test = False
-        if population.iter_count != difficulty * i:
+        if population.iter_count != pop_test_size * i:
             step_test = False
 
     # Calculate Average Runtime
@@ -144,7 +145,7 @@ def test_step(difficulty):
 
     # Print Test Result
     if step_test:
-        print("< PASS > : Population Step : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Step : Average {} ns per step().".format(per))
     else:
         print("< FAIL > : Population Step.")
         print("<      > : Step Count : {}.".format(population.step_count))
@@ -168,7 +169,7 @@ def test_evaluate(difficulty):
         # Create random population
         population = popu.Population(pop_test_size)
         # Simulate random test case
-        population = simulate_steps(population, 50)
+        population = simulate_steps(population, pop_test_gens)
 
         # Execute Evaluation, Log Runtime
         start_t = time.time_ns()
@@ -200,7 +201,7 @@ def test_evaluate(difficulty):
 
     # Print Test Result
     if evaluate_test:
-        print("< PASS > : Population Evaluation : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Evaluation : Average {} ns per evaluate().".format(per))
     else:
         print("< FAIL > : Population Evaluation     : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -216,9 +217,9 @@ def test_reproduce(difficulty):
     sum_time = 0
 
     # Create random population
-    population = popu.Population(difficulty)
+    population = popu.Population(pop_test_size)
     # Simulate random test case
-    population = simulate_steps(population, 50)
+    population = simulate_steps(population, pop_test_gens)
     # Evaluate population
     elites, parents = population.evaluate()
 
@@ -240,7 +241,7 @@ def test_reproduce(difficulty):
         sum_time += elapsed
 
         # Verify Reproduction
-        if len(offspring) != len(parents) * 2:
+        if len(offspring) != len(parents):
             reproduce_test = False
             fail_type = "SIZE"
             fail_data = [len(parents), len(offspring)]
@@ -254,7 +255,7 @@ def test_reproduce(difficulty):
 
     # Print Test Result
     if reproduce_test:
-        print("< PASS > : Population Reproduction : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Reproduction : Average {} ns per reproduce().".format(per))
     else:
         print("< FAIL > : Population Reproduction       : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -270,9 +271,9 @@ def test_modify(difficulty):
     sum_time = 0
 
     # Create random population
-    population = popu.Population(difficulty)
+    population = popu.Population(pop_test_size)
     # Simulate random test case
-    population = simulate_steps(population, 50)
+    population = simulate_steps(population, pop_test_gens)
     # Evaluate population
     elites, parents = population.evaluate()
     # Reproduce population
@@ -296,7 +297,7 @@ def test_modify(difficulty):
         sum_time += elapsed
 
         # Verify Modification
-        if len(offspring) != len(parents) * 2:
+        if len(offspring) != len(parents):
             modify_test = False
             fail_type = "SIZE"
             fail_data = [len(parents), len(offspring)]
@@ -309,7 +310,7 @@ def test_modify(difficulty):
 
     # Print Test Result
     if modify_test:
-        print("< PASS > : Population Modification : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Modification : Average {} ns per modify().".format(per))
     else:
         print("< FAIL > : Population Modification       : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -323,32 +324,52 @@ def test_modify(difficulty):
 def test_metrics(difficulty):
     sum_time = 0
 
+    # Create random population
+    population = popu.Population(pop_test_size)
+
     # Test Metrics
     metrics_test = True
+    fail_data = ""
     for i in range(difficulty):
         if not metrics_test:
             break
 
+        # Simulate random test case
+        population = simulate_steps(population, 1)
+        population.evaluate()
+
         # Execute Metrics, Log Runtime
         start_t = time.time_ns()
 
-        # PUT TESTING CODE HERE
+        json_stats = population.metrics()
 
         end_t = time.time_ns()
         elapsed = end_t - start_t
         sum_time += elapsed
 
         # Verify Metrics
-        # PUT VERIFICATION CODE HERE
+        try:
+            int(json_stats["pop_size"])
+            for fit in json_stats["pop_data"]:
+                float(fit)
+            float(json_stats["sum"])
+            float(json_stats["best"])
+            float(json_stats["worst"])
+            float(json_stats["mean"])
+            float(json_stats["std"])
+        except ValueError:
+            metrics_test = False
+            fail_data = json_stats
 
     # Calculate Average Runtime
     per = sum_time / difficulty
 
     # Print Test Result
     if metrics_test:
-        print("< PASS > : Population Modification : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Metrics : Average {} ns per metrics().".format(per))
     else:
-        print("< FAIL > : Population Modification.")
+        print("< FAIL > : Population Metrics.")
+        print("<      > : {}.".format(fail_data))
 
     # Return Boolean Test Result
     return metrics_test
@@ -357,32 +378,52 @@ def test_metrics(difficulty):
 def test_next_generation(difficulty):
     sum_time = 0
 
+    # Create random population
+    population = popu.Population(pop_test_size)
+
     # Test Next Generation
     next_gen_test = True
     for i in range(difficulty):
         if not next_gen_test:
             break
 
+        # Simulate random test case
+        population = simulate_steps(population, pop_test_gens)
+
         # Execute Generation, Log Runtime
         start_t = time.time_ns()
 
-        # PUT TESTING CODE HERE
+        json_stats = population.next_generation()
 
         end_t = time.time_ns()
         elapsed = end_t - start_t
         sum_time += elapsed
 
         # Verify Generation
-        # PUT VERIFICATION CODE HERE
+        try:
+            float(json_stats["gen_count"])
+            float(json_stats["step_count"])
+            float(json_stats["iter_count"])
+
+            int(json_stats["pop_size"])
+            for fit in json_stats["pop_data"]:
+                float(fit)
+            float(json_stats["sum"])
+            float(json_stats["best"])
+            float(json_stats["worst"])
+            float(json_stats["mean"])
+            float(json_stats["std"])
+        except ValueError:
+            next_gen_test = False
 
     # Calculate Average Runtime
     per = sum_time / difficulty
 
     # Print Test Result
     if next_gen_test:
-        print("< PASS > : Population Modification : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Next Generation : Average {} ns per next_generation().".format(per))
     else:
-        print("< FAIL > : Population Modification.")
+        print("< FAIL > : Population Next Generation.")
 
     # Return Boolean Test Result
     return next_gen_test

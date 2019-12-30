@@ -50,7 +50,8 @@ def mutate_limit(limit, mutate_prob, mutate_size):
 
     # Mutate limit
     mut_limit = int(limit)
-    mutation = random.uniform(-mutate_size, mutate_size)
+    mutate_size = abs(mutate_size)
+    mutation = random.randint(-mutate_size, mutate_size)
     mut_limit += mutation
 
     # Return mutated buy/sell limit

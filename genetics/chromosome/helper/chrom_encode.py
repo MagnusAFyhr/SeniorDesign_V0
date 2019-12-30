@@ -29,12 +29,12 @@ def encode_buy_limit(buy_limit):
         return None
 
     # Return buy_limit as string
-    return str(buy_limit)
+    return str(int(buy_limit))
 
 
 def encode_sell_limit(sell_limit):
     """ Converts the sell limit back to an encoding """
-    # Check if buy limit is a valid int
+    # Check if sell limit is a valid int
     try:
         int(sell_limit)
 
@@ -44,7 +44,7 @@ def encode_sell_limit(sell_limit):
         return None
 
     # Return sell_limit as string
-    return str(sell_limit)
+    return str(int(sell_limit))
 
 
 def encode_alleles(alleles):
