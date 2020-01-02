@@ -15,7 +15,7 @@ from test import individual_test as ind_tst
 from test import population_test as pop_tst
 
 
-def run():
+def run_tests():
 
     # test allele integrity
     # ale_tst.test_allele()
@@ -30,9 +30,17 @@ def run():
     # ind_tst.test_individual()
 
     # test population integrity
-    pop_tst.test_population()
+    # pop_tst.test_population()
 
-    # test data manager integrity
+    # test databook integrity
+
+    # test habitat integrity
+
+    return
 
 
-run()
+def run_simulation(ticker):
+    pass
+
+
+run_tests()
