@@ -213,13 +213,13 @@ def test_react(difficulty):
 
     # Make Dummy Data Dictionary
     dummy_data = {
-        '1': 1,  # 1
-        '2': 2,  # 2
-        '3': 3,  # 3
-        '4': 4,  # 4
-        '5': 5,  # 5
-        '6': 6,  # 6
-        '7': 7,  # 7
+        'Date': 1,  # 1
+        'Open': 2,  # 2
+        'High': 3,  # 3
+        'Low': 4,  # 4
+        'Close': 5,  # 5
+        'Adj Close': 6,  # 6
+        'Volume': 7,  # 7
         '8': 8,  # 8
         '9': 9,  # 9
         '10': 10,  # 10

@@ -50,6 +50,9 @@ class Population:
         self.gen_count = 0
         self.step_count = 0
         self.iter_count = 0
+        self.birth_date = None
+        self.last_date = None
+
 
     """
     Simulates A Step In The Population With A Given Observation
@@ -57,8 +60,11 @@ class Population:
     def step(self, observation):
 
         for citizen in self.citizens:
+            if self.step_count == 0:
+                self.birth_date = observation['Date']
             citizen.step(observation)
             self.iter_count += 1
+            self.last_date = observation['Date']
 
         self.step_count += 1
 
@@ -74,12 +80,16 @@ class Population:
         statistics["gen_count"] = self.gen_count
         statistics["step_count"] = self.step_count
         statistics["iter_count"] = self.iter_count
+        statistics["start_date"] = self.birth_date
+        statistics["end_date"] = self.last_date
+
 
         # get elites and parents from current population
         elites, parents = self.evaluate()
 
         # create offspring from parents
         offspring = self.reproduce(parents)
+        offspring = offspring[len(elites):]
 
         # append elite clones to offspring
         offspring.extend([elite.clone() for elite in elites])

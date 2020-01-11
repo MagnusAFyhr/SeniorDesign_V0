@@ -8,19 +8,19 @@ Purpose : To verify the functionality and consistency of the individual class.
 
 Development :
     - test_individual   : DONE
-    - init_test         : DONE
-    - step_test         : DONE
-    - fitness_test      : DONE
-    - mate_test         : DONE
-    - clone_test        : DONE
+    - test_init         : DONE
+    - test_step         : DONE
+    - test_fitness      : DONE
+    - test_mate         : DONE
+    - test_clone        : DONE
 
 Testing :
     - test_individual   : DONE
-    - init_test         : DONE
-    - step_test         : DONE
-    - fitness_test      : DONE
-    - mate_test         : DONE
-    - clone_test        : DONE
+    - test_init         : DONE
+    - test_step         : DONE
+    - test_fitness      : DONE
+    - test_mate         : DONE
+    - test_clone        : DONE
 
 """
 
@@ -121,15 +121,13 @@ def test_step(difficulty):
 
     # Make Dummy Data Dictionary
     dummy_data = {
-        'TIMESTAMP': datetime.now(),  # Timestamp
-        'PRICE': 100.00,  # Price
-        '1': 1,  # 1
-        '2': 2,  # 2
-        '3': 3,  # 3
-        '4': 4,  # 4
-        '5': 5,  # 5
-        '6': 6,  # 6
-        '7': 7,  # 7
+        'Date': datetime.now(),  # 1
+        'Open': 2,  # 2
+        'High': 3,  # 3
+        'Low': 4,  # 4
+        'Close': 5,  # 5
+        'Adj Close': 6,  # 6
+        'Volume': 7,  # 7
         '8': 8,  # 8
         '9': 9,  # 9
         '10': 10,  # 10
@@ -203,10 +201,8 @@ def test_step(difficulty):
         for j in range(step_count):
             # Load Random Data Dictionary
             for tech_ind in dummy_data:
-                if tech_ind == "TIMESTAMP":
+                if tech_ind == "Date":
                     dummy_data[tech_ind] = datetime.now()
-                elif tech_ind == "PRICE":
-                    dummy_data[tech_ind] = dummy_data[tech_ind] + random.uniform(-1, 1)
                 else:
                     dummy_data[tech_ind] = random.uniform(0, 1000)
 

@@ -9,14 +9,18 @@ Purpose : ...
 Development :
     - init                          : DONE
     - launch                        : DONE
-    - step                          :
+    - step                          : DONE
     - close                         : DONE
+    - get_databook                  : DONE
+    - verify_databook               : DONE
 
 Testing :
     - init                          :
     - launch                        :
     - step                          :
     - close                         :
+
+### CURRENTLY NO TECHNICAL INDICATORS ARE USED THIS MUST BE CHANGED ###
 
 """
 
@@ -32,6 +36,7 @@ class DataBook:
     book = None
 
     def __init__(self, ticker):
+        self.steps = 0
         self.ticker = ticker
         self.launch()
 
@@ -59,22 +64,28 @@ class DataBook:
             return None
 
         # take a step, get frame in data and remove it from the book
-        frame = self.book[0]
-        self.book = self.book.drop[0]
+        self.steps += 1
+        try:
+            frame = self.book.iloc[self.steps]
+        except IndexError:
+            # end of data reached
+            return "EOF"
 
-        # convert frame into a dictionary **************
+        # convert frame into a dictionary
+        data_dict = frame.to_dict()
 
         # return frame of data
-        return frame
+        return data_dict
 
     def close(self):
         self.live = False
         self.book = None
+        self.steps = 0
 
 
 def get_databook(ticker):
     # obtain pure data frame; either from existing pure or raw csv files
-    book_pd_df = purifier.purify_csv(ticker)
+    book_pd_df = purifier.get_pure_databook(ticker)
 
     # return data frame
     return book_pd_df
@@ -83,18 +94,17 @@ def get_databook(ticker):
 def verify_databook(book):
     # basic verification; object is a pandas data frame
     if not isinstance(book, pd.DataFrame):
-        # special debug report ***********
+        print("< ERR > : DataBook : Extracted data is not of type 'DataBook'.")
         return False
 
     # check that columns are present and order matches default
     column_ids = book.columns.values.tolist()
+    dict_columns = {i: True for i in column_ids}
+
     pure_column_ids = purifier.get_pure_columns()
-    if len(column_ids) != len(pure_column_ids):
-        # special debug report ***********
-        return False
-    for i in range(len(column_ids)):
-        if column_ids[i] != pure_column_ids[i]:
-            # special debug report ***********
+    for i in range(len(pure_column_ids)):
+        if dict_columns[pure_column_ids[i]] is None:
+            print("< WRN > : DataBook : Failed to find column data for {}.".format(pure_column_ids[i]))
             return False
 
     # otherwise, the book is valid and verified

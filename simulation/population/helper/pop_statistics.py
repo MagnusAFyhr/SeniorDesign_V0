@@ -16,6 +16,8 @@ def population_statistics(population):
         "std": None
     }
 
+    population = rank_population(population)
+
     # get population size
     pop_size = len(population)
 
@@ -60,3 +62,21 @@ def population_stand_dev(population, mean_fitness):
     stand_dev = pow(variance, 0.5)
 
     return stand_dev
+
+def rank_population(population):
+    n = len(population)
+
+    # Traverse through all array elements
+    for i in range(n):
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+            # traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if population[j].fitness() < population[j + 1].fitness():
+                temp = population[j]
+                population[j] = population[j + 1]
+                population[j + 1] = temp
+
+    return population
+

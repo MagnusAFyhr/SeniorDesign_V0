@@ -17,6 +17,15 @@ RAW_SELL = -1
 
 """ Technical Indicators """
 TECHNICAL_INDICATORS = {
+    '0': "Open",
+    '1': "High",
+    '2': "Low",
+    '3': "Close",
+    '4': "Adj Close",
+    '5': "Volume"
+}
+"""
+TECHNICAL_INDICATORS = {
     '0': "1",  # 1
     '1': "2",  # 2
     '2': "3",  # 3
@@ -85,6 +94,7 @@ TECHNICAL_INDICATORS = {
     '$': "66",  # 66
     '%': "67",  # 67
 }
+"""
 
 """ Threshold """
 # NA: Floating Point

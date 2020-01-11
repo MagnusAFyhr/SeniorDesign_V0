@@ -89,8 +89,8 @@ class Individual:
     """
     def step(self, row_dict):
         # Extract the price and timestamp from the dictionary
-        price = row_dict["PRICE"]
-        timestamp = row_dict["TIMESTAMP"]
+        timestamp = row_dict["Date"]
+        price = row_dict["Close"]
 
         if price is None or timestamp is None:
             print("< ERR > : Error in Individual step(), Invalid Data Dictionary.")

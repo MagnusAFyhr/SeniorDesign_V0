@@ -101,11 +101,12 @@ def test_init(difficulty):
                 init_test = False
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if init_test:
-        print("< PASS > : Population Initialization : Average {} ns per __init__().".format(per))
+        print("< PASS > : Population Initialization : Average {} ms per __init__().".format(per))
     else:
         print("< FAIL > : Population Initialization.")
         print("<      > : Pop. Size : {}.".format(fail_data))
@@ -141,11 +142,12 @@ def test_step(difficulty):
             step_test = False
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if step_test:
-        print("< PASS > : Population Step : Average {} ns per step().".format(per))
+        print("< PASS > : Population Step : Average {} ms per step().".format(per))
     else:
         print("< FAIL > : Population Step.")
         print("<      > : Step Count : {}.".format(population.step_count))
@@ -197,11 +199,12 @@ def test_evaluate(difficulty):
                 fail_data = ""
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if evaluate_test:
-        print("< PASS > : Population Evaluation : Average {} ns per evaluate().".format(per))
+        print("< PASS > : Population Evaluation : Average {} ms per evaluate().".format(per))
     else:
         print("< FAIL > : Population Evaluation     : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -251,11 +254,12 @@ def test_reproduce(difficulty):
                 fail_type = "BAD_CHILD"
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if reproduce_test:
-        print("< PASS > : Population Reproduction : Average {} ns per reproduce().".format(per))
+        print("< PASS > : Population Reproduction : Average {} ms per reproduce().".format(per))
     else:
         print("< FAIL > : Population Reproduction       : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -305,12 +309,14 @@ def test_modify(difficulty):
             if not chromosome.verify():
                 modify_test = False
                 fail_type = "BAD_CHILD"
+
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if modify_test:
-        print("< PASS > : Population Modification : Average {} ns per modify().".format(per))
+        print("< PASS > : Population Modification : Average {} ms per modify().".format(per))
     else:
         print("< FAIL > : Population Modification       : {}.".format(fail_type))
         if fail_type == "SIZE":
@@ -362,11 +368,12 @@ def test_metrics(difficulty):
             fail_data = json_stats
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if metrics_test:
-        print("< PASS > : Population Metrics : Average {} ns per metrics().".format(per))
+        print("< PASS > : Population Metrics : Average {} ms per metrics().".format(per))
     else:
         print("< FAIL > : Population Metrics.")
         print("<      > : {}.".format(fail_data))
@@ -417,11 +424,12 @@ def test_next_generation(difficulty):
             next_gen_test = False
 
     # Calculate Average Runtime
+    sum_time /= pow(10, 6)
     per = sum_time / difficulty
 
     # Print Test Result
     if next_gen_test:
-        print("< PASS > : Population Next Generation : Average {} ns per next_generation().".format(per))
+        print("< PASS > : Population Next Generation : Average {} ms per next_generation().".format(per))
     else:
         print("< FAIL > : Population Next Generation.")
 
@@ -447,15 +455,13 @@ def random_observation():
 
     # Make Dummy Data Dictionary
     dummy_data = {
-        'TIMESTAMP': datetime.now(),  # Timestamp
-        'PRICE': 100.00,  # Price
-        '1': rand_data,  # 1
-        '2': rand_data,  # 2
-        '3': rand_data,  # 3
-        '4': rand_data,  # 4
-        '5': rand_data,  # 5
-        '6': rand_data,  # 6
-        '7': rand_data,  # 7
+        'Date': datetime.now(),  # 1
+        'Open': 2,  # 2
+        'High': 3,  # 3
+        'Low': 4,  # 4
+        'Close': 5,  # 5
+        'Adj Close': 6,  # 6
+        'Volume': 7,  # 7
         '8': rand_data,  # 8
         '9': rand_data,  # 9
         '10': rand_data,  # 10

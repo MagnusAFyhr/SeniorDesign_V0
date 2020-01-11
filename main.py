@@ -13,6 +13,10 @@ from test import chromosome_test as chr_tst
 from test import account_test as acc_tst
 from test import individual_test as ind_tst
 from test import population_test as pop_tst
+from test import databook_test as data_tst
+from test import habitat_test as hbt_tst
+
+import simulation.habitat.habitat as habi
 
 
 def run_tests():
@@ -33,13 +37,24 @@ def run_tests():
     # pop_tst.test_population()
 
     # test databook integrity
+    # data_tst.test_databook()
 
     # test habitat integrity
+    # hbt_tst.test_habitat()
+
+    run_simulation("MSFT")
 
     return
 
 
 def run_simulation(ticker):
+
+    habitat = habi.Habitat(ticker)
+
+    i = 0
+    while i < 40:
+        gen_stats = habitat.simulate_generation()
+
     pass
 
 
