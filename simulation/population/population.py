@@ -47,7 +47,7 @@ class Population:
         # initialize random population
         self.citizens = self.initialize_random_population(pop_size)
         self.size = pop_size
-        self.gen_count = 0
+        self.gen_count = 1
         self.step_count = 0
         self.iter_count = 0
         self.birth_date = None

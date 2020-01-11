@@ -74,6 +74,7 @@ class Habitat:
                                                                    gen_stats["worst"],
                                                                    gen_stats["mean"]))
         print("<     > : Stand. Dev. : {}.".format(gen_stats["std"]))
+        print("")
 
         # do visualization stuff
 

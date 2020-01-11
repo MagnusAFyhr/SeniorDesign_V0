@@ -63,6 +63,7 @@ def population_stand_dev(population, mean_fitness):
 
     return stand_dev
 
+
 def rank_population(population):
     n = len(population)
 
