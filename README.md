@@ -11,7 +11,7 @@
 ## Introduction
 - Theory
 ```
-    Due to the difficulty in short-term forecasting of stock price based on technical indicators,
+Due to the difficulty in short-term forecasting of stock price based on technical indicators,
 it is increasingly difficult to associate specific, or groups of, technical indicator signals 
 to the fluctuating price of a stock; furthermore, considering that the signal, and relationship 
 between these signals, can change overtime then it is exponentially more difficult to forecast 
@@ -53,10 +53,16 @@ README.md
 ```
 
 - Class Diagram
-![what is this](class_diagram.png)
+```
+```
+![class diagram](class_diagram.png)
+```
+```
 
 - UML Diagram
+```
 
+```
 - Class Breakdown
 ```
 
@@ -78,6 +84,7 @@ README.md
 ```
 
 ## Running The Program
+Installation :
 ```
 1. What is step 1
 2. What is step 2
