@@ -59,14 +59,12 @@ class Habitat:
         elapsed /= pow(10, 9)
         gen_stats["runtime"] = elapsed
 
-        self.plot(gen_stats)
-
         return gen_stats
 
     def plot(self, gen_stats):
         # print generation stats to debug console
         print("< SYS > : Generation {}; Runtime : {} sec.".format(gen_stats["gen_count"], gen_stats["runtime"]))
-        print("<     > : Duration: {} :: {} ({} ticks).".format(gen_stats["start_date"],
+        print("<     > : Duration: {} -> {} ({} ticks).".format(gen_stats["start_date"],
                                                                 gen_stats["end_date"],
                                                                 gen_stats["step_count"]))
         print("<     > : Sum Fitness : {}.".format(gen_stats["sum"]))

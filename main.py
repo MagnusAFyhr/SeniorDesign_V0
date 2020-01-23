@@ -1,7 +1,7 @@
 """
 
 title : main.py
-author : magnus fyhr
+author : Magnus Fyhr
 created : 11/22/2019
 
 purpose :
@@ -19,32 +19,37 @@ from test import habitat_test as hbt_tst
 import simulation.habitat.habitat as habi
 
 
-def run_tests():
+def run_basic_tests():
 
     # test allele integrity
-    # ale_tst.test_allele()
+    ale_tst.test_allele()
 
     # test chromosome integrity
-    # chr_tst.test_chromosome()
+    chr_tst.test_chromosome()
 
     # test account integrity
-    # acc_tst.test_account()
+    acc_tst.test_account()
 
     # test individual integrity
-    # ind_tst.test_individual()
+    ind_tst.test_individual()
 
     # test population integrity
-    # pop_tst.test_population()
+    pop_tst.test_population()
 
     # test databook integrity
-    # data_tst.test_databook()
+    data_tst.test_databook()
 
     # test habitat integrity
-    # hbt_tst.test_habitat()
-
-    run_simulation("MSFT")
+    hbt_tst.test_habitat()
 
     return
+
+
+def run_advanced_tests():
+
+    # test population diversity
+
+    pass
 
 
 def run_simulation(ticker):
@@ -54,8 +59,11 @@ def run_simulation(ticker):
     i = 0
     while i < 40:
         gen_stats = habitat.simulate_generation()
+        habitat.plot(gen_stats)
 
     pass
 
 
-run_tests()
+# ale_tst.test_allele()
+
+run_simulation("MSFT")

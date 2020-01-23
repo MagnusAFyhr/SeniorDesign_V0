@@ -15,6 +15,7 @@ Development :
     - mutate        : DONE
     - crossover     : DONE
     - react         : DONE
+    - status        :
     - as_string     : DONE
 
 Testing :
@@ -25,8 +26,13 @@ Testing :
     - mutate        : DONE
     - crossover     : DONE
     - react         : DONE
+    - status        :
     - as_string     : DONE
 
+
+TO-DO:
+    - Don't forget that alleles need to be initialized in debug_mode
+    - Implement status() function
 """
 import random
 
@@ -49,31 +55,43 @@ LIMIT_VOLATILITY = 0.10
 
 class Chromosome(object):
 
+    initialized = False
+    _debug_mode = False
+
+    encoding = None
+    buy_limit = None
+    sell_limit = None
+    alleles = None
+
     """
     Initialize & Verify The Chromosome
     """
-    def __init__(self, encoding=None):
+    def __init__(self, encoding=None, debug=0):
+
+        if debug == 1:
+            self._debug_mode = True
 
         # Verify Encoding
         if encoding is None:
             encoding = chr_bui.random_encoding()
 
-        # Initialize The Chromosome With Default Values
+        # Pre-Initialization
         self.initialized = False
         self.encoding = encoding
         self.buy_limit = None
         self.sell_limit = None
         self.alleles = list([])
 
-        # Hydrate The Chromosome (Initialize)
+        # Hydrate The Chromosome (Initialization)
         if self.hydrate() is None:
             print("< ERR > : Failed to hydrate Chromosome, invalid encoding!\n{}\n".format(encoding))
             return
 
         # Verify The Chromosome
-        if self.verify() is False:
-            print("< ERR > : Failed to verify Chromosome, invalid encoding!\n{}\n".format(encoding))
-            return
+        if self._debug_mode:
+            if self.verify() is False:
+                print("< ERR > : Failed to verify Chromosome, invalid encoding!\n{}\n".format(encoding))
+                return
 
         # Done Initializing
         self.initialized = True
@@ -92,7 +110,7 @@ class Chromosome(object):
         self.sell_limit = chr_dec.decode_sell_limit(self.encoding)
 
         # Decode Alleles
-        alleles = chr_dec.decode_alleles(self.encoding)
+        alleles = chr_dec.decode_alleles(self.encoding, self._debug_mode)
         for allele in alleles:
             self.alleles.append(allele)
 
@@ -124,9 +142,10 @@ class Chromosome(object):
             allele_encodings.append(allele_encoding)
 
         # Check That All Passed Encoding
-        if buy_limit is None or sell_limit is None or len(allele_encodings) != chrom_structure.ALLELE_COUNT:
-            print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
-            return None
+        if self._debug_mode:
+            if buy_limit is None or sell_limit is None or len(allele_encodings) != chrom_structure.ALLELE_COUNT:
+                print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
+                return None
 
         # Concatenate items for random encoding
         items = list([0, 0])
@@ -211,14 +230,15 @@ class Chromosome(object):
             mut_alleles.append(mut_allele)
 
         # Check That All Passed Mutation
-        if mut_buy_limit is None or mut_sell_limit is None:
-            print("< ERR > : Failed to verify Chromosome : Contains Invalid Buy/Sell Limit.")
-            return None
-        for mut_allele in mut_alleles:
-            # Check That Allele Passed Mutation
-            if mut_allele is None:
-                print("< ERR > : Failed to verify Chromosome : Contains Invalid Allele.")
+        if self._debug_mode:
+            if mut_buy_limit is None or mut_sell_limit is None:
+                print("< ERR > : Failed to verify Chromosome : Contains Invalid Buy/Sell Limit.")
                 return None
+            for mut_allele in mut_alleles:
+                # Check That Allele Passed Mutation
+                if mut_allele is None:
+                    print("< ERR > : Failed to verify Chromosome : Contains Invalid Allele.")
+                    return None
 
         # Fix potential buy/sell limit overlap
         while mut_buy_limit < mut_sell_limit:
@@ -277,12 +297,13 @@ class Chromosome(object):
             value = row_dict[allele.tech_ind]
 
             # Verify data
-            if value is None:
-                # Data corrupted
-                print("< ERR > : Error in Chromosome reaction, data corrupted!"
-                      "\n\tCould not find key {}.".format(allele.tech_id))
+            if self._debug_mode:
+                if value is None:
+                    # Data corrupted
+                    print("< ERR > : Error in Chromosome reaction, data corrupted!"
+                          "\n\tCould not find key {}.".format(allele.tech_id))
 
-                return None
+                    return None
 
             # Add allele reaction to pressure
             pressure += allele.react(value)
@@ -295,6 +316,20 @@ class Chromosome(object):
 
         # Otherwise, Return Hold
         return "HOLD"
+
+    """
+    Returns JSON Representation Of The Allele
+    """
+    def status(self):
+        json = {
+            "initialized": self.initialized,
+            "encoding": self.encoding,
+            "buy_limit": self.buy_limit,
+            "sell_limit": self.sell_limit,
+            "alleles": [allele.status() for allele in self.alleles],
+        }
+
+        return json
 
     """
     Returns String Representation Of The Chromosome

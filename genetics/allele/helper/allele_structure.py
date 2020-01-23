@@ -11,6 +11,14 @@ Purpose : Set of variables that define allele structure.
 """ Encoding """
 ENCODING_SIZE = 10
 
+""" Mutation """
+DEF_POS_MUT_PROB = 0.25
+DEF_TECH_IND_MUT_PROB = 0.25
+DEF_THRESH_MUT_PROB = 0.25
+DEF_THRESH_VOLATILITY = 0.10
+DEF_CONDITION_MUT_PROB = 0.25
+DEF_POWER_MUT_PROB = 0.25
+
 """ Position """
 POS_START = 0
 POS_END = 1

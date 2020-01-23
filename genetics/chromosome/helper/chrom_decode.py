@@ -10,8 +10,8 @@ Development :
     - decode_alleles    : DONE
 
 Testing
-    - decode_buy_limit  :
-    - decode_sell_limit :
+    - decode_buy_limit  : DONE
+    - decode_sell_limit : DONE
     - decode_alleles    :
 
 """
@@ -61,7 +61,7 @@ def decode_sell_limit(chrom_encoding):
     return int(sell_limit)
 
 
-def decode_alleles(chrom_encoding):
+def decode_alleles(chrom_encoding, debug_mode):
     """ Obtain & initialize alleles from the encoding """
     # Unwrap encoding
     items = chrom_encoding.split(chrom_structure.ENCODING_KEY)
@@ -73,7 +73,7 @@ def decode_alleles(chrom_encoding):
     alleles = list([])
     for encoding in allele_codes:
         # Initialize Allele
-        allele = ale.Allele(encoding)
+        allele = ale.Allele(encoding, debug_mode)
 
         # Verify Allele
         if allele.initialized:

@@ -10,7 +10,6 @@ import talib
 def ADX(index, raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close)
 
-
     pass
 
 

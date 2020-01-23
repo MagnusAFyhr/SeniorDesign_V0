@@ -9,12 +9,12 @@ Purpose : To verify the functionality and consistency of the population class.
 Development :
     - test_habitat          : DONE
     - test_init             : DONE
-    - test_simulate         :
+    - test_simulate         : DONE
 
 Testing :
-    - test_habitat          :
-    - test_init             :
-    - test_simulate         :
+    - test_habitat          : DONE
+    - test_init             : DONE
+    - test_simulate         : DONE
 
 """
 
@@ -24,7 +24,7 @@ import simulation.habitat.habitat as habi
 
 def test_habitat():
 
-    test_difficulty = 100
+    test_difficulty = 10
 
     print()
     print("< TEST > : Testing Habitat : Difficulty = {}.".format(test_difficulty))
@@ -32,7 +32,7 @@ def test_habitat():
 
     init_test = test_init(test_difficulty)
 
-    simulate_test = test_simulate(int(test_difficulty/10))
+    simulate_test = test_simulate(test_difficulty)
 
     print()
     print("< TEST > : Done.")

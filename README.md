@@ -65,7 +65,12 @@ README.md
 ```
 - Class Breakdown
 ```
-
+- Allele
+- Chromosome
+- Individual
+- Account
+- Population
+- Habitat
 ```
 ## Development
 - Current Updates

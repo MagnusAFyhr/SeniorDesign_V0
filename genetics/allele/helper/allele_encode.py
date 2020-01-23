@@ -56,6 +56,7 @@ def encode_tech_ind(tech_ind):
 
 def encode_threshold(threshold):
     """ Converts the threshold back to an encoding """
+
     # Convert float to string
     thresh_string = str(threshold)
 

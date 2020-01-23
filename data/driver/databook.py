@@ -20,7 +20,11 @@ Testing :
     - step                          :
     - close                         :
 
-### CURRENTLY NO TECHNICAL INDICATORS ARE USED THIS MUST BE CHANGED ###
+TO-DO :
+    - Ability to specify range of data to be grabbed
+    - Add technical indicators, currently none
+
+
 
 """
 

@@ -18,7 +18,7 @@ from genetics.allele.helper import allele_encode as ale_enc
 from genetics.allele.helper import allele_decode as ale_dec
 
 
-def crossover(allele_encoding_a, allele_encoding_b, dominance):
+def crossover(allele_encoding_a, allele_encoding_b, dominance, debug=0):
     """ Create an offspring from a random crossover between two allele encodings """
 
     # Establish a dominant parent, always allele_encoding_a
@@ -42,10 +42,11 @@ def crossover(allele_encoding_a, allele_encoding_b, dominance):
     cross_pow = ale_enc.encode_power(ale_dec.decode_power(random.choice(parents)))
 
     # Check that all passed crossover
-    if cross_pos is None or cross_tech_ind is None or cross_thresh is None \
-            or cross_cond is None or cross_pow is None:
-        print("< ERR > : Failed to produce offspring, invalid allele states!")
-        return None
+    if debug:
+        if cross_pos is None or cross_tech_ind is None or cross_thresh is None \
+                or cross_cond is None or cross_pow is None:
+            print("< ERR > : Failed to produce offspring, invalid allele states!")
+            return None
 
     # Form crossover encoding
     offspring = cross_pos + cross_tech_ind + cross_thresh + cross_cond + cross_pow

@@ -2,8 +2,7 @@
 
 Title : allele.py
 
-Purpose : The Allele class object, responsible for providing proper
-            functions and expected functionality for the Allele.
+Purpose : A class responsible for encoding a technical indicator
 
 Development :
     - init          : DONE
@@ -13,6 +12,7 @@ Development :
     - mutate        : DONE
     - crossover     : DONE
     - react         : DONE
+    - status        : DONE
     - as_string     : DONE
 
 Testing :
@@ -23,10 +23,14 @@ Testing :
     - mutate        : DONE
     - crossover     : DONE
     - react         : DONE
+    - status        : DONE
     - as_string     : DONE
 
+Cleaning:
+    - mutate() : a mutated encoding is being returned, and the allele itself is being mutated; inefficient; which is needed?
+
 """
-from genetics.allele.helper import allele_structure
+from genetics.allele.helper import allele_structure as ale_str
 
 from genetics.allele.helper import allele_build as ale_bui
 
@@ -37,43 +41,43 @@ from genetics.allele.helper import allele_mutate as ale_mut
 from genetics.allele.helper import allele_crossover as ale_cro
 
 
-""" Mutation Variables """
-POS_MUT_PROB = 0.25
-TECH_IND_MUT_PROB = 0.25
-THRESHOLD_MUT_PROB = 0.25
-THRESHOLD_VOLATILITY = 0.10
-CONDITION_MUT_PROB = 0.25
-POWER_MUT_PROB = 0.25
-
-
 class Allele(object):
+
+    initialized = False
+    _debug_mode = False
+
+    encoding = None
+    position = None
+    tech_ind = None
+    threshold = None
+    condition = None
+    power = None
 
     """
     Initialize & Verify The Allele
     """
-    def __init__(self, encoding=None):
+    def __init__(self, encoding=None, debug=0):
 
+        if debug == 1:
+            self._debug_mode = True
+
+        # Verify Encoding
         if encoding is None:
             encoding = ale_bui.random_encoding()
 
-        # Initialize class variables to default
-        self.initialized = False
+        # Pre-Initialization
         self.encoding = encoding
-        self.position = None
-        self.tech_ind = None
-        self.threshold = None
-        self.condition = None
-        self.power = None
 
-        # Hydrate The Allele (Initialize)
+        # Hydrate The Allele (Initialization)
         if self.hydrate() is None:
             print("< ERR > : Failed to hydrate Allele, invalid encoding! {}".format(encoding))
             return
 
         # Verify The Allele
-        if self.verify() is False:
-            print("< ERR > : Failed to verify Allele, invalid encoding! {}".format(encoding))
-            return
+        if self._debug_mode:
+            if self.verify() is False:
+                print("< ERR > : Failed to verify Allele, invalid encoding! {}".format(encoding))
+                return
 
         # Done Initializing
         self.initialized = True
@@ -125,10 +129,11 @@ class Allele(object):
         power = ale_enc.encode_power(self.power)
 
         # Check That All Passed Encoding
-        if position is None or tech_ind is None or threshold is None\
-                or condition is None or power is None:
-            print("< ERR > : Failed to dehydrate Allele, invalid Allele state!")
-            return None
+        if self._debug_mode:
+            if position is None or tech_ind is None or threshold is None\
+                    or condition is None or power is None:
+                print("< ERR > : Failed to dehydrate Allele, invalid Allele state!")
+                return None
 
         # Form Encoding
         encoding = position + tech_ind + threshold + condition + power
@@ -140,9 +145,10 @@ class Allele(object):
     Verifies The Initialization Of An Allele
     """
     def verify(self):
+
         # Verify Encoding
-        if len(self.encoding) is not allele_structure.ENCODING_SIZE:
-            return None
+        if len(self.encoding) is not ale_str.ENCODING_SIZE:
+            return False
 
         # Verify Position
         if self.position is None:
@@ -173,26 +179,32 @@ class Allele(object):
     def mutate(self, radiation=1.0):
 
         # Mutate Position
-        mut_position = ale_mut.mutate_position(self.position, POS_MUT_PROB * radiation)
+        mut_position = ale_mut.mutate_position(self.position,
+                                               ale_str.DEF_POS_MUT_PROB * radiation)
 
         # Mutate Technical Indicator
-        mut_tech_ind = ale_mut.mutate_tech_ind(self.tech_ind, TECH_IND_MUT_PROB * radiation)
+        mut_tech_ind = ale_mut.mutate_tech_ind(self.tech_ind,
+                                               ale_str.DEF_TECH_IND_MUT_PROB * radiation)
 
         # Mutate Threshold
-        mut_size = self.threshold * THRESHOLD_VOLATILITY
-        mut_threshold = ale_mut.mutate_threshold(self.threshold, THRESHOLD_MUT_PROB * radiation, mut_size)
+        mut_threshold = ale_mut.mutate_threshold(self.threshold,
+                                                 ale_str.DEF_THRESH_MUT_PROB * radiation,
+                                                 self.threshold * ale_str.DEF_THRESH_VOLATILITY)
 
         # Mutate Condition
-        mut_condition = ale_mut.mutate_condition(self.condition, CONDITION_MUT_PROB * radiation)
+        mut_condition = ale_mut.mutate_condition(self.condition,
+                                                 ale_str.DEF_CONDITION_MUT_PROB * radiation)
 
         # Mutate Power
-        mut_power = ale_mut.mutate_power(self.power, POWER_MUT_PROB * radiation)
+        mut_power = ale_mut.mutate_power(self.power,
+                                         ale_str.DEF_POWER_MUT_PROB * radiation)
 
         # Check That All Passed Mutation
-        if mut_position is None or mut_tech_ind is None or mut_threshold is None\
-                or mut_condition is None or mut_power is None:
-            print("< ERR > : Failed to mutate Allele, invalid Allele state!")
-            return None
+        if self._debug_mode:
+            if mut_position is None or mut_tech_ind is None or mut_threshold is None\
+                    or mut_condition is None or mut_power is None:
+                print("< ERR > : Failed to mutate Allele, invalid Allele state!")
+                return None
 
         # Form Mutated Encoding
         enc_pos = ale_enc.encode_position(mut_position)
@@ -202,10 +214,11 @@ class Allele(object):
         enc_power = ale_enc.encode_power(mut_power)
 
         # Check That All Passed Encoding
-        if enc_pos is None or enc_ti is None or enc_thresh is None\
-                or enc_cond is None or enc_power is None:
-            print("< ERR > : Failed to encode mutated Allele, invalid mutation variables!")
-            return None
+        if self._debug_mode:
+            if enc_pos is None or enc_ti is None or enc_thresh is None\
+                    or enc_cond is None or enc_power is None:
+                print("< ERR > : Failed to encode mutated Allele, invalid mutation variables!")
+                return None
 
         mut_encoding = enc_pos + enc_ti + enc_thresh + enc_cond + enc_power
 
@@ -218,9 +231,10 @@ class Allele(object):
         self.power = mut_power
 
         # Verify Mutation
-        if self.verify() is False:
-            print("< ERR > : Failed to verify Allele, invalid mutation! {}".format(mut_encoding))
-            return
+        if self._debug_mode:
+            if self.verify() is False:
+                print("< ERR > : Failed to verify Allele, invalid mutation! {}".format(mut_encoding))
+                return
 
         # Return Mutated Encoding
         return mut_encoding
@@ -231,7 +245,7 @@ class Allele(object):
     def crossover(self, mate_allele):
 
         # Define 'dominance'
-        dominance = 2  # this will incur a 3:1 dominance of allele_a over allele_b in crossover
+        dominance = 2  # this will incur a 3:1 dominance of parent 1 over parent 2 in crossover
 
         # Obtain parent encodings
         encoding_a = self.encoding
@@ -250,13 +264,14 @@ class Allele(object):
     def react(self, input_data):
 
         # Verify Input Data
-        try:
-            int(input_data)
+        if self._debug_mode:
+            try:
+                float(input_data)
 
-        except ValueError:
-            # Otherwise, return NoneType
-            print("< ERR > : Error in Allele reaction, invalid input data! {}".format(input_data))
-            return None
+            except ValueError:
+                # Otherwise, return NoneType
+                print("< ERR > : Error in Allele reaction, invalid input data! {}".format(input_data))
+                return None
 
         if self.condition == '<':  # Less Than
 
@@ -272,9 +287,35 @@ class Allele(object):
 
             return 0  # Condition Not Met
 
-        # Allele Corrupted
+        # Allele Corrupted; Sanity Check
         print("< ERR > : Error in Allele reaction, invalid condition! {}".format(self.condition))
         return None
+
+    """
+    Returns JSON Representation Of The Allele
+    """
+    def status(self):
+        # Create JSON Object
+        json = {
+            "initialized": self.initialized,
+            "encoding": self.encoding,
+            "position": self.position,
+            "tech_ind": self.tech_ind,
+            "threshold": self.threshold,
+            "condition": self.condition,
+            "power": self.power,
+            "mut_rate": {
+                "position": ale_str.DEF_POS_MUT_PROB,
+                "tech_ind": ale_str.DEF_TECH_IND_MUT_PROB,
+                "threshold": ale_str.DEF_THRESH_MUT_PROB,
+                "thresh_volatility": ale_str.DEF_THRESH_VOLATILITY,
+                "condition": ale_str.DEF_CONDITION_MUT_PROB,
+                "power": ale_str.DEF_POWER_MUT_PROB
+            }
+        }
+
+        # Return JSON Object
+        return json
 
     """
     Returns String Representation Of The Allele
