@@ -42,12 +42,10 @@ SHARPE RATIO FOR FITNESS
 
 """
 
+import analysis.parameters as params
+
 
 class Account(object):
-
-    def_volume = 1000
-    def_balance = 10000.00
-    def_trade_cool_down = 3
 
     """
     Initialize & Verify The Account
@@ -61,8 +59,8 @@ class Account(object):
 
         self.trade_history = list([])
         self.curr_position = None
-        self.curr_balance = self.def_balance
-        # trade_volume = 0
+        self.curr_balance = params.ACCOUNT_DEFAULT_BALANCE
+        self.trade_volume = params.ACCOUNT_DEFAULT_VOLUME
 
         self.curr_cool_down = 0
         self.curr_streak = 0
@@ -113,12 +111,12 @@ class Account(object):
 
         elif action == "BUY":
             # Enter long position, if possible
-            success = self.long(timestamp, price, self.def_volume)
+            success = self.long(timestamp, price, self.trade_volume)
             return success
 
         elif action == "SELL":
             # Enter short position, if possible
-            success = self.short(timestamp, price, self.def_volume)
+            success = self.short(timestamp, price, self.trade_volume)
             return success
 
         elif action == "HOLD":
@@ -323,7 +321,7 @@ class Account(object):
     """
     def performance(self):
         # Calculate ROI based on accounts net worth and starting balance
-        roi = self.net_worth() / self.def_balance
+        roi = self.net_worth() / params.ACCOUNT_DEFAULT_BALANCE
 
         # Return the ROI
         return roi
@@ -343,7 +341,7 @@ class Account(object):
         json = {
             "init": self.initialized,
             "stock": self.ticker,
-            "start_balance": self.def_balance,
+            "start_balance": params.ACCOUNT_DEFAULT_BALANCE,
             "end_balance": self.curr_balance,
             "net_worth": self.net_worth(),
             "performance": self.performance(),

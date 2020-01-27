@@ -49,7 +49,7 @@ class Individual:
 
         # Initialize The Individual
         self.initialized = False
-        self.asset = "AAPL"
+        self.asset = "UNKNOWN"
         self.chromosome = chromosome
         self.account = acco.Account(self.asset)
 

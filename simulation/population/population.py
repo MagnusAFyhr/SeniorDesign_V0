@@ -83,7 +83,6 @@ class Population:
         statistics["start_date"] = self.birth_date
         statistics["end_date"] = self.last_date
 
-
         # get elites and parents from current population
         elites, parents = self.evaluate()
 

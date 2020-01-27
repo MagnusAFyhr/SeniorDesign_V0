@@ -36,7 +36,7 @@ TO-DO:
 """
 import random
 
-import genetics.allele.allele as ale
+import analysis.parameters as params
 
 from genetics.chromosome.helper import chrom_structure
 
@@ -47,10 +47,6 @@ from genetics.chromosome.helper import chrom_encode as chr_enc
 
 from genetics.chromosome.helper import chrom_mutate as chr_mut
 from genetics.chromosome.helper import chrom_crossover as chr_cro
-
-""" Mutation Variables """
-LIMIT_MUT_PROB = 0.25
-LIMIT_VOLATILITY = 0.10
 
 
 class Chromosome(object):
@@ -212,15 +208,15 @@ class Chromosome(object):
     def mutate(self, radiation=1.0):
 
         # Mutate Buy Limit
-        buy_mut_size = self.buy_limit * LIMIT_VOLATILITY
+        buy_mut_size = self.buy_limit * params.CHROM_LIMIT_VOLATILITY
         mut_buy_limit = chr_mut.mutate_limit(self.buy_limit,
-                                             LIMIT_MUT_PROB * radiation,
+                                             params.CHROM_LIMIT_MUT_PROB * radiation,
                                              int(buy_mut_size * radiation))
 
         # Mutate Sell Limit
-        sell_mut_size = self.sell_limit * LIMIT_VOLATILITY
+        sell_mut_size = self.sell_limit * params.CHROM_LIMIT_VOLATILITY
         mut_sell_limit = chr_mut.mutate_limit(self.sell_limit,
-                                              LIMIT_MUT_PROB * radiation,
+                                              params.CHROM_LIMIT_MUT_PROB * radiation,
                                               int(sell_mut_size * radiation))
 
         # Mutate Alleles

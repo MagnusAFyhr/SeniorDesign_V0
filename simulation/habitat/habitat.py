@@ -18,18 +18,23 @@ Testing :
     - simulate          :
     - plot              :
 
-
+TO-DO:
+    - allow MAX_GEN, GEN_PERIOD, & POP_SIZE to be manipulated by some higher-level analytics class
+    -
 
 """
 
+import analysis.parameters as params
+
 import simulation.population.population as popu
 import data.driver.databook as data
+
 import time
 
 # 251 trading days per year
-MAX_GEN = 40        # 40 generations; 2000 days of data; ~8 years of historical data
-GEN_PERIOD = 50     # 50 days of trading
-POP_SIZE = 1000     # 1,000 individuals
+# MAX_GEN = 40        # 40 generations; 2000 days of data; ~8 years of historical data
+# GEN_PERIOD = 50     # 50 days of trading
+# POP_SIZE = 1000     # 1,000 individuals
 
 
 class Habitat:
@@ -37,10 +42,10 @@ class Habitat:
     def __init__(self, ticker):
 
         # load ticker data
-        self.environment = data.DataBook(ticker)
+        self.environment = data.DataBook(ticker, params.GEN_PERIOD)
 
         # initialize random population
-        self.population = popu.Population(POP_SIZE)
+        self.population = popu.Population(params.POP_SIZE)
 
         return
 
@@ -48,10 +53,16 @@ class Habitat:
 
         start = time.time_ns()
 
-        for t in range(0, GEN_PERIOD):
+        # perform simulation
+        for t in range(0, params.GEN_PERIOD):
             observation = self.environment.step()
+
+            if observation == "EOF":
+                return None
+
             self.population.step(observation)
 
+        # obtain generational statistics of population
         gen_stats = self.population.next_generation()
 
         end = time.time_ns()

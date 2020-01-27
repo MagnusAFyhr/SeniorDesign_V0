@@ -27,9 +27,12 @@ Testing :
     - as_string     : DONE
 
 Cleaning:
-    - mutate() : a mutated encoding is being returned, and the allele itself is being mutated; inefficient; which is needed?
+    - mutate() : a mutated encoding is being returned, and the allele
+    itself is being mutated; inefficient; which is needed?
 
 """
+import analysis.parameters as params
+
 from genetics.allele.helper import allele_structure as ale_str
 
 from genetics.allele.helper import allele_build as ale_bui
@@ -180,24 +183,24 @@ class Allele(object):
 
         # Mutate Position
         mut_position = ale_mut.mutate_position(self.position,
-                                               ale_str.DEF_POS_MUT_PROB * radiation)
+                                               params.ALLELE_POSITION_MUT_PROB * radiation)
 
         # Mutate Technical Indicator
         mut_tech_ind = ale_mut.mutate_tech_ind(self.tech_ind,
-                                               ale_str.DEF_TECH_IND_MUT_PROB * radiation)
+                                               params.ALLELE_TECH_IND_MUT_PROB * radiation)
 
         # Mutate Threshold
         mut_threshold = ale_mut.mutate_threshold(self.threshold,
-                                                 ale_str.DEF_THRESH_MUT_PROB * radiation,
-                                                 self.threshold * ale_str.DEF_THRESH_VOLATILITY)
+                                                 params.ALLELE_THRESH_MUT_PROB * radiation,
+                                                 self.threshold * params.ALLELE_THRESH_VOLATILITY)
 
         # Mutate Condition
         mut_condition = ale_mut.mutate_condition(self.condition,
-                                                 ale_str.DEF_CONDITION_MUT_PROB * radiation)
+                                                 params.ALLELE_CONDITION_MUT_PROB * radiation)
 
         # Mutate Power
         mut_power = ale_mut.mutate_power(self.power,
-                                         ale_str.DEF_POWER_MUT_PROB * radiation)
+                                         params.ALLELE_POWER_MUT_PROB * radiation)
 
         # Check That All Passed Mutation
         if self._debug_mode:
@@ -305,12 +308,12 @@ class Allele(object):
             "condition": self.condition,
             "power": self.power,
             "mut_rate": {
-                "position": ale_str.DEF_POS_MUT_PROB,
-                "tech_ind": ale_str.DEF_TECH_IND_MUT_PROB,
-                "threshold": ale_str.DEF_THRESH_MUT_PROB,
-                "thresh_volatility": ale_str.DEF_THRESH_VOLATILITY,
-                "condition": ale_str.DEF_CONDITION_MUT_PROB,
-                "power": ale_str.DEF_POWER_MUT_PROB
+                "position": params.ALLELE_POSITION_MUT_PROB,
+                "tech_ind": params.ALLELE_TECH_IND_MUT_PROB,
+                "threshold": params.ALLELE_THRESH_MUT_PROB,
+                "thresh_volatility": params.ALLELE_THRESH_VOLATILITY,
+                "condition": params.ALLELE_CONDITION_MUT_PROB,
+                "power": params.ALLELE_POWER_MUT_PROB
             }
         }
 

@@ -13,17 +13,22 @@ Development :
     - close                         : DONE
     - get_databook                  : DONE
     - verify_databook               : DONE
+    - trim_databook                 : DONE
 
 Testing :
     - init                          :
     - launch                        :
     - step                          :
     - close                         :
+    - get_databook                  :
+    - verify_databook               :
+    - trim_databook                 :
 
 TO-DO :
-    - Ability to specify range of data to be grabbed
-    - Add technical indicators, currently none
+    - Ability to specify range of data or days of simulation to be grabbed
+    - Gen_period should also be incorporated, doesn't make sense to have odd amounts
 
+    - Add technical indicators, currently none
 
 
 """
@@ -39,14 +44,17 @@ class DataBook:
     live = False
     book = None
 
-    def __init__(self, ticker):
+    def __init__(self, ticker, gen_period, days_of_sim=None, start_date=None, end_date=None):
         self.steps = 0
         self.ticker = ticker
-        self.launch()
+        self.launch(gen_period, days_of_sim, start_date, end_date)
 
-    def launch(self):
+    def launch(self, gen_period, days_of_sim, start_date, end_date):
         # load the book
         book = get_databook(self.ticker)
+
+        # trim databook to specified requirements
+        book = trim_databook(book, gen_period, days_of_sim, start_date, end_date)
 
         # verify book is valid
         if verify_databook(book):
@@ -62,17 +70,13 @@ class DataBook:
             print("< WRN > : DataBook : Attempted to take a step from a non-live state.")
             return None
 
-        # check if there is another step in the data
-        if self.book.shape[0] == 0:
-            print("< WRN > : DataBook : Attempted to take a step with no steps remaining.")
-            return None
-
         # take a step, get frame in data and remove it from the book
-        self.steps += 1
         try:
             frame = self.book.iloc[self.steps]
+            self.steps += 1
         except IndexError:
             # end of data reached
+            print("< WRN > : DataBook : Attempted to take a step with no steps remaining.")
             return "EOF"
 
         # convert frame into a dictionary
@@ -113,3 +117,36 @@ def verify_databook(book):
 
     # otherwise, the book is valid and verified
     return True
+
+
+def trim_databook(book, gen_period, days_of_sim, start_date, end_date):
+    # define trim type to invalid value; so we can recognize if its changed
+    trim_type = "INVALID"
+
+    # determine trim type
+    if days_of_sim is None and start_date is None and end_date is None:
+        pass
+    elif days_of_sim is None:
+        if start_date is not None and end_date is not None:
+            pass  # trim from start_date to end_date
+        elif start_date is None and end_date is not None:
+            pass  # trim everything past end_date
+        elif start_date is not None and end_date is None:
+            pass  # trim everything before start_date
+    elif days_of_sim is not None:
+        if start_date is None and end_date is None:
+            pass  # trim everything outside the N most recent days
+        elif start_date is None and end_date is not None:
+            pass  # trim everything past end_date, and everything before N days before end_date
+        elif start_date is not None and end_date is None:
+            pass  # trim everything before start_date, and everything after N days after start_date
+        elif start_date is not None and end_date is not None:
+            pass  # invalid input, all cannot be non-None
+
+    # perform trim according to trim type
+
+    # trim to be evenly divisible by gen_period
+
+
+    return book
+

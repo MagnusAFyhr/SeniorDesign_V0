@@ -8,13 +8,13 @@ purpose :
 
 """
 
-from test import allele_test as ale_tst
-from test import chromosome_test as chr_tst
-from test import account_test as acc_tst
-from test import individual_test as ind_tst
-from test import population_test as pop_tst
-from test import databook_test as data_tst
-from test import habitat_test as hbt_tst
+from debug import allele_test as ale_tst
+from debug import chromosome_test as chr_tst
+from debug import account_test as acc_tst
+from debug import individual_test as ind_tst
+from debug import population_test as pop_tst
+from debug import databook_test as data_tst
+from debug import habitat_test as hbt_tst
 
 import simulation.habitat.habitat as habi
 
