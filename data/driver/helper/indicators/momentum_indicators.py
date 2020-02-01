@@ -1,9 +1,7 @@
 """
 https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_dict.html
-
+https://mrjbq7.github.io/ta-lib/func_groups/momentum_indicators.html
 """
-
-import numpy
 import talib as ta
 
 
@@ -67,19 +65,23 @@ def MACDEXT(raw_df, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, si
     macd, macdsignal, macdhist = ta.MACDEXT(raw_df.Close.values, fastperiod, fastmatype, slowperiod, slowmatype, signalperiod, signalmatype)
     pass
 
+
 def MACDFIX(raw_df, signalperiod=9): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
     # extract necessary data from raw dataframe (close)
     # returns 3 things
     macd, macdsignal, macdhist = MACDFIX(raw_df.Close.values, signalperiod)
     pass
 
+
 def MFI(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close, volume)
     return ta.MFI(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, raw_df.Volume.values, timeperiod)
 
+
 def MINUS_DI(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close)
     return ta.MINUS_DI(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, timeperiod)
+
 
 def MINUS_DM(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low)
@@ -137,6 +139,7 @@ def STOCH(raw_df, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3
     slowk, slowd = STOCH(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype)
     pass
 
+
 def STOCHF(raw_df, fastk_period=5, fastd_period=3, fastd_matype=0): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
     # extract necessary data from raw dataframe (high, low, close)
     # returns 2 columns
@@ -149,6 +152,7 @@ def STOCHRSI(raw_df, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype
     # returns 2 columns
     fastk, fastd = ta.STOCHRSI(raw_df.Close.values, timeperiod, fastk_period, fastd_period, fastd_matype)
     pass
+
 
 def TRIX(raw_df, timeperiod=30):
     # extract necessary data from raw dataframe (close)
@@ -163,4 +167,3 @@ def ULTOSC(raw_df, timeperiod1=7, timeperiod2=14, timeperiod3=28):
 def WILLR(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close)
     return ta.WILLR(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, timeperiod)
-
