@@ -5,7 +5,7 @@
 """
 
 import numpy
-import talib
+import talib as ta
 
 
 def BBANDS(index, raw_df):
@@ -19,7 +19,7 @@ def BBANDS(index, raw_df):
     # extract necessary data from raw dataframe
 
     # perform calculation
-    data = talib._ta_lib.BBANDS()
+    data = ta._ta_lib.BBANDS()
 
     return data
 

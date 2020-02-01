@@ -26,6 +26,7 @@ def calculate_basic_indicators(index, raw_df):
     return list([])
 
 def calculate_overlap_studies(index, raw_df):
+    #raw_df['BBANDS'] =
     BBANDS = calc_os.BBANDS(index, raw_df)
     DEMA = calc_os.DEMA(index, raw_df)
     EMA = calc_os.EMA(index, raw_df)
