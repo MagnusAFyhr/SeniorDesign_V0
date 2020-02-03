@@ -4,6 +4,15 @@ https://mrjbq7.github.io/ta-lib/func_groups/momentum_indicators.html
 """
 import talib as ta
 
+#Special Functions:
+#AROON
+#MACD
+#MACDEXT
+#MACDFIX
+#STOCH
+#STOCHF
+#STOCHRSI
+
 
 def ADX(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close)
@@ -52,10 +61,11 @@ def DX(raw_df, timeperiod=14):
     return ta.DX(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, timeperiod)
 
 
-def MACD(raw_df, fastperiod=12, slowperiod=26, signalperiod=9): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def MACD(raw_df, fastperiod=12, slowperiod=26, signalperiod=9):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
     macd, macdsignal, macdhist = ta.MACD(raw_df.Close.values, fastperiod, slowperiod, signalperiod)
+
     pass
 
 

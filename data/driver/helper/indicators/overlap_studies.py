@@ -4,6 +4,10 @@ https://mrjbq7.github.io/ta-lib/func_groups/overlap_studies.html
 import talib as ta
 
 
+#Special Functions:
+#BBANDS
+
+
 def BBANDS(raw_df, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0):   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # extract necessary data from raw dataframe (close)
     # returns 3 things
