@@ -19,8 +19,8 @@ Development :
     - balance       : DONE
     - net_worth     : DONE
     - performance   : DONE
-    - statistics    :
-    - as_json       : DONE
+    - metrics       :
+    - status        : DONE
 
 Testing :
     - init          : DONE
@@ -33,12 +33,16 @@ Testing :
     - balance       : DONE
     - net_worth     : DONE
     - performance   : DONE
-    - statistics    :
-    - as_json       : DONE
+    - metrics       :
+    - status        : DONE
 
-
-Need to add streak along with cool down
-SHARPE RATIO FOR FITNESS
+TO-DO:
+    - Account performance should be rewarded for being more aggressive
+    - Need to add streak along with cool down
+    - Add function for sharpe ratio
+    - Behavior should be able to be controlled from high-level class
+    - Implement a statistics function that returns a json object (actually dict, but oh well)
+    - what other metrics are important for measuring an investors performance
 
 """
 
@@ -47,33 +51,35 @@ import analysis.parameters as params
 
 class Account(object):
 
-    """
-    Initialize & Verify The Account
-    """
-    def __init__(self, ticker):
+    initialized = False
+    _debug_mode = False
 
-        # Initialize The Account
-        self.initialized = False
+    ticker = ""
+    trade_history = list([])
+    curr_balance = params.ACCOUNT_DEFAULT_BALANCE
+    trade_volume = params.ACCOUNT_DEFAULT_VOLUME
 
-        self.ticker = ticker
-
-        self.trade_history = list([])
-        self.curr_position = None
-        self.curr_balance = params.ACCOUNT_DEFAULT_BALANCE
-        self.trade_volume = params.ACCOUNT_DEFAULT_VOLUME
-
-        self.curr_cool_down = 0
-        self.curr_streak = 0
-
-        self.last_update = None
-        self.last_price = None
-
-        # Make Default Current Position As A JSON Object
-        self.curr_position = {
+    # Make Default Current Position As A JSON Object
+    curr_position = {
             "action": "",
             "price": 0,
             "quantity": 0,
         }
+
+    curr_streak = 0
+    curr_cool_down = 0
+
+    last_update = None
+    last_price = None
+
+    """
+    Initialize & Verify The Account
+    """
+    def __init__(self, ticker, debug=False):
+
+        # Initialize The Account
+        self._debug_mode = debug
+        self.ticker = ticker
 
         # Verify The Account
         if self.verify() is False:
@@ -90,7 +96,7 @@ class Account(object):
     def verify(self):
 
         # Verify The Ticker
-        if self.ticker is None:
+        if self.ticker == "":
             return False
 
         return True
@@ -317,9 +323,9 @@ class Account(object):
         return curr_net_worth
 
     """
-    Calculates The ROI Of An Account; Used By Individual For Fitness
+    Calculates The ROI Of The Account
     """
-    def performance(self):
+    def roi(self):
         # Calculate ROI based on accounts net worth and starting balance
         roi = self.net_worth() / params.ACCOUNT_DEFAULT_BALANCE
 
@@ -327,26 +333,41 @@ class Account(object):
         return roi
 
     """
-    Returns Several Metrics Of The Accounts Behavior As A JSON Object
+    Used By Individual To Measure Account Fitness
     """
-    def statistics(self):
-        pass
+    def performance(self):
+        return self.roi()
 
     """
-    Return A Summary Of The Account As A JSON Object
+    Returns Several Metrics Of The Accounts Behavior & Performance As A JSON Object; Obtained From 'account_metrics.py'
     """
-    def as_json(self):
+    def metrics(self):
 
-        # Format Account object into JSON object
+        # Format Metrics Into JSON Object
         json = {
-            "init": self.initialized,
-            "stock": self.ticker,
-            "start_balance": params.ACCOUNT_DEFAULT_BALANCE,
-            "end_balance": self.curr_balance,
-            "net_worth": self.net_worth(),
-            "performance": self.performance(),
-            "statistics": self.statistics(),
+            "roi": self.roi(),
+            "sharpe_ratio": self.sharpe_ratio(),
         }
 
-        # Return JSON object
+        # Return JSON Object
+        return json
+
+    """
+    Returns JSON Representation Of The Account Class
+    """
+    def status(self):
+
+        # Format Account Class Into JSON Object
+        json = {
+            "init": self.initialized,
+            "asset": self.ticker,
+            "trade_volume": self.trade_volume,
+            "start_balance": params.ACCOUNT_DEFAULT_BALANCE,
+            "end_balance": self.net_worth(),
+            "trade_history": self.history(),
+            "performance": self.performance(),
+            "metrics": self.metrics(),
+        }
+
+        # Return JSON Object
         return json

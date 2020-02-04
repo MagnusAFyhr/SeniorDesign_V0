@@ -64,7 +64,7 @@ class Chromosome(object):
     """
     def __init__(self, encoding=None, debug=0):
 
-        if debug == 1:
+        if debug > 3:
             self._debug_mode = True
 
         # Verify Encoding
@@ -72,21 +72,18 @@ class Chromosome(object):
             encoding = chr_bui.random_encoding()
 
         # Pre-Initialization
-        self.initialized = False
         self.encoding = encoding
-        self.buy_limit = None
-        self.sell_limit = None
         self.alleles = list([])
 
         # Hydrate The Chromosome (Initialization)
         if self.hydrate() is None:
-            print("< ERR > : Failed to hydrate Chromosome, invalid encoding!\n{}\n".format(encoding))
+            print("< ERR > : Failed to hydrate Chromosome, invalid encoding!\n{}.".format(encoding))
             return
 
         # Verify The Chromosome
         if self._debug_mode:
             if self.verify() is False:
-                print("< ERR > : Failed to verify Chromosome, invalid encoding!\n{}\n".format(encoding))
+                print("< ERR > : Failed to verify Chromosome, invalid encoding!\n{}.".format(encoding))
                 return
 
         # Done Initializing
@@ -130,9 +127,10 @@ class Chromosome(object):
             allele_encoding = allele.dehydrate()
 
             # Check allele was properly encoded
-            if allele_encoding is None:
-                print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
-                return None
+            if self._debug_mode:
+                if allele_encoding is None:
+                    print("< ERR > : Failed to dehydrate Chromosome, invalid Allele state!")
+                    return None
 
             # Append allele encoding to list
             allele_encodings.append(allele_encoding)
@@ -314,7 +312,7 @@ class Chromosome(object):
         return "HOLD"
 
     """
-    Returns JSON Representation Of The Allele
+    Returns JSON Representation Of The Chromosome
     """
     def status(self):
         json = {

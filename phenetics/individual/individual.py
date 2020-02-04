@@ -33,14 +33,23 @@ import phenetics.account.account as acco
 
 class Individual:
 
+    initialized = False
+    _debug_mode = 0
+
+    asset = "UNKNOWN"
+    chromosome = None
+    account = None
+
     """
     Initialize & Verify The Individual
     """
-    def __init__(self, chromosome=None):
+    def __init__(self, chromosome=None, debug=0):
+
+        self._debug_mode = debug
 
         # Verify The Chromosome
         if chromosome is None:
-            chromosome = chrm.Chromosome()
+            chromosome = chrm.Chromosome(debug=self._debug_mode)
 
         if not chromosome.initialized:
             print("< ERR > : Failed to initialize Individual, used invalid Chromosome!")
@@ -48,15 +57,15 @@ class Individual:
             return
 
         # Initialize The Individual
-        self.initialized = False
         self.asset = "UNKNOWN"
         self.chromosome = chromosome
         self.account = acco.Account(self.asset)
 
         # Verify The Individual
-        if self.verify() is False:
-            print("< ERR > : Failed to initialize Individual, verification failed!")
-            return
+        if self._debug_mode > 2:
+            if self.verify() is False:
+                print("< ERR > : Failed to initialize Individual, verification failed!")
+                return
 
         # Done Initializing
         self.initialized = True
@@ -127,7 +136,7 @@ class Individual:
         # Create chromosomes from encoding
         offspring = list([])
         for encoding in chrom_encodings:
-            offspring.append(chrm.Chromosome(encoding))
+            offspring.append(chrm.Chromosome(encoding, debug=self._debug_mode))
 
         # Return Chromosome Objects
         return offspring
@@ -140,16 +149,16 @@ class Individual:
         return self.chromosome
 
     """
-    Return A Summary Of The Individual As A JSON Object
+    Returns JSON Representation Of The Status
     """
-    def as_json(self):
+    def status(self):
 
         # Format Individual object into JSON object
         json = {
             "init": self.initialized,
             "asset": self.asset,
-            "chromosome": self.chromosome.as_string(),
-            "account": self.account.as_json(),
+            "chromosome": self.chromosome.status(),
+            "account": self.account.status(),
         }
 
         # Return JSON object

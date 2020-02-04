@@ -73,7 +73,7 @@ def decode_alleles(chrom_encoding, debug_mode):
     alleles = list([])
     for encoding in allele_codes:
         # Initialize Allele
-        allele = ale.Allele(encoding, debug_mode)
+        allele = ale.Allele(encoding=encoding, debug=debug_mode)
 
         # Verify Allele
         if allele.initialized:

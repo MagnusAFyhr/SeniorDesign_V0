@@ -30,6 +30,8 @@ Cleaning:
     - mutate() : a mutated encoding is being returned, and the allele
     itself is being mutated; inefficient; which is needed?
 
+    - add special handlers for technical indicators using switch statement for react()
+
 """
 import analysis.parameters as params
 
@@ -56,13 +58,14 @@ class Allele(object):
     condition = None
     power = None
 
+    # trigger_count = 0
+
     """
     Initialize & Verify The Allele
     """
-    def __init__(self, encoding=None, debug=0):
+    def __init__(self, encoding=None, debug=False):
 
-        if debug == 1:
-            self._debug_mode = True
+        self._debug_mode = debug
 
         # Verify Encoding
         if encoding is None:
@@ -109,7 +112,7 @@ class Allele(object):
         # Decode Power (of decision)
         self.power = ale_dec.decode_power(self.encoding)
 
-        return 1
+        return True
 
     """
     Encodes & Returns The Current State Of The Allele

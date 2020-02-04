@@ -40,12 +40,16 @@ import pandas as pd
 
 class DataBook:
 
+    initialized = False
+    _debug_mode = False
+
     ticker = ""
     live = False
     book = None
+    steps = 0
 
     def __init__(self, ticker, gen_period, days_of_sim=None, start_date=None, end_date=None):
-        self.steps = 0
+
         self.ticker = ticker
         self.launch(gen_period, days_of_sim, start_date, end_date)
 
@@ -61,7 +65,8 @@ class DataBook:
             self.live = True
             self.book = book
 
-        # return
+        # Done Initializing
+        self.initialized = True
         return
 
     def step(self):
@@ -146,7 +151,6 @@ def trim_databook(book, gen_period, days_of_sim, start_date, end_date):
     # perform trim according to trim type
 
     # trim to be evenly divisible by gen_period
-
 
     return book
 

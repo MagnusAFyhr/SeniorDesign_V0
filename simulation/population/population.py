@@ -28,6 +28,13 @@ Testing :
     - statistics                    : DONE
     - initialize_rand_population    : DONE
 
+TO-DO :
+    - verify() method for population?           :
+    - diversity tracking                        :
+        + should average diversity across all allele variables
+    - add debug to this class                   :
+    - make population initialization not random :
+
 
 """
 
@@ -37,13 +44,21 @@ import simulation.population.helper.pop_statistics as pop_stat
 import genetics.chromosome.chromosome as chrom
 import phenetics.individual.individual as indiv
 
+import time
+
 
 class Population:
+
+    initialized = False
+    _debug_mode = 0
 
     """
     Initialize Population
     """
-    def __init__(self, pop_size):
+    def __init__(self, pop_size, debug=0):
+
+        self._debug_mode = debug
+
         # initialize random population
         self.citizens = self.initialize_random_population(pop_size)
         self.size = pop_size
@@ -53,6 +68,9 @@ class Population:
         self.birth_date = None
         self.last_date = None
 
+        # Done Initializing!
+        self.initialized = True
+        return
 
     """
     Simulates A Step In The Population With A Given Observation
@@ -76,6 +94,10 @@ class Population:
     def next_generation(self):
 
         # get population statistics
+        if self._debug_mode > 1 and self._debug_mode != 5:
+            print("\t\t< POP > : Calculating Population Statistics...")
+        start_t = time.time_ns()
+
         statistics = self.metrics()
         statistics["gen_count"] = self.gen_count
         statistics["step_count"] = self.step_count
@@ -83,22 +105,66 @@ class Population:
         statistics["start_date"] = self.birth_date
         statistics["end_date"] = self.last_date
 
+        end_t = time.time_ns()
+        if self._debug_mode == 5:
+            elapsed = end_t - start_t
+            elapsed /= pow(10, 9)
+            print("\t\t< POP > : Calculated Population Statistics : {} s.".format(elapsed))
+
         # get elites and parents from current population
+        if self._debug_mode > 1 and self._debug_mode != 5:
+            print("\t\t< POP > : Evaluating Population; Selecting Elites & Parents...")
+        start_t = time.time_ns()
+
         elites, parents = self.evaluate()
 
+        end_t = time.time_ns()
+        if self._debug_mode == 5:
+            elapsed = end_t - start_t
+            elapsed /= pow(10, 9)
+            print("\t\t< POP > : Evaluated Population; Selected Elites & Parents : {} s.".format(elapsed))
+
         # create offspring from parents
+        if self._debug_mode > 1 and self._debug_mode != 5:
+            print("\t\t< POP > : Producing Offspring; Applying Crossovers...")
+        start_t = time.time_ns()
+
         offspring = self.reproduce(parents)
         offspring = offspring[len(elites):]
+        offspring.extend([elite.clone() for elite in elites])  # append elite clones to offspring
 
-        # append elite clones to offspring
-        offspring.extend([elite.clone() for elite in elites])
+        end_t = time.time_ns()
+        if self._debug_mode == 5:
+            elapsed = end_t - start_t
+            elapsed /= pow(10, 9)
+            print("\t\t< POP > : Produced Offspring; Applied Crossovers : {} s.".format(elapsed))
 
         # apply mutations to offspring
+        if self._debug_mode > 1 and self._debug_mode != 5:
+            print("\t\t< POP > : Modifying Offspring; Applying Mutations...")
+        start_t = time.time_ns()
+
         offspring = self.modify(offspring)
 
+        end_t = time.time_ns()
+        if self._debug_mode == 5:
+            elapsed = end_t - start_t
+            elapsed /= pow(10, 9)
+            print("\t\t< POP > : Modified Offspring; Applied Mutations : {} s.".format(elapsed))
+
         # create new set of population citizens
+        if self._debug_mode > 1 and self._debug_mode != 5:
+            print("\t\t< POP > : Initializing Next Population...")
+        start_t = time.time_ns()
+
         self.citizens.clear()
-        self.citizens = [indiv.Individual(chromosome) for chromosome in offspring]
+        self.citizens = [indiv.Individual(chromosome=chromosome, debug=self._debug_mode) for chromosome in offspring]
+
+        end_t = time.time_ns()
+        if self._debug_mode == 5:
+            elapsed = end_t - start_t
+            elapsed /= pow(10, 9)
+            print("\t\t< POP > : Initialized Next Population : {} s.".format(elapsed))
 
         self.iter_count = 0
         self.step_count = 0
@@ -148,7 +214,7 @@ class Population:
 
         for chromosome in offspring:
             encoding = chromosome.mutate()
-            mod_chromosome = chrom.Chromosome(encoding)
+            mod_chromosome = chrom.Chromosome(encoding, debug=self._debug_mode)
             mod_offspring.append(mod_chromosome)
 
         return mod_offspring
@@ -169,7 +235,7 @@ class Population:
 
         # initialize & append individuals
         for i in range(0, pop_size):
-            random_pop.append(indiv.Individual())
+            random_pop.append(indiv.Individual(debug=self._debug_mode))
 
         # return random population
         return random_pop
