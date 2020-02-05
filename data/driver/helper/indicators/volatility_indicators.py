@@ -9,7 +9,7 @@ def ATR(raw_df, timeperiod=14):
     return ta.ATR(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, timeperiod)
 
 def NATR(raw_df, timeperiod=14):
-    # True Range
+    # Normalized average true Range
     # extract necessary data from raw dataframe (high, low, close)
     return ta.NATR(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, timeperiod)
 

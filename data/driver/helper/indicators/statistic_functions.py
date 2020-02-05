@@ -43,6 +43,6 @@ def TSF(raw_df, timeperiod=14):
     return ta.TSF(raw_df.Close.values, timeperiod)
 
 def VAR(raw_df, timeperiod=5, nbdev=1):
-    # Linear Regression
+    # Variance
     # extract necessary data from raw dataframe (close)
     return ta.VAR(raw_df.Close.values, timeperiod, nbdev)

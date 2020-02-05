@@ -47,13 +47,7 @@ def build_pure_csv(raw_df):
     pure_df = pd.DataFrame(columns=pure_columns)
     pure_df.fillna(0)
 
-    # for each row of raw data...
-    for index, _ in raw_df.iterrows():
-        # print(raw_row)
-        pure_row = ti_calc.build_pure_row(index, raw_df)
-        pure_df.loc[index] = pure_row
-        if index > 10:
-            break
+    #Writes to the pure csv
 
     # for each row of pure data...
     for index, pure_row in pure_df.iterrows():
