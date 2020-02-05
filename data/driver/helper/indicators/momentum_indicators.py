@@ -3,16 +3,16 @@ https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_d
 https://mrjbq7.github.io/ta-lib/func_groups/momentum_indicators.html
 """
 import talib as ta
+import numpy as np
 
 #Special Functions:
-#AROON
-#MACD
-#MACDEXT
-#MACDFIX
-#STOCH
-#STOCHF
-#STOCHRSI
-
+#AROON 2
+#MACD 3
+#MACDEXT 3
+#MACDFIX 3
+#STOCH 2
+#STOCHF 2
+#STOCHRSI 2
 
 def ADX(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close)
@@ -29,11 +29,12 @@ def APO(raw_df, fastperiod=12, slowperiod=26, matype=0):
     return ta.APO(raw_df.Close.values, fastperiod, slowperiod, matype)
 
 
-def AROON(raw_df, timeperiod=14):#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def AROON(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low)
     # this function returns two columns of data
     aroondown, aroonup = ta.AROON(raw_df.High.values, raw_df.Low.values, timeperiod)
-    pass # How do I return 2 columns of data?
+    singleMerged = np.stack((aroondown, aroonup), axis=-1)
+    return singleMerged.tolist()
 
 
 def AROONOSC(raw_df, timeperiod=14):
@@ -65,22 +66,24 @@ def MACD(raw_df, fastperiod=12, slowperiod=26, signalperiod=9):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
     macd, macdsignal, macdhist = ta.MACD(raw_df.Close.values, fastperiod, slowperiod, signalperiod)
+    singleMerged = np.stack((macd, macdsignal, macdhist), axis=-1)
+    return singleMerged.tolist()
 
-    pass
 
-
-def MACDEXT(raw_df, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def MACDEXT(raw_df, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
     macd, macdsignal, macdhist = ta.MACDEXT(raw_df.Close.values, fastperiod, fastmatype, slowperiod, slowmatype, signalperiod, signalmatype)
-    pass
+    singleMerged = np.stack((macd, macdsignal, macdhist), axis=-1)
+    return singleMerged.tolist()
 
 
-def MACDFIX(raw_df, signalperiod=9): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+def MACDFIX(raw_df, signalperiod=9):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
     macd, macdsignal, macdhist = MACDFIX(raw_df.Close.values, signalperiod)
-    pass
+    singleMerged = np.stack((macd, macdsignal, macdhist), axis=-1)
+    return singleMerged.tolist()
 
 
 def MFI(raw_df, timeperiod=14):
@@ -143,25 +146,28 @@ def RSI(raw_df, timeperiod=14):
     return ta.RSI(raw_df.Close.values, timeperiod)
 
 
-def STOCH(raw_df, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def STOCH(raw_df, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0):
     # extract necessary data from raw dataframe (high, low, close)
     # returns 2 columns
     slowk, slowd = STOCH(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype)
-    pass
+    singleMerged = np.stack((slowk, slowd), axis=-1)
+    return singleMerged.tolist()
 
 
-def STOCHF(raw_df, fastk_period=5, fastd_period=3, fastd_matype=0): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+def STOCHF(raw_df, fastk_period=5, fastd_period=3, fastd_matype=0):
     # extract necessary data from raw dataframe (high, low, close)
     # returns 2 columns
     fastk, fastd = ta.STOCHF(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, fastk_period, fastd_period, fastd_matype)
-    pass
+    singleMerged = np.stack((fastk, fastd), axis=-1)
+    return singleMerged.tolist()
 
 
-def STOCHRSI(raw_df, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0): #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def STOCHRSI(raw_df, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0):
     # extract necessary data from raw dataframe (close)
     # returns 2 columns
     fastk, fastd = ta.STOCHRSI(raw_df.Close.values, timeperiod, fastk_period, fastd_period, fastd_matype)
-    pass
+    singleMerged = np.stack((fastk, fastd), axis=-1)
+    return singleMerged.tolist()
 
 
 def TRIX(raw_df, timeperiod=30):
