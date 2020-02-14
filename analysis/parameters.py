@@ -6,7 +6,33 @@ Created : 01/26/2020
 
 Purpose :
 
+TO-DO :
+    - move system logging, console output, and system debug somewhere else
+
 """
+
+SUPP_TICKERS = [
+    "MSFT",
+    "TEST"
+]
+
+""" SYSTEM LOGGING """
+
+
+"""" CONSOLE LOGGING """
+SIMULATION_CONSOLE = list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+HABITAT_CONSOLE = list([2, 3])
+ACCOUNT_CONSOLE = list([3])
+DATABOOK_CONSOLE = list([2, 3])
+POPULATION_CONSOLE = list([4])
+
+""" SYSTEM DEBUG """
+HABITAT_DEBUG = list([5, 6, 7, 8, 9, 10])
+DATABOOK_DEBUG = list([6, 7, 8, 9, 10])
+POPULATION_DEBUG = list([7, 8, 9, 10])
+INDIVIDUAL_DEBUG = list([8, 9, 10])
+ACCOUNT_DEBUG = list([9, 10])
+CHROM_DEBUG = list([10])
 
 
 """ ALLELE """
@@ -16,29 +42,40 @@ ALLELE_THRESH_MUT_PROB = 0.25
 ALLELE_THRESH_VOLATILITY = 0.10
 ALLELE_CONDITION_MUT_PROB = 0.25
 ALLELE_POWER_MUT_PROB = 0.25
-# Allele crossover dominance
+ALLELE_CROSS_DOMINANCE = 2
+
 
 """ CHROMOSOME """
 CHROM_LIMIT_MUT_PROB = 0.25
 CHROM_LIMIT_VOLATILITY = 0.10
-# Chromosome crossover dominance
+CHROM_CROSS_DOMINANCE = 2
+CHROM_BUY_SELL_GAP = 0
+CHROM_ALLELE_COUNT = 10
+
 
 """ ACCOUNT """
-ACCOUNT_DEFAULT_VOLUME = 1000
-ACCOUNT_DEFAULT_BALANCE = 10000.00
-ACCOUNT_DEFAULT_TRADE_COOL_DOWN = 3
+ACCOUNT_TRADE_VOLUME = 1000
+ACCOUNT_INIT_BALANCE = 10000.00
+ACCOUNT_TRADE_COOL_DOWN = 0
+ACCOUNT_MAX_STREAK = 100
+ACCOUNT_STREAK_COOL_DOWN = 3
+
+
 
 
 """ INDIVIDUAL """
 
 
 """ POPULATION  """
+POP_SIZE = 100
+POP_ELITE_RATIO = 0.1
 
 
-""" HABITAT """
-# 251 trading days per year
-MAX_GEN = 1000        # 40 generations; 2000 days of data; ~8 years of historical data
+""" DATABOOK """
+GEN_COUNT = 50  # 50 generations @ 50 period; 2500 days of data; ~8 years of historical data
+
+
+""" HABITAT """  # 251 trading days per year
+MAX_GEN = 1000
 GEN_PERIOD = 50     # 50 days of trading
-POP_SIZE = 1000     # 1,000 individuals
-
 

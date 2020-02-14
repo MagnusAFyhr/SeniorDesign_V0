@@ -6,6 +6,7 @@ Purpose : Set of functions responsible for building chromosome encodings from sc
 
 """
 
+from analysis import parameters as params
 from genetics.chromosome.helper import chrom_structure
 from genetics.allele.helper import allele_build as ale_bui, allele_decode as ale_dec
 import random
@@ -16,7 +17,7 @@ def random_encoding():
 
     # Generate random allele encodings
     encodings = []
-    for i in range(0, chrom_structure.ALLELE_COUNT):
+    for i in range(0, params.CHROM_ALLELE_COUNT):
         # Create random allele encoding
         encoding = ale_bui.random_encoding()
 

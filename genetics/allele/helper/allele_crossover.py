@@ -23,7 +23,7 @@ def crossover(allele_encoding_a, allele_encoding_b, dominance, debug=0):
 
     # Establish a dominant parent, always allele_encoding_a
     parents = [allele_encoding_a, allele_encoding_b]
-    for i in range(dominance):
+    for i in range(dominance-1):
         parents.append(allele_encoding_a)
 
     # Inherit position from a random parent

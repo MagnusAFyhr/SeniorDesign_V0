@@ -6,18 +6,103 @@ Created : 11/22/2019
 
 Purpose :
 
+TO-DO :
+    - Sift through code and setup new debugging system.
+        + Simulator     :
+        + Habitat       :
+        + DataBook      :
+        + Population    :
+        + Individual    : DONE
+        + Chromosome    : DONE
+        + Allele        : DONE
+    - Sift through code and setup new console reporting system.
+        + Simulator     :
+        + Habitat       :
+        + DataBook      :
+        + Population    :
+    - Update README.md
 
+Cleaning :
+    - Optimizations
+    - Add & Clean Comments Throughout Primary Code Base
+    - Place Primary Code Base In a Sub-Directory; named 'algorithm' (after all branches are merged)
+    - Fill in purposes for each class file header
+    - Clean the following classes...
+        + Habitat
+        + Population
+        + DataBook
+
+TO-DO :
+    - Finish Debugger
+    - Finish Simulator
+    - Test Account Class
+    - Add Price Tracker To DataBook (More Specifically )
+    - Add Final Generation Elite Tracker
+
+Comments :
+
+    - Might want to check the debug test files; as a lot has changed
+
+    - Elites might be getting mutated later on; also the accounts aren't getting reset!!!!
+
+    - Debug tests should test EVERY SINGLE FUNCTION; will need to enhance debug tests
+
+    - helper files need to be optimized!
+
+    - concerned about the set of alleles in a chromosome
+        + is it ok to have multiple of the same tech_ind
+        + what are the rules for chromosome crossovers
+            * should they be forced to be diverse
+
+    - POSSIBLE ISSUE : Individuals are reacting to, and trading on the same close price
+        - at market close you calculate technical indicators, run simulation and perform actions at market open???
+
+    - rename 'simulation' directory to 'world' (after merge with Raaz's branch)
+    - place all relevant directories in new 'simulation' directory
+        + simulation
+            + simulator
+            + genetics
+            + phenetics
+            + world
+            * settings.py
+            * parameters.py
 
 """
 # Debug Modes :
-# 0 : Only Overall Simulation Progress; No Verifications Anywhere
-# 1 : 0 +  Habitat Generational Statistics; No Verifications Anywhere
-# 2 : 1 + Population Debug Console Logs; No Verification Anywhere
-# 3 : 2 + Individual & Account Console Logs; WHAT ELSE                              ***** ***** *****
-# 4 : Full System Debugging To Console; Genetic, Phenetic, Simulation Verification  ***** ***** *****
-# 5 : Specialized Runtime Debugger, No Generational Statistics JUST RUNTIMES; No Verification Anywhere
+#  0 : Minimalistic Console Output                                  ***** ***** ***** *****
+#       - Includes Generic Header Of Important Parameters                                       *****
+#       - Useful For When Running Multiple Simulations At Once
+#       - No Error Checking Anywhere
+#  1 : 0 + Overall Simulation Progress                              ***** ***** ***** *****
+#       - Includes Generic Header Of Important Parameters At Beginning Of Run                   *****
+#       - Includes Detailed Description Of DataBook Being Used                                  *****
+#       - Useful For When Running A Single Simulation
+#       - Should Have Footer Message For Average Runtime, etc.
+#       - Prints Progress & Completion Estimate
+#       - No Error Checking Anywhere
+#  2 : 1 + Habitat Console Reporting
+#       - Generational Population Statistics
+#       - Focuses On The Algorithm & Its Generational Status
+#       - No Error Checking Anywhere
+#  3 : 2 + Performance Console Reporting                            ***** ***** ***** *****
+#       - Generational Account Performance & Relevant Statistics                                *****
+#       - Focuses On The Financial Aspect Of Things
+#       - No Error Checking Anywhere
+#  4 : Specialized Runtime Debugger
+#       - Outputs Population Level Runtimes To Console
+#       - No Generational Statistics; JUST RUNTIMES
+#       - No Error Checking Anywhere
+
+#  5 : Habitat Error Checking
+#  6 : 5 + DataBook Error Checking
+#  7 : 6 + Population Error Checking
+#  8 : 7 + Individual Error Checking
+#  9 : 8 + Account Error Checking
+# 10 : 9 + Allele & Chromosome Error Checking; Full System Debug Mode
+
 
 from analysis.simulator import simulator as sim
 
-simulator = sim.Simulator("MSFT", debug=1)
-simulator.run_simulation()
+simulator = sim.Simulator("MSFT", debug=2)
+simulator.run()
+

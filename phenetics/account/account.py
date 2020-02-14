@@ -10,13 +10,12 @@ Purpose : The Account class object, responsible for providing proper
 
 Development :
     - init          : DONE
-    - verify        : DONE (Add function from data manager, to check if ticker is supported)
+    - verify        : DONE
     - do            : DONE
     - long          : DONE
     - short         : DONE
     - log_trade     : DONE
     - history       : DONE
-    - balance       : DONE
     - net_worth     : DONE
     - performance   : DONE
     - metrics       :
@@ -24,69 +23,107 @@ Development :
 
 Testing :
     - init          : DONE
-    - verify        : DONE (Add function from data manager, to check if ticker is supported)
+    - verify        : DONE
     - do            : DONE
     - long          : DONE
     - short         : DONE
     - log_trade     : DONE
     - history       : DONE
-    - balance       : DONE
     - net_worth     : DONE
     - performance   : DONE
     - metrics       :
     - status        : DONE
 
+Cleaning :
+    - init          : DONE
+    - verify        :       NEEDS IMPROVEMENT; CURRENTLY USELESS
+    - do            : DONE
+    - long          :       NEEDS THOROUGH ACCOUNTING CHECK
+    - short         :       NEEDS THOROUGH ACCOUNTING CHECK
+    - log_trade     : DONE
+    - history       : DONE
+    - net_worth     : DONE
+    - performance   :       NEEDS IMPROVEMENT; WHAT DEFINES GOOD PERFORMANCE
+    - metrics       :       NEEDS IMPROVEMENT; MORE NEEDS TO BE ADDED
+    - status        : DONE
+
 TO-DO:
-    - Account performance should be rewarded for being more aggressive
-    - Need to add streak along with cool down
-    - Add function for sharpe ratio
-    - Behavior should be able to be controlled from high-level class
-    - Implement a statistics function that returns a json object (actually dict, but oh well)
+    - implement metrics functions in account 'metrics.py'
+    - make 'balance' variable *private* (also other important variable that external classes that should not access)
+
+Comments :
+    - All trades are currently dictionaries; at some point they should probably be converted to JSON strings
+    -
+
+    - Should this class log it's state after every buy/sell; in order to track performance? would be costly
+
+    - how should Account performance be rewarded?
+        + being more aggressive (aka: more trades)
+        + great ROI
+        + low risk, but decent ROI (aka: sharpe, sortino, etc. ratios)
+        + ratio of winning:losing trades
+        # ratio of $winners:$losers
+
+    - can the verify() method be improved; useless right now
+        + need someway to verify the ticker that is passed to this class
+
     - what other metrics are important for measuring an investors performance
+        + need to figure out what's the best way to implement all these metrics
+
+    - why should the account be limited to how much it can trade?
+        - risk
+        - but then bad and good behavior would distinguish more
+
+    - SHOULD WE GET RID OF HOLD? AND MAKE IT END POSITION???
+
+    - trade volume shouldn't need to be passed to the buy/short functions
 
 """
-
+import phenetics.account.account_metrics as acc_metrics
 import analysis.parameters as params
 
 
 class Account(object):
 
-    initialized = False
-    _debug_mode = False
+    """
+    Initialize & Verify The Account
+    """
+    def __init__(self, ticker, debug=0):
 
-    ticker = ""
-    trade_history = list([])
-    curr_balance = params.ACCOUNT_DEFAULT_BALANCE
-    trade_volume = params.ACCOUNT_DEFAULT_VOLUME
+        # Pre-Initialization
+        self.initialized = False
+        self._debug_mode = 0
+        self._is_debug = False
 
-    # Make Default Current Position As A JSON Object
-    curr_position = {
+        self.ticker = ticker
+        self.account_history = list([])
+        self.curr_balance = params.ACCOUNT_INIT_BALANCE
+        self.trade_volume = params.ACCOUNT_TRADE_VOLUME
+
+        self.curr_position = {  # Make Default Current Position As A Dictionary Object
             "action": "",
             "price": 0,
             "quantity": 0,
         }
 
-    curr_streak = 0
-    curr_cool_down = 0
+        self.curr_streak = 0
+        self.curr_cool_down = 0
 
-    last_update = None
-    last_price = None
+        self.last_update = None
+        self.last_price = None
 
-    """
-    Initialize & Verify The Account
-    """
-    def __init__(self, ticker, debug=False):
-
-        # Initialize The Account
+        # Setup Debug Mode
         self._debug_mode = debug
-        self.ticker = ticker
+        if debug in params.ACCOUNT_DEBUG:
+            self._is_debug = True
 
         # Verify The Account
-        if self.verify() is False:
-            print("< ERR > : Failed to initialize Account, verification failed!")
-            return
+        if self._is_debug:
+            if self.verify() is False:
+                print("< ERR > : Failed to initialize Account, verification failed!")
+                return
 
-        # Done Initializing
+        # Initialization Complete!
         self.initialized = True
         return
 
@@ -105,32 +142,28 @@ class Account(object):
     Attempts To Execute The Specified Action
     """
     def do(self, action, timestamp, price):
-
         # Update Variables
         self.last_update = timestamp
         self.last_price = price
 
         # Determine Action
-        if action is None:
-            print("< ERR > : NoneType Action Received For Account do().")
-            return None
-
-        elif action == "BUY":
-            # Enter long position, if possible
+        if action == "BUY":
+            # enter long position, if possible
             success = self.long(timestamp, price, self.trade_volume)
             return success
 
         elif action == "SELL":
-            # Enter short position, if possible
+            # enter short position, if possible
             success = self.short(timestamp, price, self.trade_volume)
             return success
 
         elif action == "HOLD":
-            # Hold current position (aka : do nothing)
+            # hold current position (aka : do nothing)
             return True
 
         # Handle Unrecognized Action
-        print("< ERR > : Unrecognized Action For Account do() : {}.".format(action))
+        if self._is_debug:
+            print("< ERR > : Unrecognized Action For Account do() : {}.".format(action))
         return None
 
     """
@@ -143,16 +176,18 @@ class Account(object):
         if self.curr_position["action"] == "SHORT":
             # Calculate Revenue
             revenue = self.curr_position["price"] * self.curr_position["quantity"]
-            revenue += (self.curr_position["price"] * self.curr_position["quantity"]) -\
-                       (price * self.curr_position["quantity"])
+            revenue += (self.curr_position["price"] - price) * self.curr_position["quantity"]
 
-            # Update Current Balance & Streak
+            # Update Current Balance, Reset Streak & Cool Down
             self.curr_balance += revenue
             self.curr_streak = 0
+            self.curr_cool_down = 0
 
             # Log Trade
-            self.log_trade(timestamp, "EXIT_SHORT", price, self.curr_position["quantity"],
-                           price * self.curr_position["quantity"])
+            self.log_trade(timestamp, "EXIT_SHORT", price,
+                           self.curr_position["quantity"],
+                           price * self.curr_position["quantity"],
+                           revenue)
 
             # Remove Position
             self.curr_position["action"] = ""
@@ -160,7 +195,11 @@ class Account(object):
             self.curr_position["quantity"] = 0
 
         # Determine if account can buy 'volume' of asset at 'price'
-        if self.curr_cool_down > 0:
+        if self.curr_streak >= params.ACCOUNT_MAX_STREAK:
+            # Do not allow account to long if it has reached the maximum consecutive trades
+            return False
+
+        elif self.curr_cool_down > 0:
             # Do not allow account to long if cool down active
             self.curr_cool_down -= 1
             return False
@@ -191,12 +230,12 @@ class Account(object):
             # Update Current Balance, Streak & Cool Down
             self.curr_balance -= volume
             self.curr_streak += 1
-            # self.curr_cool_down = self.def_trade_cool_down
+            self.curr_cool_down = params.ACCOUNT_TRADE_COOL_DOWN
 
             # Log Trade
-            self.log_trade(timestamp, "LONG", price, volume / price, volume)
+            self.log_trade(timestamp, "LONG", price, volume / price, volume, -volume)
 
-            # Done
+            # Long Complete!
             return True
 
     """
@@ -210,20 +249,27 @@ class Account(object):
             # Calculate Revenue
             revenue = price * self.curr_position["quantity"]
 
-            # Update Current Balance & Streak
+            # Update Current Balance, Reset Streak & Cool Down
             self.curr_balance += revenue
             self.curr_streak = 0
+            self.curr_cool_down = 0
 
             # Log Trade
-            self.log_trade(timestamp, "EXIT_LONG", price, self.curr_position["quantity"],
-                           price * self.curr_position["quantity"])
+            self.log_trade(timestamp, "EXIT_LONG", price,
+                           self.curr_position["quantity"],
+                           price * self.curr_position["quantity"],
+                           revenue)
 
             # Remove Position
             self.curr_position["action"] = ""
             self.curr_position["price"] = 0
             self.curr_position["quantity"] = 0
 
-        # Determine if account can buy 'volume' of asset at 'price'
+        # Determine if account can short 'volume' of asset at 'price'
+        if self.curr_streak >= params.ACCOUNT_MAX_STREAK:
+            # Do not allow account to short if it has reached the maximum consecutive trades
+            return False
+
         if self.curr_cool_down > 0:
             # Do not allow account to short if cool down active
             self.curr_cool_down -= 1
@@ -235,7 +281,6 @@ class Account(object):
 
         else:
             # If able to enter short position; calculate, update, log and append it
-
             if self.curr_position["action"] == "":
                 # No current position; take long
                 self.curr_position["action"] = "SHORT"
@@ -252,122 +297,131 @@ class Account(object):
                 self.curr_position["quantity"] = sum_quantity
 
             # Update Current Balance, Streak & Cool Down
-            # a short is technically borrowing, but volume will be deducted since the bot owes the volume to the lender
+            #   - a short is technically borrowing, but
+            #   volume will be deducted since the bot owes
+            #   the volume to the lender
             self.curr_balance -= volume
             self.curr_streak += 1
-            # self.curr_cool_down = self.def_trade_cool_down
+            self.curr_cool_down = params.ACCOUNT_TRADE_COOL_DOWN
 
-            # Log the trade
-            self.log_trade(timestamp, "SHORT", price, volume / price, volume)
+            # Log Trade
+            self.log_trade(timestamp, "SHORT", price, volume / price, volume, -volume)
 
-            # Done
+            # Short Complete!
             return True
 
     """
     Logs Trade To The Trade History As A JSON Object
     """
-    def log_trade(self, timestamp, action, price, quantity, volume):
+    def log_trade(self, timestamp, action, price, quantity, volume, revenue):
 
-        # Format trade as a JSON object
-        trade_json = {
+        # Format Trade As A Dictionary Object
+        trade_dict = {
             "timestamp": timestamp,
             "action": action,
             "price": price,
             "quantity": quantity,
             "volume": volume,
+            "revenue": revenue,
+            "net_worth": self.net_worth()
         }
 
-        # Append 'trade_json' to 'trade_history'
-        self.trade_history.append(trade_json)
+        # Append 'trade_dict' To 'trade_history'
+        self.account_history.append(trade_dict)
 
-        # Done
+        # Logging Complete!
         return
 
     """
-    Returns A Log (list) Of The Activity Of This Account
+    Returns A Log (list of dictionary objects) Of The Activity On This Account
     """
     def history(self):
-        return self.trade_history
+        return self.account_history
 
     """
-    Returns The Current Available Capital To Invest
+    Calculates The Net Value Of The Current Balance & Any Current Position
+    """
+    def net_worth(self):
+        # Create Temp Variable For Arithmetic
+        curr_net_worth = 0
+
+        # Add Current Balance To Net Worth
+        curr_net_worth += self.curr_balance
+
+        # Check For A Current Position
+        if self.curr_position["action"] == "":
+            # no current position to calculate
+            pass
+
+        elif self.curr_position["action"] == "LONG":
+            # calculate current value of long position
+            curr_net_worth += self.last_price * self.curr_position["quantity"]
+
+        elif self.curr_position["action"] == "SHORT":
+            # calculate current value of short position
+            value = self.curr_position["price"] * self.curr_position["quantity"]
+            value += (self.curr_position["price"] * self.curr_position["quantity"]) - \
+                     (self.last_price * self.curr_position["quantity"])
+            curr_net_worth += value
+            
+        # Return Account's Current Net Worth
+        return curr_net_worth
+
+    """
+    Return The Account's Available Balance
     """
     def balance(self):
         return self.curr_balance
 
     """
-    Calculates The Net Value Of The Current Balance & Any Current Positions
-    """
-    def net_worth(self):
-        curr_net_worth = 0
-
-        # Add current balance to net worth
-        curr_net_worth += self.curr_balance
-
-        # Is their a current position?
-        if self.curr_position["action"] == "":
-            # No current position to calculate
-            curr_net_worth += 0
-
-        elif self.curr_position["action"] == "LONG":
-            # Calculate current value of long position
-            revenue = self.last_price * self.curr_position["quantity"]
-            curr_net_worth += revenue
-
-        elif self.curr_position["action"] == "SHORT":
-            # Calculate current value of long position
-            revenue = self.last_price * self.curr_position["quantity"]
-            curr_net_worth += revenue
-
-        # Return Account's Current Net Worth
-        return curr_net_worth
-
-    """
-    Calculates The ROI Of The Account
-    """
-    def roi(self):
-        # Calculate ROI based on accounts net worth and starting balance
-        roi = self.net_worth() / params.ACCOUNT_DEFAULT_BALANCE
-
-        # Return the ROI
-        return roi
-
-    """
     Used By Individual To Measure Account Fitness
     """
     def performance(self):
-        return self.roi()
+        return acc_metrics.roi(params.ACCOUNT_INIT_BALANCE, self.net_worth())
 
     """
-    Returns Several Metrics Of The Accounts Behavior & Performance As A JSON Object; Obtained From 'account_metrics.py'
+    Returns Several Metrics Of The Accounts Behavior & Performance As A Dictionary Object
+        - Obtained From 'account_metrics.py'
     """
     def metrics(self):
-
-        # Format Metrics Into JSON Object
-        json = {
-            "roi": self.roi(),
-            "sharpe_ratio": self.sharpe_ratio(),
+        # Format Metrics Into Dictionary Object
+        summary = {
+            "trading_days": 0,
+            "trades": acc_metrics.account_statistics(self.account_history),
+            "ratios": {
+                "profit_factor": 0,
+                "gain_to_pain": 0,
+                "winning_pct": 0,
+                "payout_ratio": 0,
+                "cpc_index": 0,
+                "expectancy": 0,
+                "return_pct": 0,
+                "kelly_pct": 0,
+                "sharpe": 0,
+                "treynor": 0,
+                "sortino": 0,
+            },
+            "r_squared": 0
         }
 
-        # Return JSON Object
-        return json
+        # Return Dictionary Object
+        return summary
 
     """
-    Returns JSON Representation Of The Account Class
+    Returns Dictionary Representation Of Accounts's Current State
     """
     def status(self):
-
-        # Format Account Class Into JSON Object
-        json = {
+        # Format Account Into Dictionary Object
+        state = {
             "init": self.initialized,
             "asset": self.ticker,
             "trade_volume": self.trade_volume,
-            "start_balance": params.ACCOUNT_DEFAULT_BALANCE,
+            "start_balance": params.ACCOUNT_INIT_BALANCE,
             "end_balance": self.net_worth(),
             "trade_history": self.history(),
             "performance": self.performance(),
             "metrics": self.metrics(),
         }
 
-        # Return JSON Object
-        return json
+        # Return Dictionary Object
+        return state

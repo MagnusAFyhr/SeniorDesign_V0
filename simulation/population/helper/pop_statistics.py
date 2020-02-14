@@ -14,26 +14,33 @@ Testing :
 
 TO-DO:
     - add account statistics
-    - add calculation for standard deviation for diversity : DONE
 
+    - use Simpson diversity index to calculate diversity of technical indicators
+        + allele pool technical indicator diversity
+            * have used and unused
+            * obtain Simpson diversity index of population allele pool
+        + chromosome' allele diversity
+            * average the Simpson diversity index of all chromosome allele sets
+
+    - change 'stats_dict' to be hierarchical
+        + general
+            * pop_size
+            * best_fit
+            * mean_fit
+            * worst_fit
+            * stdev_fit
+            * allele_sdi
+            * chrom_sdi
+        + performance
+            + champion
+            + overall
 
 """
 
 
 def population_statistics(population):
 
-    # create json object
-    json_stats = {
-        "pop_size": None,
-        "pop_data": None,
-        "sum": None,
-        "best": None,
-        "worst": None,
-        "mean": None,
-        "std": None,
-        "diversity": None
-    }
-
+    # rank the population
     population = rank_population(population)
 
     # get population size
@@ -57,20 +64,22 @@ def population_statistics(population):
     # get population standard deviation
     std = population_stand_dev(population, mean_fit)
 
-    # get population diversity
-    diversity = population_diversity(population)
+    # get allele and chromosome diversities
+    allele_diversity, chromosome_diversity = population_diversity(population)
 
-    # load json object
-    json_stats["pop_size"] = pop_size
-    json_stats["pop_data"] = pop_fit_data
-    json_stats["sum"] = sum_fit
-    json_stats["best"] = best_fit
-    json_stats["worst"] = worst_fit
-    json_stats["mean"] = mean_fit
-    json_stats["std"] = std
-    json_stats["diversity"] = diversity  # json object
+    # create dictionary object
+    stats_dict = dict([])
+    stats_dict["pop_size"] = pop_size
+    # stats_dict["pop_data"] = pop_fit_data
+    stats_dict["sum_fit"] = sum_fit
+    stats_dict["best_fit"] = best_fit
+    stats_dict["worst_fit"] = worst_fit
+    stats_dict["mean_fit"] = mean_fit
+    stats_dict["fit_stdev"] = std
+    stats_dict["allele_sdi"] = allele_diversity
+    stats_dict["chrom_sdi"] = chromosome_diversity
 
-    return json_stats
+    return stats_dict
 
 
 def population_stand_dev(population, mean_fitness):
@@ -106,71 +115,53 @@ def rank_population(population):
 
 def population_diversity(population):
 
-    # allele pool and distributions
-    allele_distribution = dict()
+    # create data sets
+    allele_distributions = dict()
+    allele_set_distributions = list([])
     for citizen in population:
-        for allele in citizen.chromosome.alleles:
-            if allele.tech_ind in allele_distribution:
-                allele_distribution[allele.tech_ind] += 1
+        # create dictionary for allele set
+        set_dict = dict([])
+
+        allele_set = citizen.chromosome.alleles
+
+        # populate dictionaries
+        for allele in allele_set:
+            # populate alleles list
+            if allele.tech_ind in allele_set:
+                allele_distributions[allele.tech_ind] += 1
             else:
-                allele_distribution[allele.tech_ind] = 1
+                allele_distributions[allele.tech_ind] = 1
 
-    # high; low; mean; std; distribution percentage
-    used_count = 0
-    unused_count = 0
-    sum_count = 0
-    high_count = None
-    low_count = None
-    for key, value in allele_distribution.items():
-        # sum
-        sum_count += value
+            # populate set dictionary
+            if allele.tech_ind in set_dict:
+                set_dict[allele.tech_ind] += 1
+            else:
+                set_dict[allele.tech_ind] = 1
 
-        # high
-        if high_count is None:
-            high_count = value
-        elif high_count < value:
-            high_count = value
+        # populate allele sets list with set dictionary
+        allele_set_distributions.append(set_dict)
 
-        # low
-        if low_count is None:
-            low_count = value
-        elif low_count > value:
-            low_count = value
+    # allele pool diversity (Simpson's Diversity Index)
+    numerator = 0
+    total_alleles = 0
+    for _, value in allele_distributions.items():
+        numerator += value * (value - 1)
+        total_alleles += value
+    denominator = total_alleles * (total_alleles - 1)
+    allele_pool_sdi = 1 - (numerator / denominator)
 
-        # distribution percentage
-        if value == 0:
-            unused_count += 1
-        else:
-            used_count += 1
+    # chromosome internal allele set diversity (Simpson's Diversity Index)
+    chromosome_count = len(allele_set_distributions)
+    sum_chromosome_sdi = 0
+    for allele_set in allele_set_distributions:
+        numerator = 0
+        total_alleles = 0
+        for _, value in allele_set.items():
+            numerator += value * (value - 1)
+            total_alleles += value
+        denominator = total_alleles * (total_alleles - 1)
+        chromosome_sdi = 1 - (numerator / denominator)
+        sum_chromosome_sdi += chromosome_sdi
+    average_chromosome_sdi = sum_chromosome_sdi / chromosome_count
 
-    # obtain pool size
-    pool_size = len(allele_distribution)
-
-    # calculate mean
-    mean_count = round(sum_count / pool_size, 2)
-
-    # calculate standard deviation
-    sum_sq_var = 0
-    for _, value in allele_distribution.items():
-        variance = value - mean_count
-        sq_var = pow(variance, 2)
-        sum_sq_var += sq_var
-    variance = sum_sq_var / (pool_size - 1)
-    stand_dev = pow(variance, 0.5)
-
-    # calculate distribution percentage
-    distribution = round((used_count / pool_size) * 100, 2)
-
-    # make json object (dict)
-    json = {
-        "used": used_count,
-        "unused": unused_count,
-        "sum": sum_count,
-        "high": high_count,
-        "low": low_count,
-        "mean": mean_count,
-        "std": stand_dev,
-        "percent": distribution
-    }
-
-    return json
+    return allele_pool_sdi, average_chromosome_sdi

@@ -23,51 +23,78 @@ Testing :
     - fitness       : DONE
     - mate          : DONE
     - clone         : DONE
-    - as_json       : DONE
+    - status        : DONE
+
+Cleaning :
+    - init          : DONE
+    - verify        : DONE
+    - step          : DONE
+    - fitness       : DONE
+    - mate          : DONE
+    - clone         : DONE
+    - status        : DONE
+
+Optimizing :
+    - init          :
+    - verify        :
+    - step          :
+    - fitness       :
+    - mate          :
+    - clone         :
+    - status        :
+
+
+TO-DO:
+
+Comments :
+
+Future Improvements :
+
 
 """
 
 import genetics.chromosome.chromosome as chrm
 import phenetics.account.account as acco
+import analysis.parameters as params
 
 
 class Individual:
 
-    initialized = False
-    _debug_mode = 0
-
-    asset = "UNKNOWN"
-    chromosome = None
-    account = None
-
     """
     Initialize & Verify The Individual
     """
-    def __init__(self, chromosome=None, debug=0):
+    def __init__(self, ticker="", chromosome=None, debug=0):
 
+        # Pre-Initialization
+        self.initialized = False
+        self._debug_mode = 0
+        self._is_debug = False
+
+        self.ticker = ticker
+        self.chromosome = None
+        self.account = None
+
+        # Setup Debug Mode
         self._debug_mode = debug
+        if debug in params.INDIVIDUAL_DEBUG:
+            self._is_debug = True
 
-        # Verify The Chromosome
+        # Check Chromosome
         if chromosome is None:
             chromosome = chrm.Chromosome(debug=self._debug_mode)
 
-        if not chromosome.initialized:
-            print("< ERR > : Failed to initialize Individual, used invalid Chromosome!")
-            self.initialized = False
-            return
-
         # Initialize The Individual
-        self.asset = "UNKNOWN"
+        self.ticker = ticker
         self.chromosome = chromosome
-        self.account = acco.Account(self.asset)
+        self.account = acco.Account(ticker=self.ticker, debug=self._debug_mode)
 
         # Verify The Individual
-        if self._debug_mode > 2:
+        if self._is_debug:
             if self.verify() is False:
-                print("< ERR > : Failed to initialize Individual, verification failed!")
+                print("< ERR > : Failed to initialize Individual; verification failed!")
                 return
 
-        # Done Initializing
+        # Initialization Complete!
         self.initialized = True
         return
 
@@ -75,7 +102,6 @@ class Individual:
     Verifies The Initialization Of An Individual
     """
     def verify(self):
-
         # Verify Chromosome
         if self.chromosome is None:
             return False
@@ -90,79 +116,84 @@ class Individual:
         elif not self.account.initialized:
             return False
 
-        # Otherwise, Individual Is Verified
+        # Verification Complete!
         return True
 
     """
     Simulates The Next Step In The Data
     """
     def step(self, row_dict):
-        # Extract the price and timestamp from the dictionary
+        # Extract The Price & Timestamp From The Dictionary
         timestamp = row_dict["Date"]
         price = row_dict["Close"]
 
-        if price is None or timestamp is None:
-            print("< ERR > : Error in Individual step(), Invalid Data Dictionary.")
-            return None
+        if self._is_debug:
+            if price is None or timestamp is None:
+                print("< ERR > : Error in Individual step(), Invalid Data Dictionary.")
+                return None
 
-        # Get the reaction from the chromosome
+        # Get The Reaction From The Chromosome
         reaction = self.chromosome.react(row_dict)
 
-        # Use the reaction to take action via do()
+        if self._is_debug:
+            if reaction is None:
+                print("< ERR > : NoneType action received from Chromosome react() : {}.".format(reaction))
+
+        # Use The Reaction To Take Action Via 'do()' Command; Obtain Feedback
         feedback = self.account.do(reaction, timestamp, price)
 
-        # Done
+        if self._is_debug:
+            if feedback is None:
+                print("< ERR > : NoneType feedback received from Account do() : {}.".format(feedback))
+
+        # Step Complete!
         return feedback
 
     """
     Calculates The Fitness Of An Individual
-        - fitness should be a dictionary of buy_performance, sell_performance, etc.
-        - for now fitness will just be performance
     """
     def fitness(self):
-        # Obtain fitness from account performance
+        # Obtain Account Performance As Individual Fitness
         fitness = self.account.performance()
 
-        # Return fitness
+        # Return Fitness
         return fitness
 
     """
     Returns Two Offspring Chromosomes From Mating Two Individuals
     """
     def mate(self, mate):
-        # Obtain two chromosomes from mating two individuals
+        # Obtain Two Chromosomes From Mating Two Individuals
         chrom_encodings = self.chromosome.crossover(mate.chromosome)
 
-        # Create chromosomes from encoding
+        # Create Chromosomes From Encoding
         offspring = list([])
         for encoding in chrom_encodings:
-            offspring.append(chrm.Chromosome(encoding, debug=self._debug_mode))
+            offspring.append(chrm.Chromosome(encoding=encoding, debug=self._debug_mode))
 
-        # Return Chromosome Objects
+        # Mating Complete; Return Initialized Chromosomes!
         return offspring
 
     """
-    Returns A Copy Of The Current Individual’s Chromosome
+    Returns A Copy Of The Individual’s Chromosome
     """
     def clone(self):
-        # Return copy of individual's chromosome
         return self.chromosome
 
     """
-    Returns JSON Representation Of The Status
+    Returns Dictionary Representation Of Individual's Current State
     """
     def status(self):
-
-        # Format Individual object into JSON object
-        json = {
+        # Format Individual Into Dictionary Object
+        state = {
             "init": self.initialized,
-            "asset": self.asset,
+            "asset": self.ticker,
             "chromosome": self.chromosome.status(),
             "account": self.account.status(),
         }
 
-        # Return JSON object
-        return json
+        # Return Dictionary Object
+        return state
 
 
 

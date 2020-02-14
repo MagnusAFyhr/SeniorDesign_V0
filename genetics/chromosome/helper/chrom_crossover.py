@@ -5,7 +5,9 @@ Title : allele_crossover.py
 Purpose : Single function responsible for handling the crossover between two chromosome encodings
 
 """
-import random
+
+from analysis import parameters as params
+
 from genetics.chromosome.helper import chrom_structure
 from genetics.chromosome.helper import chrom_encode as chr_enc
 from genetics.chromosome.helper import chrom_decode as chr_dec
@@ -13,13 +15,15 @@ from genetics.chromosome.helper import chrom_decode as chr_dec
 from genetics.allele.helper import allele_decode as ale_dec
 from genetics.allele.helper import allele_crossover as ale_cro
 
+import random
+
 
 def crossover(chrom_encoding_a, chrom_encoding_b, dominance):
     """ Create an offspring from a random crossover between two chromosome encodings """
 
     # Establish a dominant parent, always allele_encoding_a
     parents = [chrom_encoding_a, chrom_encoding_b]
-    for i in range(dominance):
+    for i in range(dominance-1):
         parents.append(chrom_encoding_a)
 
     # Inherit buy limit from a random parent
@@ -59,7 +63,7 @@ def crossover(chrom_encoding_a, chrom_encoding_b, dominance):
                 break
 
     # Fill in rest of crossover alleles with alleles from random parents
-    while len(cross_allele_encodings) < chrom_structure.ALLELE_COUNT:
+    while len(cross_allele_encodings) < params.CHROM_ALLELE_COUNT:
         # Inherit random allele from random parent
         parent_of_allele = random.choice(parents)
 
@@ -75,7 +79,7 @@ def crossover(chrom_encoding_a, chrom_encoding_b, dominance):
             cross_allele_encodings.append(allele_encoding)
 
     # Verify crossover allele encodings list
-    if len(cross_allele_encodings) != chrom_structure.ALLELE_COUNT:
+    if len(cross_allele_encodings) != params.CHROM_ALLELE_COUNT:
         print("< ERR > : Error crossing chromosomes : Allele count invalid : {}.".format(len(cross_allele_encodings)))
         return None
 

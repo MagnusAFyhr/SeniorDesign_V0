@@ -4,16 +4,13 @@ WHAT DOES THIS FILE DO
 
 import random
 
-ELITES_RATIO = float(0.1)
 
-
-def evaluate_individuals(individuals):
+def evaluate_individuals(individuals, elite_count):
 
     # rank individuals by fitness
     ranked_individuals = rank_individuals(individuals)
 
     # select elites
-    elite_count = int(len(ranked_individuals) * ELITES_RATIO)
     elites = ranked_individuals[:elite_count]
 
     # select parents
@@ -58,7 +55,7 @@ def select_parents_roulette_rank(pool):
         rand_num = random.randint(0, sum_rank)
 
         # select a new parent; spin roulette wheel
-        for j in range(0, rand_num):
+        for j in range(0, rand_num + 1):
             rand_num -= pool_size - j
 
             if rand_num <= 0:
