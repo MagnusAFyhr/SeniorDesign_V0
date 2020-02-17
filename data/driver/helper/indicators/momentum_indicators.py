@@ -44,7 +44,7 @@ def AROONOSC(raw_df, timeperiod=14):
 
 def BOP(raw_df):
     # extract necessary data from raw dataframe (open, high, low, close)
-    return ta.BOP(raw_df.Open.values, raw_df.High.values, raw_df.Low.Values, raw_df.Close.values)
+    return ta.BOP(raw_df.Open.values, raw_df.High.values, raw_df.Low.values, raw_df.Close.values)
 
 
 def CCI(raw_df, timeperiod=14):
