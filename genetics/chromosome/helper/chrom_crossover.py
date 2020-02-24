@@ -26,11 +26,11 @@ def crossover(chrom_encoding_a, chrom_encoding_b, dominance):
     for i in range(dominance-1):
         parents.append(chrom_encoding_a)
 
-    # Inherit buy limit from a random parent
-    cross_buy_limit = chr_enc.encode_buy_limit(chr_dec.decode_buy_limit(random.choice(parents)))
+    # Inherit long limit from a random parent
+    cross_long_limit = chr_enc.encode_long_limit(chr_dec.decode_long_limit(random.choice(parents)))
 
-    # Inherit sell_limit from a random parent
-    cross_sell_limit = chr_enc.encode_sell_limit(chr_dec.decode_sell_limit(random.choice(parents)))
+    # Inherit short_limit from a random parent
+    cross_short_limit = chr_enc.encode_short_limit(chr_dec.decode_short_limit(random.choice(parents)))
 
     # Obtain allele encodings from chromosome encodings
     allele_encodings_a = chrom_encoding_a.split(chrom_structure.ENCODING_KEY)[chrom_structure.ALLELE_START:]
@@ -85,8 +85,8 @@ def crossover(chrom_encoding_a, chrom_encoding_b, dominance):
 
     # Concatenate items for crossover encoding
     items = list([0, 0])
-    items[chrom_structure.BUY_LIMIT_INDEX] = cross_buy_limit
-    items[chrom_structure.SELL_LIMIT_INDEX] = cross_sell_limit
+    items[chrom_structure.LONG_LIMIT_INDEX] = cross_long_limit
+    items[chrom_structure.SHORT_LIMIT_INDEX] = cross_short_limit
     for allele_encoding in cross_allele_encodings:
         items.append(allele_encoding)
 

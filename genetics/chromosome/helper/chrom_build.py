@@ -24,9 +24,9 @@ def random_encoding():
         # Append random allele encoding to encoding list
         encodings.append(encoding)
 
-    # Calculate full buy and sell power
-    full_buy_power = 0
-    full_sell_power = 0
+    # Calculate full long and short power
+    full_long_power = 0
+    full_short_power = 0
     for allele_encoding in encodings:
         # Obtain position from allele encoding
         position = ale_dec.decode_position(allele_encoding)
@@ -34,27 +34,27 @@ def random_encoding():
         # Obtain power from allele encoding
         power = ale_dec.decode_power(allele_encoding) + 1
 
-        # Add/subtract power to corresponding buy/sell power
+        # Add/subtract power to corresponding long/short power
         if position == 1:
-            # If its a buy allele
-            full_buy_power += power
+            # If its a long allele
+            full_long_power += power
 
         elif position == -1:
-            # If its a sell allele
-            full_sell_power -= power
+            # If its a short allele
+            full_short_power -= power
 
-    # Generate two random numbers; will correspond to buy and sell limit
-    buy_limit = random.randint(full_sell_power, full_buy_power)
-    sell_limit = random.randint(full_sell_power, full_buy_power)
+    # Generate two random numbers; will correspond to long and short limit
+    long_limit = random.randint(0, full_long_power)
+    short_limit = random.randint(full_short_power, 0)
 
-    # Make sure that the larger of the two is the buy limit, and smaller is the sell limit
-    if buy_limit < sell_limit:
-        buy_limit, sell_limit = sell_limit, buy_limit
+    # Make sure that the larger of the two is the long limit, and smaller is the short limit
+    if long_limit < short_limit:
+        long_limit, short_limit = short_limit, long_limit
 
     # Concatenate items for random encoding
     items = list([0, 0])
-    items[chrom_structure.BUY_LIMIT_INDEX] = str(buy_limit)
-    items[chrom_structure.SELL_LIMIT_INDEX] = str(sell_limit)
+    items[chrom_structure.LONG_LIMIT_INDEX] = str(long_limit)
+    items[chrom_structure.SHORT_LIMIT_INDEX] = str(short_limit)
     for allele_encoding in encodings:
         items.append(allele_encoding)
 

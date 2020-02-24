@@ -12,7 +12,7 @@ Development :
     - init                          : DONE
     - simulate_generation           : DONE
     - report                        :
-    - status                        :
+    - status                        : DONE
     - plot                          :
 
 Testing :
@@ -41,11 +41,13 @@ TO-DO:
     - improve report() function
         + add more to it; need financial part too
         + clean it up
-    - add status() function
-    - Add logic to track movement of price over a generation; should account do this
 
+COMMENTS:
+    - "params.AVAIL_TECH_IND = self.environment.tech_ind_dict"; new approach should be used
 
 """
+
+from simulation.habitat.helper import habitat_console_logger as console
 
 import analysis.parameters as params
 
@@ -67,6 +69,8 @@ class Habitat:
         self._debug_mode = 0
         self._is_debug = False
 
+        self.ticker = ticker
+
         self.environment = None
         self.population = None
 
@@ -78,13 +82,16 @@ class Habitat:
         # Initialize & Verify DataBook
         self.environment = data.DataBook(ticker, params.GEN_PERIOD, gen_count=params.GEN_COUNT)
         if not self.environment.initialized:
-            print("< ERR > :{} Failed to initialize Habitat; DataBook failed verification!")
+            print("< ERR > : Habitat : {} Failed to initialize Habitat; DataBook failed verification!")
             return
+
+        # Update Global Variable For Available Technical Indicators; Used By Alleles
+        params.AVAIL_TECH_IND = self.environment.tech_ind_dict
 
         # Initialize Population
         self.population = popu.Population(params.POP_SIZE, debug=self._debug_mode)
         if not self.population.initialized:
-            print("< ERR > :{} Failed to initialize Habitat; Population failed verification!")
+            print("< ERR > : Habitat : {} Failed to initialize Habitat; Population failed verification!")
             return
 
         # Initialization Complete!
@@ -96,7 +103,7 @@ class Habitat:
     """
     def simulate_generation(self):
 
-        # WHAT IS THIS
+        # Beginning Debug Reporting
         if self._is_debug or self._debug_mode in params.HABITAT_CONSOLE:
             print("\t< HAB > : Simulating Generation {}...".format(self.population.gen_count))
 
@@ -129,6 +136,7 @@ class Habitat:
         elapsed /= pow(10, 9)
         gen_stats["runtime"] = elapsed
 
+        # Completion Debug Reporting
         if self._is_debug or self._debug_mode in params.HABITAT_CONSOLE:
             print("\t< HAB > : Generational Simulation Complete!")
 
@@ -143,41 +151,29 @@ class Habitat:
     """
     def report(self, gen_stats):
 
-        if self._debug_mode in params.HABITAT_CONSOLE:
-            # Generic Header
-            print("\t\t<     > : Generation\t\t\t\t\t: {} ".format(gen_stats["gen_count"]))
-            print("\t\t<     > : Population Size\t\t\t\t: {}".format(gen_stats["pop_size"]))
-            print("\t\t<     > : Runtime\t\t\t\t\t\t: {} seconds".format(round(gen_stats["runtime"], 4)))
-            print("\t\t<     > : Start Date\t\t\t\t\t: {} ".format(gen_stats["start_date"]))
-            print("\t\t<     > : End Date\t\t\t\t\t\t: {} ".format(gen_stats["end_date"]))
-            print("\t\t<     > : Duration\t\t\t\t\t\t: {} days".format(gen_stats["step_count"]))
-
-            # General Statistics
-            print("\t< HAB > : General Statistics. ")
-            print("\t\t<     > : Best Fitness\t\t\t\t\t: {}".format(round(gen_stats["best_fit"], 4)))
-            print("\t\t<     > : Mean Fitness\t\t\t\t\t: {}".format(round(gen_stats["mean_fit"], 4)))
-            print("\t\t<     > : Worst Fitness\t\t\t\t\t: {}".format(round(gen_stats["worst_fit"], 4)))
-            print("\t\t<     > : Fitness Std. Dev.\t\t\t\t: {}".format(round(gen_stats["fit_stdev"], 4)))
-            print("\t\t<     > : Allele Diversity\t\t\t\t: {}%".format(round(gen_stats["allele_sdi"] * 100, 2)))
-            print("\t\t<     > : Chromosome Diversity\t\t\t: {}%".format(round(gen_stats["chrom_sdi"] * 100, 2)))
-
-        # Performance Statistics
-        if self._debug_mode in params.ACCOUNT_CONSOLE:
-            print("\t< HAB > : Performance Statistics. ")
-            print("\t\t<     > : Put")
-            print("\t\t<     > : Stuff")
-            print("\t\t<     > : Here...")
+        console.report(gen_stats, self._debug_mode)
 
         # Done Reporting!
         return
 
     """
-    Returns Dictionary Representation Of Habitat's Current State
+    Returns Dictionary Representation Of Habitat's Current State; Useful For System Testing
     """
     def status(self):
-        #
-        pass
+        # Format Habitat Into Dictionary Object
+        state = {
+            "init": self.initialized,
+            "debug_mode": self._debug_mode,
+            "is_debug": self._is_debug,
 
+            "ticker": self.ticker,
+
+            "environment": self.environment,
+            "population": self.population
+        }
+
+        # Return Dictionary Object
+        return state
 
     """
     Provide Runtime Visualizations

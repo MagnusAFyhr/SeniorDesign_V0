@@ -19,30 +19,33 @@ Development :
     - metrics                       : DONE
     - status                        : DONE
     - initialize_rand_population    : DONE
+    - initialize_dist_population    :
 
 Testing :
-    - init                          : DONE
-    - step                          : DONE
+    - init                          :
+    - step                          :
     - verify                        :
-    - next_generation               : DONE
-    - evaluate                      : DONE
-    - reproduce                     : DONE
-    - modify                        : DONE
-    - metrics                       : DONE
+    - next_generation               :
+    - evaluate                      :
+    - reproduce                     :
+    - modify                        :
+    - metrics                       :
     - status                        :
-    - initialize_rand_population    : DONE
+    - initialize_rand_population    :
+    - initialize_dist_population    :
 
 Cleaning :
-    - init                          : DONE
-    - step                          : DONE
-    - verify                        : DONE
-    - next_generation               : DONE
+    - init                          :
+    - step                          :
+    - verify                        :
+    - next_generation               :
     - evaluate                      : DONE
     - reproduce                     : DONE
     - modify                        : DONE
     - metrics                       : DONE
     - status                        : DONE
     - initialize_rand_population    : DONE
+    - initialize_dist_population    :
 
 Optimizing :
     - init                          :
@@ -54,24 +57,19 @@ Optimizing :
     - modify                        :
     - metrics                       :
     - initialize_rand_population    :
+    - initialize_dist_population    :
 
 TO-DO :
     - make population initialization not random (parameter!!!):
-        + Should be evenly distributed
+        + Should be evenly distributed across alleles then chromosomes
         + numbers spread out by some standard deviation
         + numbers could be given a default value that represents the center of the distribution
 
 
 Comments :
-    - check the pop_evaluate file; make sure that the rank_individuals function is working properly
-
-    - evaluate() : relatively slow; see if it can be optimized
-    - metrics()  : relatively slow; see if it can be optimized
-    - reproduce(): does parents list need to be copied
-
-    - does more diversity need to be tracked?
-        + chromosome diversity should be tracked!!!
-        + should average diversity across all allele variables? might be costly
+    - reproduce(): does parents list need to be copied;
+        - all copying should actually be removed
+    - should observation be verified in step?
 
 Future Improvements :
 
@@ -80,6 +78,7 @@ Future Improvements :
 
 import analysis.parameters as params
 
+import simulation.population.helper.pop_generate as pop_gen
 import simulation.population.helper.pop_evaluate as pop_eval
 import simulation.population.helper.pop_statistics as pop_stat
 
@@ -104,13 +103,16 @@ class Population:
         self.gen_count = 0
         self.step_count = 0
         self.iter_count = 0
-        self.birth_date = None
-        self.last_date = None
+
+        self.open_date = None
+        self.close_date = None
+        self.open_price = None
+        self.close_price = None
 
         # Initialization
         self.size = pop_size
         self.elite_count = int(pop_size * params.POP_ELITE_RATIO)
-        self.citizens = self.initialize_random_population(pop_size)
+        self.citizens = pop_gen.generate_random_population(pop_size, self._debug_mode)
 
         # Setup Debug Mode
         self._debug_mode = debug
@@ -120,7 +122,7 @@ class Population:
         # Verify Population
         if self._is_debug:
             if not self.verify():
-                print("< ERR > : Failed to initialize Population; verification failed!")
+                print("< ERR > : Population : Failed to initialize Population; verification failed!")
                 return
 
         # Done Initializing!
@@ -151,9 +153,14 @@ class Population:
     Simulates A Step In The Population With A Given Observation
     """
     def step(self, observation):
+        # Verify Observation
+        if self._is_debug:
+            pass
+
         # If First Step Of Generation; Update Birth Date
         if self.step_count == 0:
-            self.birth_date = observation['Date']
+            self.open_date = observation['Date']
+            self.open_price = observation['Close']
 
         # Simulate Step Across Each Population Member
         for citizen in self.citizens:
@@ -163,7 +170,8 @@ class Population:
             self.iter_count += 1
 
         # Track Last Date Data Was Simulated
-        self.last_date = observation['Date']
+        self.close_date = observation['Date']
+        self.close_price = observation['Close']
 
         # Step Complete; Increment Step Count!
         self.step_count += 1
@@ -173,6 +181,7 @@ class Population:
     Generates The Next Population
     """
     def next_generation(self):
+
         #
         # Obtain Population Statistics
         #
@@ -269,7 +278,13 @@ class Population:
         start_t = time.time_ns()
 
         self.citizens.clear()
-        self.citizens = [indiv.Individual(chromosome=chromosome, debug=self._debug_mode) for chromosome in offspring]
+        citizens = list([])
+        for elite in elites:
+            elite.refresh()
+            citizens.append(elite)
+        citizens.extend([indiv.Individual(chromosome=chromosome, debug=self._debug_mode) for chromosome in offspring])
+        self.citizens = citizens
+
         # Optional Debug Step
         if self._is_debug:
             if len(self.citizens) != self.size:
@@ -291,8 +306,10 @@ class Population:
         # Reset Generational Tracker Variables
         self.step_count = 0
         self.gen_count += 1
-        self.birth_date = None
-        self.last_date = None
+        self.open_date = None
+        self.close_date = None
+        self.open_price = None
+        self.close_price = None
 
         # Next Generation Ready; Return Previous Generation Statistics!
         return statistics
@@ -333,7 +350,7 @@ class Population:
 
         # Trim Off N Trailing Chromosomes; Append N Elites To Offspring
         offspring = offspring[:len(offspring) - len(elites)]
-        offspring.extend([elite.clone() for elite in elites])
+        # offspring.extend([elite.clone() for elite in elites])
 
         # Reproduction Complete; Return Offspring!
         return offspring
@@ -360,43 +377,37 @@ class Population:
     def metrics(self):
         # Calculate Statistics & Place In Dictionary Object
         statistics = pop_stat.population_statistics(self.citizens)
+        statistics["pop_size"] = self.size
         statistics["gen_count"] = self.gen_count
         statistics["step_count"] = self.step_count
         statistics["iter_count"] = self.iter_count
-        statistics["start_date"] = self.birth_date
-        statistics["end_date"] = self.last_date
+        statistics["open_date"] = self.open_date
+        statistics["close_date"] = self.close_date
+        statistics["open_price"] = self.open_price
+        statistics["close_price"] = self.close_price
+        statistics["market_fit"] = self.close_price / self.open_price
 
         # Return Dictionary Object
         return statistics
 
     """
-    Returns Dictionary Representation Of Population's Current State
+    Returns Dictionary Representation Of Population's Current State; Useful For System Testing
     """
     def status(self):
         # Format Population Into Dictionary Object
         state = {
             "init": self.initialized,
+            "debug_mode": self._debug_mode,
+            "is_debug": self._is_debug,
+
             "gen_count": self.gen_count,
             "iter_count": self.iter_count,
+
             "pop_size": self.size,
+            "members": [individual.status() for individual in self.citizens],
             "elite_count": self.elite_count,
-            "members": [individual.status() for individual in self.citizens]
+            "elites": [individual.status() for individual in self.citizens if individual.is_elite]
         }
 
         # Return Dictionary Object
         return state
-
-    """
-    Initialize A Random Population Of Individuals 
-        - might want to implement logic to force evenly distributed population
-    """
-    def initialize_random_population(self, pop_size):
-        # Create Empty List
-        random_pop = list([])
-
-        # Initialize & Append Random Individuals
-        for i in range(0, pop_size):
-            random_pop.append(indiv.Individual(debug=self._debug_mode))
-
-        # Return Random Population
-        return random_pop

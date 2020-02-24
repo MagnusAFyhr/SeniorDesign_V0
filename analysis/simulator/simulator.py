@@ -10,22 +10,27 @@ Purpose :
 Development :
     - init ()           : DONE
     - run()             : DONE
+    - status()          :
 
 Testing :
     - init ()           :
     - run()             :
+    - status()          :
 
 Cleaning :
-    - init()            : DONE
-    - run()             : DONE
+    - init()            :
+    - run()             :
+    - status()          :
 
 Optimizing :
     - init ()           :
     - run()             :
+    - status()          :
 
 TO-DO:
 
 Comments :
+    - probably need to add reset method for habitat, and environment
 
 """
 
@@ -47,24 +52,21 @@ class Simulator(object):
         self.initialized = False
         self._debug_mode = 0
 
-        self.sim_id = ""
-        self.ticker = ""
-        self.habitat = None
-
         # Setup Debug Mode
         self._debug_mode = debug
-
-        # Assign Simulation ID
-        if sim_id != "":
-            self.sim_id = " [{}] :".format(sim_id)
 
         # Assign Ticker
         self.ticker = ticker
 
-        # Initialize & Verify Habitat
+        # Assign Simulation ID
+        self.sim_id = sim_id
+        if self.sim_id != "":
+            self.sim_id = " [{}] :".format(sim_id)
+
+        # Initialize, Assign,  & Verify Habitat
         self.habitat = habi.Habitat(ticker, debug=self._debug_mode)
         if not self.habitat.initialized:
-            print("< ERR > :{} Failed to initialize Simulator; Habitat failed verification!")
+            print("< ERR > : Simulator :{} Failed to initialize Simulator; Habitat failed verification!")
             return
 
         # Done Initializing
@@ -102,12 +104,16 @@ class Simulator(object):
                 est_gens,
                 params.GEN_PERIOD
             ))
+            print("< SIM > :{} Simulating population across the following technical indicators.\n\t\t<     > {}".format(
+                self.sim_id,
+                params.AVAIL_TECH_IND.values()
+            ))
 
-        # Create Empty List To Store Generation Runtimes
+        # Create Empty List To Store Generation Runtimes & Statistics
+        runtimes = list([])
         sim_stats = list([])
 
         # Perform Simulation; Log Statistics To 'gen_stats'
-        runtimes = list([])
         sim_start_t = time.time_ns()
         while self.habitat.population.gen_count < est_gens:
             # simulate a generation
@@ -153,4 +159,10 @@ class Simulator(object):
 
         # Return Array Of Generation Stats; Array Of Dictionaries
         return sim_stats
+
+    """
+    Returns Dictionary Representation Of Simulations's Current State; Useful For System Testing
+    """
+    def status(self):
+        pass
 

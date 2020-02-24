@@ -41,6 +41,9 @@ TO-DO :
     - Add report() function
     - Add status() function
 
+COMMENTS :
+    - quick implementation of global variable "AVAIL_TECH_IND"; implementation could be improved
+
 """
 
 from data.driver.helper import purifier
@@ -51,22 +54,24 @@ import pandas as pd
 
 class DataBook:
 
-    initialized = False
-    _debug_mode = 0
-    _is_debug = False
-
-    ticker = ""
-    live = False
-    book = None
-    steps = 0
-
-    start_date = None
-    end_date = None
-
     """
     Initialize DataBook
     """
     def __init__(self, ticker, gen_period, gen_count=None, debug=0):
+
+        # Pre-Initialization
+        self.initialized = False
+        self._debug_mode = 0
+        self._is_debug = False
+
+        self.ticker = ""
+        self.live = False
+        self.book = None
+        self.tech_ind_dict = None
+        self.steps = 0
+
+        self.start_date = None
+        self.end_date = None
 
         # Setup Debug Mode
         self._debug_mode = debug
@@ -76,7 +81,7 @@ class DataBook:
         # Assign & Verify Ticker
         self.ticker = ticker
         if self.ticker not in params.SUPP_TICKERS:
-            print("< ERR > : Failed to initialize DataBook; '{}' is not a supported ticker!".format(
+            print("< ERR > : DataBook : Failed to initialize DataBook; '{}' is not a supported ticker!".format(
                 self.ticker
             ))
             return
@@ -86,7 +91,7 @@ class DataBook:
 
         # Verify DataBook
         if not self.live:
-            print("< ERR > : Failed to initialize DataBook; launch failed.")
+            print("< ERR > : DataBook : Failed to initialize DataBook; launch failed.")
             return
 
         # Print DataBook Characteristics To Console
@@ -119,6 +124,18 @@ class DataBook:
             self.book = book
             self.start_date = self.book.iloc[0, 0]
             self.end_date = self.book.iloc[len(book.index) - 1, 0]
+
+        # Create Encoding Dictionary For Alleles; Update Global Variables
+        ti_dict = dict()
+        i = 0
+        for ti in self.book.columns.values.tolist():
+            if ti == "Date":
+                continue
+            key = str(i)
+            value = ti
+            ti_dict[key] = value
+            i += 1
+        self.tech_ind_dict = ti_dict
 
         # Launch Complete!
         return
@@ -180,7 +197,7 @@ def verify_databook(book):
 
     # basic verification; object is a pandas data frame
     if not isinstance(book, pd.DataFrame):
-        print("< ERR > : DataBook : Extracted data is not of type 'DataBook'.")
+        print("< ERR > : DataBook : Failed to verify DataBook; result not of type 'DataBook'.")
         return False
 
     # check that columns are present and order matches default

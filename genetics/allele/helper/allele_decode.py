@@ -22,6 +22,7 @@ Testing
 
 """
 from genetics.allele.helper import allele_structure, allele_symbols
+from analysis import parameters as params
 
 
 def decode_position(allele_encoding):
@@ -30,14 +31,14 @@ def decode_position(allele_encoding):
     pos_char = allele_encoding[allele_structure.POS_START:allele_structure.POS_END]
 
     # Check if character is a valid position
-    if pos_char == allele_symbols.BUY:
+    if pos_char == allele_symbols.LONG:
         return int(1)
 
-    elif pos_char == allele_symbols.SELL:
+    elif pos_char == allele_symbols.SHORT:
         return int(-1)
 
     # Otherwise, return NoneType
-    print("< ERR > : Error decoding allele : Invalid Position : {} : {}.".format(pos_char, allele_encoding))
+    print("< ERR > : Allele : Error decoding Allele : Invalid Position : {} : {}.".format(pos_char, allele_encoding))
     return None
 
 
@@ -47,13 +48,13 @@ def decode_tech_ind(allele_encoding):
     ti_char = allele_encoding[allele_structure.TECH_IND_START:allele_structure.TECH_IND_END]
 
     # Check if character is a valid technical indicator
-    tech_ind = allele_symbols.TECHNICAL_INDICATORS[ti_char]
+    tech_ind = params.AVAIL_TECH_IND[ti_char]
     if tech_ind is not None:
         # Return key-value pair
         return tech_ind
 
     # Otherwise, return NoneType
-    print("< ERR > : Error decoding allele : Invalid Technical Indicator : {} : {}.".format(ti_char, allele_encoding))
+    print("< ERR > : Allele : Error decoding Allele : Invalid Technical Indicator : {} : {}.".format(ti_char, allele_encoding))
     return None
 
 
@@ -68,7 +69,7 @@ def decode_threshold(allele_encoding):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Error decoding allele : Invalid Threshold : {} : {}.".format(thresh_string, allele_encoding))
+        print("< ERR > : Allele : Error decoding Allele : Invalid Threshold : {} : {}.".format(thresh_string, allele_encoding))
         return None
 
     # Return thresh_string as float
@@ -88,7 +89,7 @@ def decode_condition(allele_encoding):
         return allele_symbols.GREATER_THAN
 
     # Otherwise, return NoneType
-    print("< ERR > : Error decoding allele : Invalid Condition : {} : {}.".format(cond_char, allele_encoding))
+    print("< ERR > : Allele : Error decoding Allele : Invalid Condition : {} : {}.".format(cond_char, allele_encoding))
     return None
 
 
@@ -103,7 +104,7 @@ def decode_power(allele_encoding):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Error decoding allele : Power : {} : {}.".format(pow_char, allele_encoding))
+        print("< ERR > : Allele : Error decoding Allele : Power : {} : {}.".format(pow_char, allele_encoding))
         return None
 
     # Return pow_char as integer

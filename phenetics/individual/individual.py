@@ -14,7 +14,8 @@ Development :
     - fitness       : DONE
     - mate          : DONE
     - clone         : DONE
-    - as_json       : DONE
+    - refresh       :
+    - status        : DONE
 
 Testing :
     - init          : DONE
@@ -23,6 +24,7 @@ Testing :
     - fitness       : DONE
     - mate          : DONE
     - clone         : DONE
+    - refresh       :
     - status        : DONE
 
 Cleaning :
@@ -32,6 +34,7 @@ Cleaning :
     - fitness       : DONE
     - mate          : DONE
     - clone         : DONE
+    - refresh       :
     - status        : DONE
 
 Optimizing :
@@ -41,12 +44,15 @@ Optimizing :
     - fitness       :
     - mate          :
     - clone         :
+    - refresh       :
     - status        :
 
 
 TO-DO:
 
+
 Comments :
+
 
 Future Improvements :
 
@@ -70,9 +76,8 @@ class Individual:
         self._debug_mode = 0
         self._is_debug = False
 
-        self.ticker = ticker
-        self.chromosome = None
-        self.account = None
+        self.is_elite = False
+        self.lifespan = 0
 
         # Setup Debug Mode
         self._debug_mode = debug
@@ -91,7 +96,7 @@ class Individual:
         # Verify The Individual
         if self._is_debug:
             if self.verify() is False:
-                print("< ERR > : Failed to initialize Individual; verification failed!")
+                print("< ERR > : Individual : Failed to initialize Individual; verification failed!")
                 return
 
         # Initialization Complete!
@@ -129,22 +134,23 @@ class Individual:
 
         if self._is_debug:
             if price is None or timestamp is None:
-                print("< ERR > : Error in Individual step(), Invalid Data Dictionary.")
+                print("< ERR > : Individual : Error in Individual step(), Invalid Data Dictionary.")
                 return None
 
         # Get The Reaction From The Chromosome
         reaction = self.chromosome.react(row_dict)
 
+        # Verify The Reaction; If Necessary
         if self._is_debug:
             if reaction is None:
-                print("< ERR > : NoneType action received from Chromosome react() : {}.".format(reaction))
+                print("< ERR > : Individual : NoneType action received from Chromosome react() : {}.".format(reaction))
 
         # Use The Reaction To Take Action Via 'do()' Command; Obtain Feedback
         feedback = self.account.do(reaction, timestamp, price)
 
         if self._is_debug:
             if feedback is None:
-                print("< ERR > : NoneType feedback received from Account do() : {}.".format(feedback))
+                print("< ERR > : Individual : NoneType feedback received from Account do() : {}.".format(feedback))
 
         # Step Complete!
         return feedback
@@ -153,6 +159,9 @@ class Individual:
     Calculates The Fitness Of An Individual
     """
     def fitness(self):
+        # End The Trading Of This Account; Closes Any Open Positions
+        self.account.end()
+
         # Obtain Account Performance As Individual Fitness
         fitness = self.account.performance()
 
@@ -181,13 +190,33 @@ class Individual:
         return self.chromosome
 
     """
+    Resets The Account Of The Individual; Gets Rid Of Previous Trade Data
+    """
+    def refresh(self):
+        # Create A New Account
+        self.account = acco.Account(ticker=self.ticker, debug=self._debug_mode)
+        if self._is_debug:
+            if self.verify() is False:
+                print("< ERR > : Individual : Failed to refresh Individual; verification failed!")
+                return
+
+        # Reset Complete!
+        return
+
+    """
     Returns Dictionary Representation Of Individual's Current State
     """
     def status(self):
         # Format Individual Into Dictionary Object
         state = {
             "init": self.initialized,
-            "asset": self.ticker,
+            "debug_mode": self._debug_mode,
+            "is_debug": self._is_debug,
+
+            "ticker": self.ticker,
+            "is_elite": self.is_elite,
+            "lifespan": self.lifespan,
+
             "chromosome": self.chromosome.status(),
             "account": self.account.status(),
         }

@@ -7,19 +7,15 @@ Created : 11/22/2019
 Purpose :
 
 TO-DO :
-    - Sift through code and setup new debugging system.
-        + Simulator     :
-        + Habitat       :
-        + DataBook      :
-        + Population    :
-        + Individual    : DONE
-        + Chromosome    : DONE
-        + Allele        : DONE
+
     - Sift through code and setup new console reporting system.
         + Simulator     :
         + Habitat       :
         + DataBook      :
         + Population    :
+
+    - Finish Simulator
+    - Test Account Class
     - Update README.md
 
 Cleaning :
@@ -33,19 +29,12 @@ Cleaning :
         + DataBook
 
 TO-DO :
-    - Finish Debugger
-    - Finish Simulator
-    - Test Account Class
-    - Add Price Tracker To DataBook (More Specifically )
-    - Add Final Generation Elite Tracker
+
 
 Comments :
 
     - Might want to check the debug test files; as a lot has changed
-
-    - Elites might be getting mutated later on; also the accounts aren't getting reset!!!!
-
-    - Debug tests should test EVERY SINGLE FUNCTION; will need to enhance debug tests
+        + debug tests should test EVERY SINGLE FUNCTION; will need to enhance debug tests
 
     - helper files need to be optimized!
 
@@ -53,9 +42,6 @@ Comments :
         + is it ok to have multiple of the same tech_ind
         + what are the rules for chromosome crossovers
             * should they be forced to be diverse
-
-    - POSSIBLE ISSUE : Individuals are reacting to, and trading on the same close price
-        - at market close you calculate technical indicators, run simulation and perform actions at market open???
 
     - rename 'simulation' directory to 'world' (after merge with Raaz's branch)
     - place all relevant directories in new 'simulation' directory
@@ -66,6 +52,10 @@ Comments :
             + world
             * settings.py
             * parameters.py
+
+    - fix error messages to say what class the message is coming from
+
+    - need to further understand technical indicators; and how to read them in order to code them
 
 """
 # Debug Modes :
@@ -103,6 +93,6 @@ Comments :
 
 from analysis.simulator import simulator as sim
 
-simulator = sim.Simulator("MSFT", debug=2)
+simulator = sim.Simulator("MSFT", debug=3)
 simulator.run()
 

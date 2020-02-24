@@ -14,6 +14,8 @@ Development :
     - do            : DONE
     - long          : DONE
     - short         : DONE
+    - exit_position :
+    - end           :
     - log_trade     : DONE
     - history       : DONE
     - net_worth     : DONE
@@ -27,6 +29,8 @@ Testing :
     - do            : DONE
     - long          : DONE
     - short         : DONE
+    - exit_position :
+    - end           :
     - log_trade     : DONE
     - history       : DONE
     - net_worth     : DONE
@@ -38,8 +42,10 @@ Cleaning :
     - init          : DONE
     - verify        :       NEEDS IMPROVEMENT; CURRENTLY USELESS
     - do            : DONE
-    - long          :       NEEDS THOROUGH ACCOUNTING CHECK
-    - short         :       NEEDS THOROUGH ACCOUNTING CHECK
+    - long          :
+    - short         :
+    - exit_position :
+    - end           :
     - log_trade     : DONE
     - history       : DONE
     - net_worth     : DONE
@@ -51,9 +57,12 @@ TO-DO:
     - implement metrics functions in account 'metrics.py'
     - make 'balance' variable *private* (also other important variable that external classes that should not access)
 
+    - trade_history should be calculated in real-time
+
+    - implement streak cool down
+
 Comments :
     - All trades are currently dictionaries; at some point they should probably be converted to JSON strings
-    -
 
     - Should this class log it's state after every buy/sell; in order to track performance? would be costly
 
@@ -70,16 +79,20 @@ Comments :
     - what other metrics are important for measuring an investors performance
         + need to figure out what's the best way to implement all these metrics
 
-    - why should the account be limited to how much it can trade?
-        - risk
-        - but then bad and good behavior would distinguish more
-
-    - SHOULD WE GET RID OF HOLD? AND MAKE IT END POSITION???
-
     - trade volume shouldn't need to be passed to the buy/short functions
 
+    - only elites should call metrics()
+
+
+Future Improvements:
+    - Winning/Losing Trade Control: when...
+        - winning holding time & winning roi > n,r
+        - losing holding time & losing roi > n,r
+
 """
-import phenetics.account.account_metrics as acc_metrics
+
+from phenetics.account.helper import account_metrics as acc_metrics
+from phenetics.account.helper import account_ratios as acc_ratios
 import analysis.parameters as params
 
 
@@ -111,6 +124,7 @@ class Account(object):
 
         self.last_update = None
         self.last_price = None
+        self.prices = list([])
 
         # Setup Debug Mode
         self._debug_mode = debug
@@ -120,7 +134,7 @@ class Account(object):
         # Verify The Account
         if self._is_debug:
             if self.verify() is False:
-                print("< ERR > : Failed to initialize Account, verification failed!")
+                print("< ERR > : Account : Failed to initialize Account, verification failed!")
                 return
 
         # Initialization Complete!
@@ -145,14 +159,15 @@ class Account(object):
         # Update Variables
         self.last_update = timestamp
         self.last_price = price
+        self.prices.append(price)
 
         # Determine Action
-        if action == "BUY":
+        if action == "LONG":
             # enter long position, if possible
             success = self.long(timestamp, price, self.trade_volume)
             return success
 
-        elif action == "SELL":
+        elif action == "SHORT":
             # enter short position, if possible
             success = self.short(timestamp, price, self.trade_volume)
             return success
@@ -161,9 +176,14 @@ class Account(object):
             # hold current position (aka : do nothing)
             return True
 
+        elif action == "EXIT":
+            # exit current position, if possible
+            success = self.exit_position(timestamp, price)
+            return success
+
         # Handle Unrecognized Action
         if self._is_debug:
-            print("< ERR > : Unrecognized Action For Account do() : {}.".format(action))
+            print("< ERR > : Account : Unrecognized Action For Account do() : {}.".format(action))
         return None
 
     """
@@ -186,8 +206,7 @@ class Account(object):
             # Log Trade
             self.log_trade(timestamp, "EXIT_SHORT", price,
                            self.curr_position["quantity"],
-                           price * self.curr_position["quantity"],
-                           revenue)
+                           price * self.curr_position["quantity"])
 
             # Remove Position
             self.curr_position["action"] = ""
@@ -233,7 +252,7 @@ class Account(object):
             self.curr_cool_down = params.ACCOUNT_TRADE_COOL_DOWN
 
             # Log Trade
-            self.log_trade(timestamp, "LONG", price, volume / price, volume, -volume)
+            self.log_trade(timestamp, "LONG", price, volume / price, volume)
 
             # Long Complete!
             return True
@@ -257,8 +276,7 @@ class Account(object):
             # Log Trade
             self.log_trade(timestamp, "EXIT_LONG", price,
                            self.curr_position["quantity"],
-                           price * self.curr_position["quantity"],
-                           revenue)
+                           price * self.curr_position["quantity"])
 
             # Remove Position
             self.curr_position["action"] = ""
@@ -299,21 +317,84 @@ class Account(object):
             # Update Current Balance, Streak & Cool Down
             #   - a short is technically borrowing, but
             #   volume will be deducted since the bot owes
-            #   the volume to the lender
+            #   the volume to the lender; currently
             self.curr_balance -= volume
             self.curr_streak += 1
             self.curr_cool_down = params.ACCOUNT_TRADE_COOL_DOWN
 
             # Log Trade
-            self.log_trade(timestamp, "SHORT", price, volume / price, volume, -volume)
+            self.log_trade(timestamp, "SHORT", price, volume / price, volume)
 
             # Short Complete!
             return True
 
     """
+    Exit Any Current Positions
+    """
+    def exit_position(self, timestamp, price):
+
+        if self.curr_position["action"] == "":
+            return False
+
+        elif self.curr_position["action"] == "LONG":
+            # Calculate Revenue
+            revenue = price * self.curr_position["quantity"]
+
+            # Update Current Balance, Reset Streak & Cool Down
+            self.curr_balance += revenue
+            self.curr_streak = 0
+            self.curr_cool_down = 0
+
+            # Log Trade
+            self.log_trade(timestamp, "EXIT_LONG", price,
+                           self.curr_position["quantity"],
+                           price * self.curr_position["quantity"])
+
+            # Remove Position; Reset Values
+            self.curr_position["action"] = ""
+            self.curr_position["price"] = 0
+            self.curr_position["quantity"] = 0
+
+            return True
+
+        elif self.curr_position["action"] == "SHORT":
+            # Calculate Revenue
+            revenue = self.curr_position["price"] * self.curr_position["quantity"]
+            revenue += (self.curr_position["price"] - price) * self.curr_position["quantity"]
+
+            # Update Current Balance, Reset Streak & Cool Down
+            self.curr_balance += revenue
+            self.curr_streak = 0
+            self.curr_cool_down = 0
+
+            # Log Trade
+            self.log_trade(timestamp, "EXIT_SHORT", price,
+                           self.curr_position["quantity"],
+                           price * self.curr_position["quantity"])
+
+            # Remove Position; Reset Values
+            self.curr_position["action"] = ""
+            self.curr_position["price"] = 0
+            self.curr_position["quantity"] = 0
+
+            return True
+
+        else:
+            # handle unexpected value
+            return False
+
+    """
+    """
+    def end(self):
+
+        self.exit_position(self.last_update, self.last_price)
+
+        return
+
+    """
     Logs Trade To The Trade History As A JSON Object
     """
-    def log_trade(self, timestamp, action, price, quantity, volume, revenue):
+    def log_trade(self, timestamp, action, price, quantity, volume):
 
         # Format Trade As A Dictionary Object
         trade_dict = {
@@ -322,7 +403,6 @@ class Account(object):
             "price": price,
             "quantity": quantity,
             "volume": volume,
-            "revenue": revenue,
             "net_worth": self.net_worth()
         }
 
@@ -377,31 +457,26 @@ class Account(object):
     Used By Individual To Measure Account Fitness
     """
     def performance(self):
-        return acc_metrics.roi(params.ACCOUNT_INIT_BALANCE, self.net_worth())
+        return acc_ratios.roi(params.ACCOUNT_INIT_BALANCE, self.net_worth())
 
     """
     Returns Several Metrics Of The Accounts Behavior & Performance As A Dictionary Object
         - Obtained From 'account_metrics.py'
     """
     def metrics(self):
+
+        # Calculate General Trading Metrics; Also Obtain Trading History
+        general_metrics, trade_history = acc_metrics.trading_metrics(self.account_history)
+
+        # Calculate Technical Metrics; Ratios, etc.
+        technical_metrics = acc_ratios.trading_ratios(trade_history)
+
         # Format Metrics Into Dictionary Object
         summary = {
-            "trading_days": 0,
-            "trades": acc_metrics.account_statistics(self.account_history),
-            "ratios": {
-                "profit_factor": 0,
-                "gain_to_pain": 0,
-                "winning_pct": 0,
-                "payout_ratio": 0,
-                "cpc_index": 0,
-                "expectancy": 0,
-                "return_pct": 0,
-                "kelly_pct": 0,
-                "sharpe": 0,
-                "treynor": 0,
-                "sortino": 0,
-            },
-            "r_squared": 0
+            "trading_days": len(self.prices),
+            "fitness": self.performance(),
+            "general": general_metrics,
+            "technical": technical_metrics,
         }
 
         # Return Dictionary Object
@@ -414,13 +489,17 @@ class Account(object):
         # Format Account Into Dictionary Object
         state = {
             "init": self.initialized,
+            "debug_mode": self._debug_mode,
+            "is_debug": self._is_debug,
+
             "asset": self.ticker,
             "trade_volume": self.trade_volume,
+
             "start_balance": params.ACCOUNT_INIT_BALANCE,
+            "curr_balance": self.curr_balance,
             "end_balance": self.net_worth(),
-            "trade_history": self.history(),
+
             "performance": self.performance(),
-            "metrics": self.metrics(),
         }
 
         # Return Dictionary Object
