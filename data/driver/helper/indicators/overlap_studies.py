@@ -13,10 +13,10 @@ import numpy as np
 def BBANDS(raw_df, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
-    upperband, middleband, lowerband = BBANDS(raw_df.Close.values, timeperiod, nbdevup, nbdevdn, matype)
+
+    upperband, middleband, lowerband = ta.BBANDS(raw_df.Close.values, timeperiod, nbdevup, nbdevdn, matype)
     singleMerged = np.stack((upperband, middleband, lowerband), axis=-1)
     return singleMerged.tolist()
-
 
 def DEMA(raw_df, timeperiod=30):
     # extract necessary data from raw dataframe (close)
@@ -46,7 +46,7 @@ def MA(raw_df, timeperiod=30, matype=0):
 def MAMA(raw_df, fastlimit=0, slowlimit=0):
     # extract necessary data from raw dataframe (close)
     # returns 2 things
-    mama, fama = MAMA(raw_df.Close.values, fastlimit, slowlimit)
+    mama, fama = ta.MAMA(raw_df.Close.values, 1, 100)
     singleMerged = np.stack((mama, fama), axis=-1)
     return singleMerged.tolist()
 

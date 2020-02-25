@@ -32,10 +32,6 @@ def build_pure_dataframe(raw_df):
     return raw_df
 
 
-#def calculate_basic_indicators(raw_df):
-#    return list([])
-
-
 def calculate_momentum_indicators(raw_df):
     ADX = calc_mom.ADX(raw_df)
     ADXR = calc_mom.ADXR(raw_df)
@@ -47,9 +43,9 @@ def calculate_momentum_indicators(raw_df):
     CMO = calc_mom.CMO(raw_df)
     DX = calc_mom.DX(raw_df)
     MACD = calc_mom.MACD(raw_df)
-    #MACDEXT = calc_mom.MACDEXT(raw_df)
-    #MACDFIX = calc_mom.MACDFIX(raw_df)
-    #MFI = calc_mom.MFI(raw_df)
+    MACDEXT = calc_mom.MACDEXT(raw_df)
+    MACDFIX = calc_mom.MACDFIX(raw_df)
+    MFI = calc_mom.MFI(raw_df)
     MINUS_DI = calc_mom.MINUS_DI(raw_df)
     MINUS_DM = calc_mom.MINUS_DM(raw_df)
     MOM = calc_mom.MOM(raw_df)
@@ -61,9 +57,9 @@ def calculate_momentum_indicators(raw_df):
     ROCR = calc_mom.ROCR(raw_df)
     ROCR100 = calc_mom.ROCR100(raw_df)
     RSI = calc_mom.RSI(raw_df)
-    #STOCH = calc_mom.STOCH(raw_df)
-    #STOCHF = calc_mom.STOCHF(raw_df)
-    #STOCHRSI = calc_mom.STOCHRSI(raw_df)
+    STOCH = calc_mom.STOCH(raw_df)
+    STOCHF = calc_mom.STOCHF(raw_df)
+    STOCHRSI = calc_mom.STOCHRSI(raw_df)
     TRIX = calc_mom.TRIX(raw_df)
     ULTOSC = calc_mom.ULTOSC(raw_df)
     WILLR = calc_mom.WILLR(raw_df)
@@ -79,9 +75,9 @@ def calculate_momentum_indicators(raw_df):
     raw_df["CMO"] = CMO
     raw_df["DX"] = DX
     raw_df["MACD"] = MACD
-    #raw_df["MACDEXT"] = MACDEXT
-    #raw_df["MACDFIX"] = MACDFIX
-    #raw_df["MFI"] = MFI
+    raw_df["MACDEXT"] = MACDEXT
+    raw_df["MACDFIX"] = MACDFIX
+    raw_df["MFI"] = MFI
     raw_df["MINUS_DI"] = MINUS_DI
     raw_df["MINUS_DM"] = MINUS_DM
     raw_df["MOM"] = MOM
@@ -93,9 +89,9 @@ def calculate_momentum_indicators(raw_df):
     raw_df["ROCR"] = ROCR
     raw_df["ROCR100"] = ROCR100
     raw_df["RSI"] = RSI
-    #raw_df["STOCH"] = STOCH
-    #raw_df["STOCHF"] = STOCHF
-    #raw_df["STOCHRSI"] = STOCHRSI
+    raw_df["STOCH"] = STOCH
+    raw_df["STOCHF"] = STOCHF
+    raw_df["STOCHRSI"] = STOCHRSI
     raw_df["TRIX"] = TRIX
     raw_df["ULTOSC"] = ULTOSC
     raw_df["WILLR"] = WILLR
@@ -104,7 +100,7 @@ def calculate_momentum_indicators(raw_df):
 
 
 def calculate_overlap_studies(raw_df):
-    #BBANDS = calc_os.BBANDS(raw_df)
+    BBANDS = calc_os.BBANDS(raw_df)
     DEMA = calc_os.DEMA(raw_df)
     EMA = calc_os.EMA(raw_df)
     HT_TRENDLINE = calc_os.HT_TRENDLINE(raw_df)
@@ -121,7 +117,7 @@ def calculate_overlap_studies(raw_df):
     TEMA = calc_os.TEMA(raw_df)
     WMA = calc_os.WMA(raw_df)
 
-    #raw_df["BBANDS"] = BBANDS
+    raw_df["BBANDS"] = BBANDS
     raw_df["DEMA"] = DEMA
     raw_df["EMA"] = EMA
     raw_df["HT_TRENDLINE"] = HT_TRENDLINE
@@ -179,11 +175,11 @@ def calculate_volatility_indicators(raw_df):
 
 def calculate_volume_indicators(raw_df):
     #AD = calc_volu.AD(raw_df)
-    #ADOSC = calc_volu.ADOSC(raw_df)
-    #OBV = calc_volu.OBV(raw_df)
+    ADOSC = calc_volu.ADOSC(raw_df)
+    OBV = calc_volu.OBV(raw_df)
 
     #raw_df["AD"] = AD
-    #raw_df["ADOSC"] = ADOSC
-    #raw_df["OBV"] = OBV
+    raw_df["ADOSC"] = ADOSC
+    raw_df["OBV"] = OBV
 
     return raw_df

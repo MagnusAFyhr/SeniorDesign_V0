@@ -11,9 +11,9 @@ def AD(raw_df):
 def ADOSC(raw_df, fastperiod=3, slowperiod=10):
     # Chaikin A/D Oscillator
     # extract necessary data from raw dataframe (high, low, close, volume)
-    return ta.ADOSC(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, raw_df.Volume.values, fastperiod, slowperiod)
+    return ta.ADOSC(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, raw_df.Volume.values.astype(float), fastperiod, slowperiod)
 
 def OBV(raw_df):
     # On Balance Volume
     # extract necessary data from raw dataframe (close, volume)
-    return ta.OBV(raw_df.Close.values, raw_df.Volume.values)
+    return ta.OBV(raw_df.Close.values, raw_df.Volume.values.astype(float))

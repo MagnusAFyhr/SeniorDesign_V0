@@ -81,14 +81,14 @@ def MACDEXT(raw_df, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, si
 def MACDFIX(raw_df, signalperiod=9):
     # extract necessary data from raw dataframe (close)
     # returns 3 things
-    macd, macdsignal, macdhist = MACDFIX(raw_df.Close.values, signalperiod)
+    macd, macdsignal, macdhist = ta.MACDFIX(raw_df.Close.values, signalperiod)
     singleMerged = np.stack((macd, macdsignal, macdhist), axis=-1)
     return singleMerged.tolist()
 
 
 def MFI(raw_df, timeperiod=14):
     # extract necessary data from raw dataframe (high, low, close, volume)
-    return ta.MFI(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, raw_df.Volume.values, timeperiod)
+    return ta.MFI(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, raw_df.Volume.values.astype(float), timeperiod)
 
 
 def MINUS_DI(raw_df, timeperiod=14):
@@ -149,7 +149,7 @@ def RSI(raw_df, timeperiod=14):
 def STOCH(raw_df, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0):
     # extract necessary data from raw dataframe (high, low, close)
     # returns 2 columns
-    slowk, slowd = STOCH(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype)
+    slowk, slowd = ta.STOCH(raw_df.High.values, raw_df.Low.values, raw_df.Close.values, fastk_period, slowk_period, slowk_matype) #, slowd_period, slowd_matype)
     singleMerged = np.stack((slowk, slowd), axis=-1)
     return singleMerged.tolist()
 

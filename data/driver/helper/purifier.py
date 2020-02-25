@@ -29,7 +29,7 @@ def build_pure_csv(ticker, raw_df):
     pure_df = calc.build_pure_dataframe(raw_df)
 
     # write the pure dataframe to a csv in pure directory
-    pure_df.to_csv("data/pure/pure_{}.csv".format(ticker), sep=',')
+    # pure_df.to_csv("data/pure/pure_{}.csv".format(ticker), sep=',')
 
     return pure_df
 
