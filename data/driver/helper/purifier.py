@@ -1,27 +1,9 @@
 from pathlib import Path
 import pandas as pd
-import numpy as np
-import data.driver.helper.calculator as ti_calc
-
-raw_columns = ['Date',
-               'Open',
-               'High',
-               'Low',
-               'Close',
-               'Adj Close',
-               'Volume']
-
-pure_columns = ['Date',
-                'Open',
-                'High',
-                'Low',
-                'Close',
-                'Adj Close',
-                'Volume']
+import data.driver.helper.calculator as calc
 
 
 def get_pure_databook(ticker):
-
     # check if ticker has an existing 'pure' type
     # if so, return the already existing csv as a pandas 'DataFrame'
     if pure_dataset_exists(ticker):
@@ -32,8 +14,8 @@ def get_pure_databook(ticker):
     # if so, create a pure csv from the raw csv
     # then return the pandas 'DataFrame' of the pure csv
     if raw_dataset_exists(ticker):
-        raw_df = pd.read_csv("data/raw/{}.csv".format(ticker))
-        pure_df = build_pure_csv(raw_df)
+        raw_df = pd.read_csv("data/raw/{}.csv".format(ticker), sep=',')
+        pure_df = build_pure_csv(ticker, raw_df)
 
         return pure_df
 
@@ -42,21 +24,14 @@ def get_pure_databook(ticker):
     return None
 
 
-def build_pure_csv(raw_df):
-    # initialize pure dataframe
-    pure_df = pd.DataFrame(columns=pure_columns)
-    pure_df.fillna(0)
+def build_pure_csv(ticker, raw_df):
+    # build the pure dataframe
+    pure_df = calc.build_pure_dataframe(raw_df)
 
-    #Writes to the pure csv
+    # write the pure dataframe to a csv in pure directory
+    pure_df.to_csv("data/pure/pure_{}.csv".format(ticker), sep=',')
 
-    # for each row of pure data...
-    for index, pure_row in pure_df.iterrows():
-        print(pure_row)
-
-    # verify pure dataframe
-    # write new pure dataframe to pure csv in pure directory
-
-    return raw_df
+    return pure_df
 
 
 def pure_dataset_exists(ticker):
@@ -77,11 +52,3 @@ def raw_dataset_exists(ticker):
 
     # otherwise, return false
     return False
-
-
-def get_raw_columns():
-    return raw_columns.copy()
-
-
-def get_pure_columns():
-    return pure_columns.copy()

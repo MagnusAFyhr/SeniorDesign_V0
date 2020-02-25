@@ -29,9 +29,7 @@ def build_pure_dataframe(raw_df):
     raw_df = calculate_volatility_indicators(raw_df)
     raw_df = calculate_volume_indicators(raw_df)
 
-    pure_df = raw_df
-
-    return pure_df
+    return raw_df
 
 
 #def calculate_basic_indicators(raw_df):

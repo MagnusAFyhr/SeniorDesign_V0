@@ -16,11 +16,11 @@ from debug import individual_test as ind_tst
 from debug import population_test as pop_tst
 from debug import databook_test as data_tst
 from debug import habitat_test as hbt_tst
-from debug import test_data_purity as tdp
+from data.driver.helper.purifier import get_pure_databook as gpd
 
 import simulation.habitat.habitat as habi
 
-
+""""
 def run_basic_tests():
 
     # test allele integrity
@@ -64,17 +64,10 @@ def run_simulation(ticker):
         habitat.plot(gen_stats)
 
     pass
+"""
 
 # ale_tst.test_allele()
 #run_simulation("MSFT")
 
-def csv_write(ticker):
-    df = pd.read_csv("MSFT.csv", sep=',')
-    df = tdp.insertIndicators(df)
-    df.to_csv("PURE_TEST", sep='\t')
-    pass
 
-
-
-
-csv_write("MSFT.csv")
+gpd("MSFT")
