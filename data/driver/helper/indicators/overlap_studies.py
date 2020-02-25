@@ -46,14 +46,14 @@ def MA(raw_df, timeperiod=30, matype=0):
 def MAMA(raw_df, fastlimit=0, slowlimit=0):
     # extract necessary data from raw dataframe (close)
     # returns 2 things
-    mama, fama = ta.MAMA(raw_df.Close.values, 1, 100)
+    mama, fama = ta.MAMA(raw_df.Close.values, fastlimit, slowlimit)
     singleMerged = np.stack((mama, fama), axis=-1)
     return singleMerged.tolist()
 
 
-def MAVP(raw_df, periods, minperiod=2, maxperiod=30, matype=0):
+def MAVP(raw_df, minperiod=2, maxperiod=30, matype=0):
     # extract necessary data from raw dataframe (close)
-    return ta.MAVP(raw_df.Close.values, periods, minperiod, maxperiod, matype)
+    return ta.MAVP(raw_df.Close.values, raw_df.Open.values, minperiod, maxperiod, matype)
 
 
 def MIDPOINT(raw_df, timeperiod=14):

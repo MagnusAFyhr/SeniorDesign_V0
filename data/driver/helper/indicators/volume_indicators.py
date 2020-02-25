@@ -2,6 +2,7 @@
 http://mrjbq7.github.io/ta-lib/func_groups/volume_indicators.html
 """
 import talib as ta
+import numpy as np
 
 def AD(raw_df):
     # Chaikin A/D Line
