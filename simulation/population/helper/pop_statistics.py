@@ -1,40 +1,22 @@
 """
-
-Title : pop_statistics.py
-Author : Magnus Fyhr
-Created : 1/7/2020
-
-Purpose :
-
-Development :
-
-
-Testing :
-
-
-TO-DO:
-    - add account statistics
-
-    - change 'stats_dict' to be hierarchical
-        + fitness
-            * pop_size
-            * best_fit
-            * mean_elite_fit
-            * mean_fit
-            * worst_fit
-            * stdev_fit
-        + diversity
-            * allele_sdi
-            * chrom_sdi
-        + performance
-            + overall
-            + elites
-
-
+WHAT DOES THIS FILE DO
 """
 
 
 def population_statistics(population):
+
+    # create json object
+    json_stats = {
+        "pop_size": None,
+        "pop_data": None,
+        "sum": None,
+        "best": None,
+        "worst": None,
+        "mean": None,
+        "std": None
+    }
+
+    population = rank_population(population)
 
     # get population size
     pop_size = len(population)
@@ -46,10 +28,10 @@ def population_statistics(population):
     sum_fit = sum(pop_fit_data)
 
     # get population best fitness
-    best_fit = max(pop_fit_data)  # population[0].fitness()
+    best_fit = population[0].fitness()
 
     # get population worst fitness
-    worst_fit = min(pop_fit_data)  # population[pop_size - 1].fitness()
+    worst_fit = population[pop_size - 1].fitness()
 
     # get population mean fitness
     mean_fit = sum_fit / pop_size
@@ -57,32 +39,16 @@ def population_statistics(population):
     # get population standard deviation
     std = population_stand_dev(population, mean_fit)
 
-    # get allele and chromosome diversities
-    allele_diversity, chromosome_diversity = population_diversity(population)
+    # load json object
+    json_stats["pop_size"] = pop_size
+    json_stats["pop_data"] = pop_fit_data
+    json_stats["sum"] = sum_fit
+    json_stats["best"] = best_fit
+    json_stats["worst"] = worst_fit
+    json_stats["mean"] = mean_fit
+    json_stats["std"] = std
 
-    # get previous population elites' mean fitness
-    elites_overall_stats, elites_stats = analyze_elite_performance(population)
-
-    # get elite mean fitness
-    mean_elite_fit = 0
-    if elites_overall_stats is not None:
-        mean_elite_fit = elites_overall_stats["fitness"]
-
-    # create dictionary object
-    stats_dict = dict([])
-    stats_dict["sum_fit"] = sum_fit
-    stats_dict["best_fit"] = best_fit
-    stats_dict["worst_fit"] = worst_fit
-    stats_dict["mean_elite_fit"] = mean_elite_fit
-    stats_dict["mean_fit"] = mean_fit
-    stats_dict["fit_stdev"] = std
-    stats_dict["allele_sdi"] = allele_diversity
-    stats_dict["chrom_sdi"] = chromosome_diversity
-    stats_dict["elites_overall_stats"] = elites_overall_stats
-    stats_dict["elites_stats"] = elites_stats
-    stats_dict["market_stats"] = None
-
-    return stats_dict
+    return json_stats
 
 
 def population_stand_dev(population, mean_fitness):
@@ -98,103 +64,20 @@ def population_stand_dev(population, mean_fitness):
     return stand_dev
 
 
-def population_diversity(population):
+def rank_population(population):
+    n = len(population)
 
-    # create data sets
-    allele_distributions = dict()
-    allele_set_distributions = list([])
-    for citizen in population:
-        # create dictionary for allele set
-        set_dict = dict([])
+    # Traverse through all array elements
+    for i in range(n):
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+            # traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if population[j].fitness() < population[j + 1].fitness():
+                temp = population[j]
+                population[j] = population[j + 1]
+                population[j + 1] = temp
 
-        allele_set = citizen.chromosome.alleles
-
-        # populate dictionaries
-        for allele in allele_set:
-            # populate alleles list
-            if allele.tech_ind in allele_set:
-                allele_distributions[allele.tech_ind] += 1
-            else:
-                allele_distributions[allele.tech_ind] = 1
-
-            # populate set dictionary
-            if allele.tech_ind in set_dict:
-                set_dict[allele.tech_ind] += 1
-            else:
-                set_dict[allele.tech_ind] = 1
-
-        # populate allele sets list with set dictionary
-        allele_set_distributions.append(set_dict)
-
-    # allele pool diversity (Simpson's Diversity Index)
-    numerator = 0
-    total_alleles = 0
-    for _, value in allele_distributions.items():
-        numerator += value * (value - 1)
-        total_alleles += value
-    denominator = total_alleles * (total_alleles - 1)
-    allele_pool_sdi = 1 - (numerator / denominator)
-
-    # chromosome internal allele set diversity (Simpson's Diversity Index)
-    chromosome_count = len(allele_set_distributions)
-    sum_chromosome_sdi = 0
-    for allele_set in allele_set_distributions:
-        numerator = 0
-        total_alleles = 0
-        for _, value in allele_set.items():
-            numerator += value * (value - 1)
-            total_alleles += value
-        denominator = total_alleles * (total_alleles - 1)
-        chromosome_sdi = 1 - (numerator / denominator)
-        sum_chromosome_sdi += chromosome_sdi
-    average_chromosome_sdi = sum_chromosome_sdi / chromosome_count
-
-    return allele_pool_sdi, average_chromosome_sdi
-
-
-def analyze_elite_performance(population):
-
-    # obtain previous generation's elites from population; only get their fitness
-    elites_stats = list([])
-    for citizen in population:
-        if citizen.is_elite:
-            elites_stats.append(citizen.account.metrics())
-
-    # get elite count
-    elite_count = len(elites_stats)
-    if elite_count == 0:
-        return None, None
-
-    # sum all elite stats then calculate mean
-    sum_elite_stats = elites_stats[0].copy()
-    for i in range(1, elite_count - 1):
-        sum_dict(sum_elite_stats, elites_stats[i])
-
-    # average only the "avg_stat" keys
-    average_dict(sum_elite_stats, len(elites_stats))
-
-    # done; return elites mean fitness
-    return sum_elite_stats, elites_stats
-
-
-def sum_dict(dict1, dict2):
-    for key, value in dict2.items():
-        if isinstance(value, dict):
-            sum_dict(dict1[key], value)
-        else:
-            if "most" in key or "high" in key:
-                dict1[key] = max(dict1[key], dict2[key])
-            else:
-                dict1[key] += value
-
-
-def average_dict(d, count):
-    for key, value in d.items():
-        if isinstance(value, dict):
-            average_dict(d[key], count)
-        else:
-            if "avg" in key or "pct" in key or "fitness" in key:
-                d[key] /= count
-
-
+    return population
 

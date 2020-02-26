@@ -32,7 +32,6 @@ This class will definitely need to be cleaned, commented and improved
 """
 
 import phenetics.account.account as acco
-import analysis.parameters as params
 import time
 import random
 
@@ -185,8 +184,8 @@ def test_logging(difficulty):
                 "timestamp": timestamp,
                 "action": trade_action,
                 "price": trade_price,
-                "quantity": params.ACCOUNT_TRADE_VOLUME / trade_price,
-                "volume": params.ACCOUNT_TRADE_VOLUME,
+                "quantity": account.def_volume / trade_price,
+                "volume": account.def_volume,
             }
             trade_list.append(trade_json)
             timestamp += 1
@@ -334,8 +333,8 @@ def test_accounting(difficulty):
                 "timestamp": timestamp,
                 "action": trade_action,
                 "price": trade_price,
-                "quantity": params.ACCOUNT_TRADE_VOLUME / trade_price,
-                "volume": params.ACCOUNT_TRADE_VOLUME,
+                "quantity": account.def_volume / trade_price,
+                "volume": account.def_volume,
             }
             trade_list.append(trade_json)
             timestamp += 1
@@ -344,12 +343,12 @@ def test_accounting(difficulty):
         balance_history = list([])
         for trade in trade_list:
             old_balance = account.balance()
-
+        
             # Execute Trade
             account.do(trade["action"], trade["timestamp"], trade["price"])
-
+            
             new_balance = account.balance()
-
+            
             # Log Balances To Balance List
             balance_history.append([trade["timestamp"], old_balance, new_balance])
 
@@ -442,109 +441,3 @@ def test_accounting(difficulty):
 
     # Return Boolean Test Result
     return accounting_test
-
-
-def test_accuracy(difficulty):
-    # Create Sample Size Based On Difficulty & Trade Count Per Sample
-    trade_count = 20
-
-    # Make Dummy Data
-    trade_types = ["BUY", "SELL", "HOLD"]
-
-    # Test Trade History
-    accuracy_test = True
-    fail_type = ""
-    fail_data = None
-    for i in range(difficulty):
-        # Initialize Test Account
-        account = acco.Account("TEST")
-
-        # Make Random Trade List Data
-        trade_list = list([])
-        timestamp = 0
-        for _ in range(trade_count):
-            # Generate a random data
-            trade_price = 1.00  # random.uniform(1, 2)
-            trade_action = random.choice(trade_types)
-            trade_json = {
-                "timestamp": timestamp,
-                "action": trade_action,
-                "price": trade_price,
-                "quantity": params.ACCOUNT_TRADE_VOLUME / trade_price,
-                "volume": params.ACCOUNT_TRADE_VOLUME,
-            }
-            trade_list.append(trade_json)
-            timestamp += 1
-
-        # Simulate Trade List; Log Balances To Test Accounting
-        balance_history = list([])
-        for trade in trade_list:
-            old_balance = account.balance()
-
-            # Execute Trade
-            account.do(trade["action"], trade["timestamp"], trade["price"])
-
-            new_balance = account.balance()
-            net_worth = account.net_worth()
-
-            # Log Balances To Balance List
-            balance_info = {
-                'timestamp': trade["timestamp"],
-                'old_balance': old_balance,
-                'net_worth': net_worth,
-                'new_balance': new_balance
-            }
-            balance_history.append(balance_info)
-
-            # check negative balance
-            if new_balance < 0:
-                accuracy_test = False
-                fail_type = "NEG_BALANCE"
-                fail_data = [account.trade_history, balance_history]
-                break
-
-        # Check that test has not already failed
-        if not accuracy_test:
-            break
-
-        # Print Balance History
-        account_history = account.history()
-        print(" < OUT > : Account Functionality Analysis.")
-        print(f" <     > : [{'Timestamp':12}, {'Action':12}, {'Price':12}, {'Quantity':12}, {'Volume':12}, "
-              f"{'Old Balance':12}, {'Net Worth'}, {'New Balance':12}]")
-        print(" <     > : ({}, {})".format(len(balance_history), len(account_history)))
-        for l in range(max(len(balance_history), len(account_history))):
-            info = {
-                'timestamp': "-------",
-                'action': "-------",
-                'price': "-------",
-                'quantity': "-------",
-                'volume': "-------",
-                'old_balance': "-------",
-                'net_worth': "-------",
-                'new_balance': "-------"
-            }
-            if l < len(account_history):
-                info['timestamp'] = account_history[l]["timestamp"]
-                info['action'] = account_history[l]["action"]
-                info['price'] = account_history[l]["price"]
-                info['quantity'] = account_history[l]["quantity"]
-                info['volume'] = account_history[l]["volume"]
-
-                for n in range(len(balance_history)):
-                    if account_history[l]["timestamp"] == balance_history[n]["timestamp"]:
-                        info_2 = balance_history[n]
-                        info["old_balance"] = info_2["old_balance"]
-                        info["net_worth"] = info_2["net_worth"]
-                        info["new_balance"] = info_2["new_balance"]
-                        break
-
-                print(f" <     > : [{info['timestamp']:12}, {info['action']:12}, "
-                      f"{info['price']:12}, {info['quantity']:12}, {info['volume']:12}, "
-                      f"{info['old_balance']:12}, {info['net_worth']}, {info['new_balance']:12}]")
-            info.clear()
-
-    # Print Test Result
-
-    # Return Boolean Test Result
-    return accuracy_test

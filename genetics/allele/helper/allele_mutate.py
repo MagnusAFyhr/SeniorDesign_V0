@@ -23,9 +23,7 @@ Testing :
     - mutate_power      : DONE
 
 """
-
 from genetics.allele.helper import allele_structure, allele_symbols
-from analysis import parameters as params
 import random
 
 
@@ -50,14 +48,14 @@ def mutate_position(position, mutate_prob):
         return position
 
     # Mutate position
-    if position == allele_symbols.RAW_LONG:
-        return allele_symbols.RAW_SHORT
+    if position == allele_symbols.RAW_BUY:
+        return allele_symbols.RAW_SELL
 
-    elif position == allele_symbols.RAW_SHORT:
-        return allele_symbols.RAW_LONG
+    elif position == allele_symbols.RAW_SELL:
+        return allele_symbols.RAW_BUY
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error mutating Allele : Invalid Position : {}.".format(position))
+    print("< ERR > : Error mutating allele : Invalid Position : {}.".format(pos_char))
     return None
 
 
@@ -70,7 +68,7 @@ def mutate_tech_ind(tech_ind, mutate_prob):
         return tech_ind
 
     # Mutate technical indicator
-    values = list(params.AVAIL_TECH_IND.values())
+    values = list(allele_symbols.TECHNICAL_INDICATORS.values())
     tech_ind = random.choice(values)
 
     # Return mutated technical indicator
@@ -91,7 +89,7 @@ def mutate_threshold(threshold, mutate_prob, mutate_size):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Allele : Error mutating Allele : Invalid Threshold : {}.".format(threshold))
+        print("< ERR > : Error mutating allele : Invalid Threshold : {}.".format(threshold))
         return None
 
     # Mutate threshold
@@ -119,7 +117,7 @@ def mutate_condition(condition, mutate_prob):
         return allele_symbols.LESS_THAN
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error mutating Allele : Invalid Condition : {}.".format(condition))
+    print("< ERR > : Error mutating allele : Invalid Condition : {}.".format(condition))
     return None
 
 
@@ -137,7 +135,7 @@ def mutate_power(power, mutate_prob):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Allele : Error mutating Allele : Invalid Power : {}.".format(power))
+        print("< ERR > : Error mutating allele : Invalid Power : {}.".format(power))
         return None
 
     # Mutate Power

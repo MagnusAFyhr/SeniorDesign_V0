@@ -5,50 +5,51 @@ Title : chrom_encode.py
 Purpose : Set of functions responsible for handling the encode operations of a chromosome object's state
 
 Development :
-    - encode_long_limit  : DONE
-    - encode_short_limit : DONE
+    - encode_buy_limit  : DONE
+    - encode_sell_limit : DONE
     - encode_alleles    : DONE
 
 Testing
-    - encode_long_limit  :
-    - encode_short_limit :
+    - encode_buy_limit  :
+    - encode_sell_limit :
     - encode_alleles    :
 
 """
 
 
-def encode_long_limit(long_limit):
-    """ Converts the long limit back to an encoding """
-    # Check if long limit is a valid int
+def encode_buy_limit(buy_limit):
+    """ Converts the buy limit back to an encoding """
+    # Check if buy limit is a valid int
     try:
-        int(long_limit)
+        int(buy_limit)
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Chromosome : Error encoding Chromosome : Buy Limit : {}.".format(long_limit))
+        print("< ERR > : Error encoding chromosome : Buy Limit : {}.".format(buy_limit))
         return None
 
-    # Return long_limit as string
-    return str(int(long_limit))
+    # Return buy_limit as string
+    return str(int(buy_limit))
 
 
-def encode_short_limit(short_limit):
-    """ Converts the short limit back to an encoding """
-    # Check if short limit is a valid int
+def encode_sell_limit(sell_limit):
+    """ Converts the sell limit back to an encoding """
+    # Check if sell limit is a valid int
     try:
-        int(short_limit)
+        int(sell_limit)
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Chromosome : Error encoding Chromosome : Sell Limit : {}.".format(short_limit))
+        print("< ERR > : Error encoding chromosome : Sell Limit : {}.".format(sell_limit))
         return None
 
-    # Return short_limit as string
-    return str(int(short_limit))
+    # Return sell_limit as string
+    return str(int(sell_limit))
 
 
 def encode_alleles(alleles):
     """ Converts the alleles back to an encoding """
+    # Convert all alleles back to an encoding
     encodings = list([])
     for allele in alleles:
 
@@ -61,7 +62,7 @@ def encode_alleles(alleles):
 
         else:
             # Otherwise, return NoneType
-            print("< ERR > : Chromosome : Error encoding Chromosome : Allele encoding failed : {}.".format(allele.encoding))
+            print("< ERR > : Error encoding chromosome : Allele encoding failed : {}.".format(allele.encoding))
             return None
 
     # Return set of encoded alleles

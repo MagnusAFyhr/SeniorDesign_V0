@@ -15,27 +15,25 @@ Testing :
 """
 
 from genetics.allele.helper import allele_structure, allele_symbols
-from analysis import parameters as params
 import random
 
 
-def random_encoding(tech_ind=""):
+def random_encoding():
     """ Builds a completely random encoding"""
 
     # Generate random position
     r_pos = random.randint(0, 1)
     if r_pos == 0:
-        pos = allele_symbols.LONG
+        pos = allele_symbols.BUY
     else:
-        pos = allele_symbols.SHORT
+        pos = allele_symbols.SELL
 
     # Generate random technical indicator
-    if tech_ind not in params.AVAIL_TECH_IND:
-        keys = list(params.AVAIL_TECH_IND.keys())
-        tech_ind = random.choice(keys)
+    keys = list(allele_symbols.TECHNICAL_INDICATORS.keys())
+    tech_ind = random.choice(keys)
 
     # Generate random threshold
-    n_thresh = random.uniform(params.ALLELE_THRESH_RAND_MIN, params.ALLELE_THRESH_RAND_MAX)
+    n_thresh = random.uniform(0, 999.99)
     thresh_len = allele_structure.THRESH_END - allele_structure.THRESH_START
     thresh = str(n_thresh)[0:thresh_len]
 
