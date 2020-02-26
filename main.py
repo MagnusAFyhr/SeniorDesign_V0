@@ -1,98 +1,73 @@
 """
 
-Title : main.py
-Author : Magnus Fyhr
-Created : 11/22/2019
+title : main.py
+author : Magnus Fyhr
+created : 11/22/2019
 
-Purpose :
-
-TO-DO :
-
-    - Sift through code and setup new console reporting system.
-        + Simulator     :
-        + Habitat       :
-        + DataBook      :
-        + Population    :
-
-    - Finish Simulator
-    - Test Account Class
-    - Update README.md
-
-Cleaning :
-    - Optimizations
-    - Add & Clean Comments Throughout Primary Code Base
-    - Place Primary Code Base In a Sub-Directory; named 'algorithm' (after all branches are merged)
-    - Fill in purposes for each class file header
-    - Clean the following classes...
-        + Habitat
-        + Population
-        + DataBook
-
-TO-DO :
-
-
-Comments :
-
-    - Might want to check the debug test files; as a lot has changed
-        + debug tests should test EVERY SINGLE FUNCTION; will need to enhance debug tests
-
-    - helper files need to be optimized!
-
-    - concerned about the set of alleles in a chromosome
-        + is it ok to have multiple of the same tech_ind
-        + what are the rules for chromosome crossovers
-            * should they be forced to be diverse
-
-    - rename 'simulation' directory to 'world' (after merge with Raaz's branch)
-    - place all relevant directories in new 'simulation' directory
-        + simulation
-            + simulator
-            + genetics
-            + phenetics
-            + world
-            * settings.py
-            * parameters.py
-
-    - fix error messages to say what class the message is coming from
-
-    - need to further understand technical indicators; and how to read them in order to code them
+purpose :
 
 """
-# Debug Modes :
-#  0 : Minimalistic Console Output                                  ***** ***** ***** *****
-#       - Includes Generic Header Of Important Parameters                                       *****
-#       - Useful For When Running Multiple Simulations At Once
-#       - No Error Checking Anywhere
-#  1 : 0 + Overall Simulation Progress                              ***** ***** ***** *****
-#       - Includes Generic Header Of Important Parameters At Beginning Of Run                   *****
-#       - Includes Detailed Description Of DataBook Being Used                                  *****
-#       - Useful For When Running A Single Simulation
-#       - Should Have Footer Message For Average Runtime, etc.
-#       - Prints Progress & Completion Estimate
-#       - No Error Checking Anywhere
-#  2 : 1 + Habitat Console Reporting
-#       - Generational Population Statistics
-#       - Focuses On The Algorithm & Its Generational Status
-#       - No Error Checking Anywhere
-#  3 : 2 + Performance Console Reporting                            ***** ***** ***** *****
-#       - Generational Account Performance & Relevant Statistics                                *****
-#       - Focuses On The Financial Aspect Of Things
-#       - No Error Checking Anywhere
-#  4 : Specialized Runtime Debugger
-#       - Outputs Population Level Runtimes To Console
-#       - No Generational Statistics; JUST RUNTIMES
-#       - No Error Checking Anywhere
+import pandas as pd
 
-#  5 : Habitat Error Checking
-#  6 : 5 + DataBook Error Checking
-#  7 : 6 + Population Error Checking
-#  8 : 7 + Individual Error Checking
-#  9 : 8 + Account Error Checking
-# 10 : 9 + Allele & Chromosome Error Checking; Full System Debug Mode
+from debug import allele_test as ale_tst
+from debug import chromosome_test as chr_tst
+from debug import account_test as acc_tst
+from debug import individual_test as ind_tst
+from debug import population_test as pop_tst
+from debug import databook_test as data_tst
+from debug import habitat_test as hbt_tst
+from data.driver.helper.purifier import get_pure_databook as gpd
+
+import simulation.habitat.habitat as habi
+
+""""
+def run_basic_tests():
+
+    # test allele integrity
+    ale_tst.test_allele()
+
+    # test chromosome integrity
+    chr_tst.test_chromosome()
+
+    # test account integrity
+    acc_tst.test_account()
+
+    # test individual integrity
+    ind_tst.test_individual()
+
+    # test population integrity
+    pop_tst.test_population()
+
+    # test databook integrity
+    data_tst.test_databook()
+
+    # test habitat integrity
+    hbt_tst.test_habitat()
+
+    return
 
 
-from analysis.simulator import simulator as sim
+def run_advanced_tests():
 
-simulator = sim.Simulator("MSFT", debug=3)
-simulator.run()
+    # test population diversity
 
+    pass
+
+
+def run_simulation(ticker):
+
+    habitat = habi.Habitat(ticker)
+
+    i = 0
+    while i < 40:
+        gen_stats = habitat.simulate_generation()
+        habitat.plot(gen_stats)
+
+    pass
+"""
+
+# ale_tst.test_allele()
+#run_simulation("MSFT")
+
+
+gpd("MSFT")
