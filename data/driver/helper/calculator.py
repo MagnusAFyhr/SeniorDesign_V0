@@ -106,7 +106,7 @@ def calculate_overlap_studies(raw_df):
     HT_TRENDLINE = calc_os.HT_TRENDLINE(raw_df)
     KAMA = calc_os.KAMA(raw_df)
     MA = calc_os.MA(raw_df)
-    #MAMA = calc_os.MAMA(raw_df)
+    MAMA = calc_os.MAMA(raw_df)
     MAVP = calc_os.MAVP(raw_df)
     MIDPOINT = calc_os.MIDPOINT(raw_df)
     MIDPRICE = calc_os.MIDPRICE(raw_df)
@@ -123,7 +123,7 @@ def calculate_overlap_studies(raw_df):
     raw_df["HT_TRENDLINE"] = HT_TRENDLINE
     raw_df["KAMA"] = KAMA
     raw_df["MA"] = MA
-    #raw_df["MAMA"] = MAMA
+    raw_df["MAMA"] = MAMA
     raw_df["MAVP"] = MAVP
     raw_df["MIDPOINT"] = MIDPOINT
     raw_df["MIDPRICE"] = MIDPRICE
@@ -174,11 +174,11 @@ def calculate_volatility_indicators(raw_df):
 
 
 def calculate_volume_indicators(raw_df):
-    #AD = calc_volu.AD(raw_df)
+    AD = calc_volu.AD(raw_df)
     ADOSC = calc_volu.ADOSC(raw_df)
     OBV = calc_volu.OBV(raw_df)
 
-    #raw_df["AD"] = AD
+    raw_df["AD"] = AD
     raw_df["ADOSC"] = ADOSC
     raw_df["OBV"] = OBV
 

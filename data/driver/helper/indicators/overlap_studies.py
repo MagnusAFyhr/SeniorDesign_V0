@@ -43,7 +43,7 @@ def MA(raw_df, timeperiod=30, matype=0):
     return ta.MA(raw_df.Close.values, timeperiod, matype)
 
 
-def MAMA(raw_df, fastlimit=0, slowlimit=0):
+def MAMA(raw_df, fastlimit=0.5, slowlimit=0.05):
     # extract necessary data from raw dataframe (close)
     # returns 2 things
     mama, fama = ta.MAMA(raw_df.Close.values, fastlimit, slowlimit)
