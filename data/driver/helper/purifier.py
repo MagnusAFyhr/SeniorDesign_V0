@@ -7,7 +7,7 @@ def get_pure_databook(ticker):
     # check if ticker has an existing 'pure' type
     # if so, return the already existing csv as a pandas 'DataFrame'
     if pure_dataset_exists(ticker):
-        pure_df = pd.read_csv("data/pure/pure_{}.csv".format(ticker))
+        pure_df = pd.read_csv("data/pure/pure_{}.csv".format(ticker), sep=',')
         return pure_df
 
     # otherwise, check if ticker has an available 'raw' type
