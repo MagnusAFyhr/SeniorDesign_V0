@@ -32,7 +32,7 @@ def should_mutate(mutate_prob):
 
 
 def mutate_limit(limit, mutate_prob, mutate_size):
-    """ Obtains mutation of buy/sell limit """
+    """ Obtains mutation of long/short limit """
 
     # Check if mutation should occur
     if not should_mutate(mutate_prob):
@@ -45,7 +45,7 @@ def mutate_limit(limit, mutate_prob, mutate_size):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Error mutating chromosome : Invalid Limit : {}.".format(limit))
+        print("< ERR > : Chromosome : Error mutating Chromosome : Invalid Limit : {}.".format(limit))
         return None
 
     # Mutate limit
@@ -54,7 +54,7 @@ def mutate_limit(limit, mutate_prob, mutate_size):
     mutation = random.randint(-mutate_size, mutate_size)
     mut_limit += mutation
 
-    # Return mutated buy/sell limit
+    # Return mutated long/short limit
     return mut_limit
 
 
@@ -78,7 +78,7 @@ def mutate_alleles(alleles, mutate_prob):
 
             else:
                 # Otherwise, return NoneType
-                print("< ERR > : Error mutating chromosome : Invalid allele mutation : {}.".format(allele.encoding))
+                print("< ERR > : Chromosome : Error mutating Chromosome : Invalid Allele mutation : {}.".format(allele.encoding))
                 return None
 
         else:

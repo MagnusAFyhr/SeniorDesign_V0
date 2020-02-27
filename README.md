@@ -32,10 +32,16 @@ of a given stock to provide returns that result in a consistent positive monthly
 ## Project Breakdown
 - Directory Structure
 ```
++ analysis
+    + experiment
+    + simulator
 + data
     + driver
     + pure
     + raw
++ debug
+    + components
+    ...
 + genetics
     + allele
     + chromosome
@@ -70,6 +76,7 @@ README.md
 - Individual
 - Account
 - Population
+- DataBook
 - Habitat
 ```
 ## Development
@@ -78,14 +85,17 @@ README.md
 01-10-2020 : First prototype complete! Needs technical indicators.
 ...
 ```
-- To-do List
+- To-Do List
 ```
-- ...
+- Update README.md
+- Finish Simulation Tool
+- Finish Technical Indicator Tool
+- Add dynamic technical indicator support for allele
 - ...
 ```
 - Future Milestones
 ```
-- ...
+- Make Allele Class more flexible
 ```
 
 ## Running The Program

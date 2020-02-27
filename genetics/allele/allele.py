@@ -1,8 +1,10 @@
 """
 
 Title : allele.py
+Author : Magnus Fyhr
+Created : 11/20/2019
 
-Purpose : A class responsible for encoding a technical indicator
+Purpose : A class responsible for encoding a technical indicator.
 
 Development :
     - init          : DONE
@@ -11,7 +13,7 @@ Development :
     - verify        : DONE
     - mutate        : DONE
     - crossover     : DONE
-    - react         : DONE
+    - react         :
     - status        : DONE
     - as_string     : DONE
 
@@ -21,14 +23,31 @@ Testing :
     - dehydrate     : DONE
     - verify        : DONE
     - mutate        : DONE
-    - crossover     : DONE
-    - react         : DONE
+    - crossover     : DONE (further testing needed after pending update)
+    - react         : DONE (further testing needed after pending update)
     - status        : DONE
     - as_string     : DONE
 
-Cleaning:
-    - mutate() : a mutated encoding is being returned, and the allele
-    itself is being mutated; inefficient; which is needed?
+Cleaning :
+    - init          : DONE
+    - hydrate       : DONE
+    - dehydrate     : DONE
+    - verify        : DONE
+    - mutate        : DONE
+    - crossover     :
+    - react         :
+    - status        : DONE
+    - as_string     :
+
+
+TO-DO :
+    - if 0 triggers happen then mutation should move towards the average value
+    - add 'trigger_count' variable to track how and when an allele triggers an action.
+
+Comments :
+    - good idea to clean, organize, optimize, comment, etc. all the 'helper' functions/files for the Allele
+
+Future Improvements :
 
 """
 import analysis.parameters as params
@@ -40,49 +59,45 @@ from genetics.allele.helper import allele_build as ale_bui
 from genetics.allele.helper import allele_decode as ale_dec
 from genetics.allele.helper import allele_encode as ale_enc
 
+from genetics.allele.helper import allele_react as ale_rct
 from genetics.allele.helper import allele_mutate as ale_mut
 from genetics.allele.helper import allele_crossover as ale_cro
 
 
 class Allele(object):
 
-    initialized = False
-    _debug_mode = False
-
-    encoding = None
-    position = None
-    tech_ind = None
-    threshold = None
-    condition = None
-    power = None
-
     """
     Initialize & Verify The Allele
     """
-    def __init__(self, encoding=None, debug=0):
+    def __init__(self, encoding=None, debug=False):
 
-        if debug == 1:
-            self._debug_mode = True
-
-        # Verify Encoding
+        # Check Encoding
         if encoding is None:
             encoding = ale_bui.random_encoding()
 
         # Pre-Initialization
+        self.initialized = False
+        self._is_debug = debug
+
         self.encoding = encoding
+        self.position = None
+        self.tech_ind = None
+        self.threshold = None
+        self.condition = None
+        self.power = None
 
         # Hydrate The Allele (Initialization)
-        if self.hydrate() is None:
-            print("< ERR > : Failed to hydrate Allele, invalid encoding! {}".format(encoding))
+        if not self.hydrate():
+            print("< ERR > : Allele : Failed to hydrate Allele, invalid encoding! {}".format(encoding))
             return
 
         # Verify The Allele
-        if self._debug_mode:
+        if self._is_debug:
             if self.verify() is False:
-                print("< ERR > : Failed to verify Allele, invalid encoding! {}".format(encoding))
+                print("< ERR > : Allele : Failed to verify Allele, invalid encoding! {}".format(encoding))
                 return
 
-        # Done Initializing
+        # Initialization Complete!
         self.initialized = True
         return
 
@@ -92,9 +107,9 @@ class Allele(object):
     def hydrate(self):
         # Sanity Check
         if self.encoding is None:
-            return None
+            return False
 
-        # Decode Position (buy:sell)
+        # Decode Position (long:short)
         self.position = ale_dec.decode_position(self.encoding)
 
         # Decode Technical Indicator
@@ -109,14 +124,15 @@ class Allele(object):
         # Decode Power (of decision)
         self.power = ale_dec.decode_power(self.encoding)
 
-        return 1
+        # Hydration Complete!
+        return True
 
     """
     Encodes & Returns The Current State Of The Allele
     """
     def dehydrate(self):
 
-        # Encode Position (buy:sell)
+        # Encode Position (long:short)
         position = ale_enc.encode_position(self.position)
 
         # Encode Technical Indicator
@@ -132,16 +148,16 @@ class Allele(object):
         power = ale_enc.encode_power(self.power)
 
         # Check That All Passed Encoding
-        if self._debug_mode:
+        if self._is_debug:
             if position is None or tech_ind is None or threshold is None\
                     or condition is None or power is None:
-                print("< ERR > : Failed to dehydrate Allele, invalid Allele state!")
+                print("< ERR > : Allele : Failed to dehydrate Allele, invalid Allele state!")
                 return None
 
         # Form Encoding
         encoding = position + tech_ind + threshold + condition + power
 
-        # Return Encoding
+        # Dehydration Complete; Return Encoding!
         return encoding
 
     """
@@ -173,11 +189,11 @@ class Allele(object):
         if self.power is None:
             return False
 
-        # Passed Verification
+        # Verification Complete!
         return True
 
     """
-    Mutates The State Of The Current Allele & Returns A Mutation Of The Allele As An Encoding
+    Mutates The State Of The Allele & Returns The Encoding Of This Mutation
     """
     def mutate(self, radiation=1.0):
 
@@ -203,29 +219,30 @@ class Allele(object):
                                          params.ALLELE_POWER_MUT_PROB * radiation)
 
         # Check That All Passed Mutation
-        if self._debug_mode:
+        if self._is_debug:
             if mut_position is None or mut_tech_ind is None or mut_threshold is None\
                     or mut_condition is None or mut_power is None:
-                print("< ERR > : Failed to mutate Allele, invalid Allele state!")
+                print("< ERR > : Allele : Failed to mutate Allele, invalid Allele state!")
+                return None
+
+        # Encode Mutated Parameters
+        enc_mut_pos = ale_enc.encode_position(mut_position)
+        enc_mut_ti = ale_enc.encode_tech_ind(mut_tech_ind)
+        enc_mut_thresh = ale_enc.encode_threshold(mut_threshold)
+        enc_mut_cond = ale_enc.encode_condition(mut_condition)
+        enc_mut_power = ale_enc.encode_power(mut_power)
+
+        # Check That All Mutations Passed Encoding
+        if self._is_debug:
+            if enc_mut_pos is None or enc_mut_ti is None or enc_mut_thresh is None\
+                    or enc_mut_cond is None or enc_mut_power is None:
+                print("< ERR > : Allele : Failed to encode mutated Allele, invalid mutation variables!")
                 return None
 
         # Form Mutated Encoding
-        enc_pos = ale_enc.encode_position(mut_position)
-        enc_ti = ale_enc.encode_tech_ind(mut_tech_ind)
-        enc_thresh = ale_enc.encode_threshold(mut_threshold)
-        enc_cond = ale_enc.encode_condition(mut_condition)
-        enc_power = ale_enc.encode_power(mut_power)
+        mut_encoding = enc_mut_pos + enc_mut_ti + enc_mut_thresh + enc_mut_cond + enc_mut_power
 
-        # Check That All Passed Encoding
-        if self._debug_mode:
-            if enc_pos is None or enc_ti is None or enc_thresh is None\
-                    or enc_cond is None or enc_power is None:
-                print("< ERR > : Failed to encode mutated Allele, invalid mutation variables!")
-                return None
-
-        mut_encoding = enc_pos + enc_ti + enc_thresh + enc_cond + enc_power
-
-        # Apply Mutation
+        # Apply Mutation To Itself
         self.encoding = mut_encoding
         self.position = mut_position
         self.tech_ind = mut_tech_ind
@@ -234,12 +251,12 @@ class Allele(object):
         self.power = mut_power
 
         # Verify Mutation
-        if self._debug_mode:
+        if self._is_debug:
             if self.verify() is False:
-                print("< ERR > : Failed to verify Allele, invalid mutation! {}".format(mut_encoding))
+                print("< ERR > : Allele : Failed to verify Allele, invalid mutation! {}".format(mut_encoding))
                 return
 
-        # Return Mutated Encoding
+        # Mutation Complete; Return Mutated Encoding!
         return mut_encoding
 
     """
@@ -247,18 +264,18 @@ class Allele(object):
     """
     def crossover(self, mate_allele):
 
-        # Define 'dominance'
-        dominance = 2  # this will incur a 3:1 dominance of parent 1 over parent 2 in crossover
+        # Define 'dominance'; Incurs A 'n:1' Dominance Of Parent 1 Over Parent 2 In Crossover
+        dominance = params.ALLELE_CROSS_DOMINANCE
 
-        # Obtain parent encodings
+        # Obtain Parent Encodings
         encoding_a = self.encoding
         encoding_b = mate_allele.encoding
 
-        # Create offspring
+        # Create Offspring
         offspring_a = ale_cro.crossover(encoding_a, encoding_b, dominance)
         offspring_b = ale_cro.crossover(encoding_b, encoding_a, dominance)
 
-        # Return offspring
+        # Crossover Complete; Return Offspring!
         return [offspring_a, offspring_b]
 
     """
@@ -267,39 +284,55 @@ class Allele(object):
     def react(self, input_data):
 
         # Verify Input Data
-        if self._debug_mode:
+        if self._is_debug:
             try:
+                if isinstance(input_data, list):
+                    for data in input_data:
+                        float(data)
+
                 float(input_data)
 
             except ValueError:
                 # Otherwise, return NoneType
-                print("< ERR > : Error in Allele reaction, invalid input data! {}".format(input_data))
+                print("< ERR > : Allele : Error in Allele reaction, invalid input data! {}".format(input_data))
                 return None
 
-        if self.condition == '<':  # Less Than
+        # Determine Reaction
+        if isinstance(input_data, list):
 
-            if input_data < self.threshold:  # Condition Met
-                return 1 + self.power
+            power = ale_rct.react(self, input_data) * self.position
+            if self._is_debug:
+                try:
+                    int(power)
+                except ValueError:
+                    print("< ERR > : Allele : Error in Allele reaction, invalid special reaction! {}".format(input_data))
+            return power
 
-            return 0  # Condition Not Met
+        else:
+            if self.condition == '<':  # Less Than
 
-        elif self.condition == '>':  # Greater Than
+                if input_data < self.threshold:  # Condition Met
+                    return (1 + self.power) * self.position
 
-            if input_data > self.threshold:  # Condition Met
-                return 1 + self.power
+                return 0  # Condition Not Met
 
-            return 0  # Condition Not Met
+            elif self.condition == '>':  # Greater Than
+
+                if input_data > self.threshold:  # Condition Met
+                    return (1 + self.power) * self.position
+
+                return 0  # Condition Not Met
 
         # Allele Corrupted; Sanity Check
-        print("< ERR > : Error in Allele reaction, invalid condition! {}".format(self.condition))
+        print("< ERR > : Allele : Error in Allele reaction, invalid condition! {}".format(self.condition))
         return None
 
     """
-    Returns JSON Representation Of The Allele
+    Returns Dictionary Representation Of Allele's Current State
     """
     def status(self):
-        # Create JSON Object
-        json = {
+        # Format Allele Into Dictionary Object
+        state = {
             "initialized": self.initialized,
             "encoding": self.encoding,
             "position": self.position,
@@ -317,16 +350,16 @@ class Allele(object):
             }
         }
 
-        # Return JSON Object
-        return json
+        # Return Dictionary Object
+        return state
 
     """
     Returns String Representation Of The Allele
     """
     def as_string(self):
-        position = "SELL"
+        position = "SHORT"
         if self.position == 1:
-            position = "BUY"
+            position = "LONG"
 
         return "if ( {}(t) {} {} ) -> VOTE {}({})".format(self.tech_ind,
                                                           self.condition,

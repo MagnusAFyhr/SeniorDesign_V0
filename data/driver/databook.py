@@ -10,7 +10,8 @@ Development :
     - init                          : DONE
     - launch                        : DONE
     - step                          : DONE
-    - close                         : DONE
+    - report                        :
+    - status                        :
     - get_databook                  : DONE
     - verify_databook               : DONE
     - trim_databook                 : DONE
@@ -19,90 +20,184 @@ Testing :
     - init                          :
     - launch                        :
     - step                          :
-    - close                         :
+    - report                        :
+    - status                        :
     - get_databook                  :
     - verify_databook               :
     - trim_databook                 :
 
+Cleaning :
+    - init                          : DONE
+    - launch                        : DONE
+    - step                          : DONE
+    - report                        :
+    - status                        :
+    - get_databook                  :
+    - verify_databook               :
+    - trim_databook                 :
+
+
 TO-DO :
-    - Ability to specify range of data or days of simulation to be grabbed
-    - Gen_period should also be incorporated, doesn't make sense to have odd amounts
+    - Add report() function
+    - Add status() function
 
-    - Add technical indicators, currently none
-
+COMMENTS :
+    - quick implementation of global variable "AVAIL_TECH_IND"; implementation could be improved
 
 """
 
 from data.driver.helper import purifier
+from analysis import parameters as params
 
 import pandas as pd
 
 
 class DataBook:
 
-    ticker = ""
-    live = False
-    book = None
+    """
+    Initialize DataBook
+    """
+    def __init__(self, ticker, gen_period, gen_count=None, debug=0):
 
-    def __init__(self, ticker, gen_period, days_of_sim=None, start_date=None, end_date=None):
+        # Pre-Initialization
+        self.initialized = False
+        self._debug_mode = 0
+        self._is_debug = False
+
+        self.ticker = ""
+        self.live = False
+        self.book = None
+        self.tech_ind_dict = None
         self.steps = 0
-        self.ticker = ticker
-        self.launch(gen_period, days_of_sim, start_date, end_date)
 
-    def launch(self, gen_period, days_of_sim, start_date, end_date):
-        # load the book
+        self.start_date = None
+        self.end_date = None
+
+        # Setup Debug Mode
+        self._debug_mode = debug
+        if self._debug_mode in params.DATABOOK_DEBUG:
+            self._is_debug = True
+
+        # Assign & Verify Ticker
+        self.ticker = ticker
+        if self.ticker not in params.SUPP_TICKERS:
+            print("< ERR > : DataBook : Failed to initialize DataBook; '{}' is not a supported ticker!".format(
+                self.ticker
+            ))
+            return
+
+        # Launch DataBook
+        self.launch(gen_period, gen_count)
+
+        # Verify DataBook
+        if not self.live:
+            print("< ERR > : DataBook : Failed to initialize DataBook; launch failed.")
+            return
+
+        # Print DataBook Characteristics To Console
+        if self._debug_mode in params.DATABOOK_CONSOLE:
+            pass
+
+        # Initialization Complete!
+        self.initialized = True
+        return
+
+    """
+    Obtain Historical Data For DataBook
+    """
+    def launch(self, gen_period, gen_count):
+
+        # Soft Reset
+        self.live = False
+        self.book = None
+        self.steps = 0
+
+        # Obtain The Historical Data
         book = get_databook(self.ticker)
 
-        # trim databook to specified requirements
-        book = trim_databook(book, gen_period, days_of_sim, start_date, end_date)
+        # Trim Historical Data To Specified Requirements
+        book = trim_databook(book, gen_period, gen_count)
 
-        # verify book is valid
+        # Verify Historical Data
         if verify_databook(book):
             self.live = True
             self.book = book
+            self.start_date = self.book.iloc[0, 0]
+            self.end_date = self.book.iloc[len(book.index) - 1, 0]
 
-        # return
+        # Create Encoding Dictionary For Alleles; Update Global Variables
+        ti_dict = dict()
+        i = 0
+        for ti in self.book.columns.values.tolist():
+            if ti == "Date":
+                continue
+            key = str(i)
+            value = ti
+            ti_dict[key] = value
+            i += 1
+        self.tech_ind_dict = ti_dict
+
+        # Launch Complete!
         return
 
+    """
+    Take A Step In The Historical Data; Obtain The Subsequent Frame Of Data
+    """
     def step(self):
-        # sanity check
+
+        # Sanity Check
         if not self.live:
-            print("< WRN > : DataBook : Attempted to take a step from a non-live state.")
+            print("< ERR > : DataBook : Attempted to take a step from a non-live state.")
             return None
 
-        # take a step, get frame in data and remove it from the book
+        # Take A Step; Obtain Subsequent Frame In Data
         try:
             frame = self.book.iloc[self.steps]
             self.steps += 1
         except IndexError:
             # end of data reached
-            print("< WRN > : DataBook : Attempted to take a step with no steps remaining.")
+            print("< ERR > : DataBook : Attempted to take a step with no steps remaining.")
             return "EOF"
 
-        # convert frame into a dictionary
+        # Convert Frame Into A Dictionary Object
         data_dict = frame.to_dict()
 
-        # return frame of data
+        # Verify Data Dictionary; Single Row Of Pandas Data
+        if self._is_debug:
+            pass
+
+        # Step Complete; Return Frame Of Data
         return data_dict
 
-    def close(self):
-        self.live = False
-        self.book = None
-        self.steps = 0
+    """
+    Print DataBook Characteristics To Debug Console
+    """
+    def report(self):
+        pass
+
+    """
+    Returns Dictionary Representation Of DataBook's Characteristics
+    """
+    def status(self):
+        pass
 
 
 def get_databook(ticker):
-    # obtain pure data frame; either from existing pure or raw csv files
+    """ Obtain Historical Data Of Specified Ticker As Pandas DataFrame """
+
+    # Obtain Pandas Data Frame
     book_pd_df = purifier.get_pure_databook(ticker)
 
-    # return data frame
+    # Return Pandas Data Frame
     return book_pd_df
 
 
 def verify_databook(book):
+    """ Verify Historical Data For DataBook """
+
     # basic verification; object is a pandas data frame
     if not isinstance(book, pd.DataFrame):
-        print("< ERR > : DataBook : Extracted data is not of type 'DataBook'.")
+        print("< ERR > : DataBook : Failed to verify DataBook; result not of type 'DataBook'.")
         return False
 
     # check that columns are present and order matches default
@@ -112,41 +207,26 @@ def verify_databook(book):
     pure_column_ids = purifier.get_pure_columns()
     for i in range(len(pure_column_ids)):
         if dict_columns[pure_column_ids[i]] is None:
-            print("< WRN > : DataBook : Failed to find column data for {}.".format(pure_column_ids[i]))
+            print("< ERR > : DataBook : Failed to find column data for {}.".format(pure_column_ids[i]))
             return False
 
-    # otherwise, the book is valid and verified
+    # Verification Complete!
     return True
 
 
-def trim_databook(book, gen_period, days_of_sim, start_date, end_date):
-    # define trim type to invalid value; so we can recognize if its changed
-    trim_type = "INVALID"
+def trim_databook(book, gen_period, gen_count):
+    """ Trim Historical Data To Specified Requirements For DataBook """
 
-    # determine trim type
-    if days_of_sim is None and start_date is None and end_date is None:
+    # apply trim
+    if gen_count is None:
         pass
-    elif days_of_sim is None:
-        if start_date is not None and end_date is not None:
-            pass  # trim from start_date to end_date
-        elif start_date is None and end_date is not None:
-            pass  # trim everything past end_date
-        elif start_date is not None and end_date is None:
-            pass  # trim everything before start_date
-    elif days_of_sim is not None:
-        if start_date is None and end_date is None:
-            pass  # trim everything outside the N most recent days
-        elif start_date is None and end_date is not None:
-            pass  # trim everything past end_date, and everything before N days before end_date
-        elif start_date is not None and end_date is None:
-            pass  # trim everything before start_date, and everything after N days after start_date
-        elif start_date is not None and end_date is not None:
-            pass  # invalid input, all cannot be non-None
-
-    # perform trim according to trim type
+    else:
+        if gen_count * gen_period < len(book.index):
+            book = book.iloc[len(book.index) - (gen_count * gen_period) - 1:]
 
     # trim to be evenly divisible by gen_period
-
+    excess = len(book.index) % gen_period
+    book = book.iloc[excess:]
 
     return book
 
