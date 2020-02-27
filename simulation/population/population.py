@@ -191,12 +191,11 @@ class Population:
 
         statistics = self.metrics()
         # Optional Debug Step
-        if self._is_debug:
+        if self._is_debug and self.gen_count > 0:
             for key, stat in statistics.items():
                 if stat is None:
-                    print("< ERR > : Population : Failed to obtain metrics(); "
+                    print("< WRN > : Population : Failed to obtain metrics(); "
                           "NoneType found! ({})".format(key))
-                    return None
 
         end_t = time.time_ns()
         elapsed = end_t - start_t
@@ -232,10 +231,10 @@ class Population:
             print("\t\t< POP > : Producing Offspring; Applying Crossovers...")
         start_t = time.time_ns()
 
-        offspring = self.reproduce(elites, parents)
+        offspring = self.reproduce(parents)
         # Optional Debug Step
         if self._is_debug:
-            if len(offspring) != self.size:
+            if len(offspring) != self.size - self.elite_count:
                 print("< ERR > : Population : Failed to reproduce(); "
                       "offspring size is off! ({})".format(len(offspring)))
                 return None
@@ -256,7 +255,7 @@ class Population:
         offspring = self.modify(offspring)
         # Optional Debug Step
         if self._is_debug:
-            if len(offspring) != self.size:
+            if len(offspring) != self.size - self.elite_count:
                 print("< ERR > : Population : Failed to modify(); offspring size is off!")
                 return None
             for child in offspring:
@@ -324,7 +323,7 @@ class Population:
     """
     Reproduction Mechanism For The Population 
     """
-    def reproduce(self, elites, parents):
+    def reproduce(self, parents):
         # Copy List Of Parents
         pool = parents.copy()
 
@@ -349,7 +348,7 @@ class Population:
             continue
 
         # Trim Off N Trailing Chromosomes; Append N Elites To Offspring
-        offspring = offspring[:len(offspring) - len(elites)]
+        offspring = offspring[:len(offspring) - self.elite_count]
         # offspring.extend([elite.clone() for elite in elites])
 
         # Reproduction Complete; Return Offspring!

@@ -340,10 +340,10 @@ class Chromosome(object):
 
             return "LONG"
 
-        elif pressure < self.short_limit and not (pressure > self.long_limit):
+        elif pressure < self.short_limit:
             # check double reaction
             if self._is_debug:
-                if pressure < self.short_limit:
+                if pressure > self.long_limit:
                     print("< ERR > : Error in Chromosome reaction, short and long limit triggered.")
                     return None
 

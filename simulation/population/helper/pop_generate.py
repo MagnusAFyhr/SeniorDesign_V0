@@ -17,6 +17,8 @@ Testing :
 import analysis.parameters as params
 from phenetics.individual import individual as indiv
 from genetics.allele.helper import allele_build as ale_bui
+from genetics.chromosome.helper import chrom_build as chr_bui
+import random
 
 
 def generate_random_population(pop_size, debug_mode):
@@ -31,9 +33,7 @@ def generate_random_population(pop_size, debug_mode):
     return random_pop
 
 
-def generate_normal_population(pop_size):
-    # Create Empty List
-    normal_pop = list([])
+def generate_normal_population(pop_size, debug_mode):
 
     # Create A Pool Of Available Technical Indicators
     avail_tech_ind = list([])
@@ -43,13 +43,26 @@ def generate_normal_population(pop_size):
     # Initialize A Normal Pool Of Alleles
     normal_allele_pool = list([])
     net_allele_count = pop_size * params.CHROM_ALLELE_COUNT
-    for i in net_allele_count:
+    for i in range(0, net_allele_count):
         tech_ind = avail_tech_ind[i % len(avail_tech_ind)]
         allele_encoding = ale_bui.random_encoding(tech_ind=tech_ind)
         normal_allele_pool.append(allele_encoding)
 
     # Initialize A Pool Of Chromosomes
+    normal_chromosome_pool = list([])
+    for i in range(0, pop_size):
+        chrom_alleles = list([])
+        # choose and pop random allele from pool; append to chrom_alleles
+        for n in range(0, params.CHROM_ALLELE_COUNT):
+            rand_allele_index = random.randint(0, len(normal_allele_pool) - 1)
+            chrom_alleles.append(normal_allele_pool.pop(rand_allele_index))
+        # initialize & append chromosome
+        chromosome = chr_bui.random_encoding(chrom_alleles)
+        normal_chromosome_pool.append(chromosome)
 
     # Use Chromosomes To Initialize Individuals
+    normal_individuals = list([])
+    for i in range(0, pop_size):
+        normal_individuals.append(indiv.Individual(chromosome=normal_chromosome_pool.pop(), debug=debug_mode))
 
-    pass
+    return normal_individuals

@@ -12,22 +12,22 @@ from genetics.allele.helper import allele_build as ale_bui, allele_decode as ale
 import random
 
 
-def random_encoding():
+def random_encoding(allele_encodings=list([])):
     """ Builds a completely random encoding"""
 
     # Generate random allele encodings
-    encodings = []
-    for i in range(0, params.CHROM_ALLELE_COUNT):
+    while len(allele_encodings) < params.CHROM_ALLELE_COUNT:
+    # for i in range(0, params.CHROM_ALLELE_COUNT):
         # Create random allele encoding
         encoding = ale_bui.random_encoding()
 
         # Append random allele encoding to encoding list
-        encodings.append(encoding)
+        allele_encodings.append(encoding)
 
     # Calculate full long and short power
     full_long_power = 0
     full_short_power = 0
-    for allele_encoding in encodings:
+    for allele_encoding in allele_encodings:
         # Obtain position from allele encoding
         position = ale_dec.decode_position(allele_encoding)
 
@@ -51,11 +51,12 @@ def random_encoding():
     if long_limit < short_limit:
         long_limit, short_limit = short_limit, long_limit
 
+
     # Concatenate items for random encoding
     items = list([0, 0])
     items[chrom_structure.LONG_LIMIT_INDEX] = str(long_limit)
     items[chrom_structure.SHORT_LIMIT_INDEX] = str(short_limit)
-    for allele_encoding in encodings:
+    for allele_encoding in allele_encodings:
         items.append(allele_encoding)
 
     # Form random encoding

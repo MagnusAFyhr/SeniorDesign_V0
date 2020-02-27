@@ -88,11 +88,11 @@ Comments :
 #  7 : 6 + Population Error Checking
 #  8 : 7 + Individual Error Checking
 #  9 : 8 + Account Error Checking
-# 10 : 9 + Allele & Chromosome Error Checking; Full System Debug Mode
+# 10 : 9 + Allele & Chromosome Error Checking; Full System Debug Mode : doesn't work
 
 
 from analysis.simulator import simulator as sim
 
-simulator = sim.Simulator("MSFT", debug=3)
+simulator = sim.Simulator("MSFT", debug=10)
 simulator.run()
 

@@ -11,16 +11,16 @@ import random
 def evaluate_individuals(individuals, elite_count):
 
     # rank individuals by fitness
-    ranked_individuals = rank_individuals(individuals)
+    rank_individuals(individuals)
 
     # select elites
-    elites = ranked_individuals[:elite_count]
+    elites = individuals[:elite_count]
     for elite in elites:
         elite.is_elite = True
         elite.lifespan += 1
 
     # select parents
-    parents = select_parents_roulette_rank(ranked_individuals)
+    parents = select_parents_roulette_rank(individuals)
 
     # Return elites, parents
     return elites, parents
@@ -29,12 +29,11 @@ def evaluate_individuals(individuals, elite_count):
 def rank_individuals(unranked_individuals):
     n = len(unranked_individuals)
 
-    # rank individuals using quick sort
-    ranked_individuals = unranked_individuals.copy()
-    quick_sort(ranked_individuals, 0, n-1)
+    # rank individuals using iterative quick sort
+    quick_sort_iterative(unranked_individuals, 0, n-1)
 
     # Return ranked individuals
-    return ranked_individuals
+    return unranked_individuals
 
 
 def select_parents_roulette_rank(pool):
@@ -73,14 +72,11 @@ def select_parents_roulette_rank(pool):
 # to left of pivot and all greater elements to right
 # of pivot
 def partition(arr, low, high):
-    i = (low - 1)  # index of smaller element
-    pivot = arr[high].fitness()  # pivot
+    i = (low - 1)
+    pivot = arr[high]
 
     for j in range(low, high):
-
-        # If current element is smaller than or
-        # equal to pivot
-        if arr[j].fitness() <= pivot:
+        if arr[j].fitness() >= pivot.fitness():
             # increment index of smaller element
             i = i + 1
             arr[i], arr[j] = arr[j], arr[i]
@@ -89,23 +85,65 @@ def partition(arr, low, high):
     return i + 1
 
 
-# The main function that implements QuickSort
+# Function to do Recursive Quick sort
 # arr[] --> Array to be sorted,
-# low  --> Starting index,
-# high  --> Ending index
-
-# Function to do Quick sort
-def quick_sort(arr, low, high):
-    if low < high:
+# start  --> Starting index,
+# end  --> Ending index
+def quick_sort_recursive(arr, start, end):
+    if start < end:
         # pi is partitioning index, arr[p] is now
         # at right place
-        pi = partition(arr, low, high)
+        pi = partition(arr, start, end)
 
         # Separately sort elements before
         # partition and after partition
-        quick_sort(arr, low, pi - 1)
-        quick_sort(arr, pi + 1, high)
+        quick_sort_recursive(arr, start, pi - 1)
+        quick_sort_recursive(arr, pi + 1, end)
 
 
+# Function to do Iterative Quick sort
+# arr[] --> Array to be sorted,
+# l  --> Starting index,
+# h  --> Ending index
+def quick_sort_iterative(arr, low, high):
+    # Create an auxiliary stack
+    size = high - low + 1
+    stack = [0] * size
 
+    # initialize top of stack
+    top = -1
 
+    # push initial values of low and high to stack
+    top = top + 1
+    stack[top] = low
+    top = top + 1
+    stack[top] = high
+
+    # Keep popping from stack while is not empty
+    while top >= 0:
+
+        # Pop high and low
+        high = stack[top]
+        top = top - 1
+        low = stack[top]
+        top = top - 1
+
+        # Set pivot element at its correct position in
+        # sorted array
+        p = partition(arr, low, high)
+
+        # If there are elements on left side of pivot,
+        # then push left side to stack
+        if p - 1 > low:
+            top = top + 1
+            stack[top] = low
+            top = top + 1
+            stack[top] = p - 1
+
+        # If there are elements on right side of pivot,
+        # then push right side to stack
+        if p + 1 < high:
+            top = top + 1
+            stack[top] = p + 1
+            top = top + 1
+            stack[top] = high

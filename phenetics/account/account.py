@@ -147,8 +147,8 @@ class Account(object):
     def verify(self):
 
         # Verify The Ticker
-        if self.ticker == "":
-            return False
+        #if self.ticker == "":
+        #   return False
 
         return True
 

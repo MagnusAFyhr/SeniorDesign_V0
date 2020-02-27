@@ -119,6 +119,7 @@ class Individual:
             return False
 
         elif not self.account.initialized:
+            print("Not Init")
             return False
 
         # Verification Complete!
