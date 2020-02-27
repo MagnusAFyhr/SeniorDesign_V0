@@ -23,7 +23,7 @@ def crossover(allele_encoding_a, allele_encoding_b, dominance, debug=0):
 
     # Establish a dominant parent, always allele_encoding_a
     parents = [allele_encoding_a, allele_encoding_b]
-    for i in range(dominance-1):
+    for i in range(dominance):
         parents.append(allele_encoding_a)
 
     # Inherit position from a random parent
@@ -45,7 +45,7 @@ def crossover(allele_encoding_a, allele_encoding_b, dominance, debug=0):
     if debug:
         if cross_pos is None or cross_tech_ind is None or cross_thresh is None \
                 or cross_cond is None or cross_pow is None:
-            print("< ERR > : Allele : Error in Allele crossover; failed to produce offspring, invalid Allele state(s)!")
+            print("< ERR > : Failed to produce offspring, invalid allele states!")
             return None
 
     # Form crossover encoding

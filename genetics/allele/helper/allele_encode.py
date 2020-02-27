@@ -22,7 +22,6 @@ Testing
 
 """
 from genetics.allele.helper import allele_structure, allele_symbols
-from analysis import parameters as params
 
 
 def encode_position(position):
@@ -30,13 +29,13 @@ def encode_position(position):
 
     # Check if position is valid
     if position == 1:
-        return allele_symbols.LONG
+        return allele_symbols.BUY
 
     elif position == -1:
-        return allele_symbols.SHORT
+        return allele_symbols.SELL
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error encoding Allele : Invalid Position : {}.".format(position))
+    print("< ERR > : Error encoding allele : Invalid Position : {}.".format(position))
     return None
 
 
@@ -44,14 +43,14 @@ def encode_tech_ind(tech_ind):
     """ Converts the technical indicator back to an encoding """
 
     # Loop through 'tech_ind_dict'
-    for ti in params.AVAIL_TECH_IND:
+    for ti in allele_symbols.TECHNICAL_INDICATORS:
         # Check for match
-        if params.AVAIL_TECH_IND[ti] == tech_ind:
+        if allele_symbols.TECHNICAL_INDICATORS[ti] == tech_ind:
             # Return key-value pair
             return ti
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error encoding Allele : Invalid Technical Indicator : {}.".format(tech_ind))
+    print("< ERR > : Error encoding allele : Invalid Technical Indicator : {}.".format(tech_ind))
     return None
 
 
@@ -79,7 +78,7 @@ def encode_threshold(threshold):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Allele : Error encoding Allele : Invalid Threshold : {}.".format(thresh_string))
+        print("< ERR > : Error encoding allele : Invalid Threshold : {}.".format(thresh_string))
         return None
 
     # Return thresh_string
@@ -97,7 +96,7 @@ def encode_condition(condition):
         return allele_symbols.GREATER_THAN
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error encoding Allele : Invalid Condition : {}.".format(condition))
+    print("< ERR > : Error encoding allele : Invalid Condition : {}.".format(condition))
     return None
 
 
@@ -113,9 +112,9 @@ def encode_power(power):
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Allele : Error encoding Allele : Power : Value Error : {}.".format(power))
+        print("< ERR > : Error encoding allele : Power : Value Error : {}.".format(power))
         return None
 
     # Otherwise, return NoneType
-    print("< ERR > : Allele : Error encoding Allele : Power : {}.".format(power))
+    print("< ERR > : Error encoding allele : Power : {}.".format(power))
     return None

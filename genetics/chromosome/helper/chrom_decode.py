@@ -5,13 +5,13 @@ Title : chrom_decode.py
 Purpose : Set of functions responsible for handling the decode operations of a chromosome's encoding
 
 Development :
-    - decode_long_limit  : DONE
-    - decode_short_limit : DONE
+    - decode_buy_limit  : DONE
+    - decode_sell_limit : DONE
     - decode_alleles    : DONE
 
 Testing
-    - decode_long_limit  : DONE
-    - decode_short_limit : DONE
+    - decode_buy_limit  : DONE
+    - decode_sell_limit : DONE
     - decode_alleles    :
 
 """
@@ -19,46 +19,46 @@ from genetics.chromosome.helper import chrom_structure
 import genetics.allele.allele as ale
 
 
-def decode_long_limit(chrom_encoding):
-    """ Obtain long limit from the encoding """
+def decode_buy_limit(chrom_encoding):
+    """ Obtain buy limit from the encoding """
     # Unwrap encoding
     items = chrom_encoding.split(chrom_structure.ENCODING_KEY)
 
-    # Obtain long limit from chromosome encoding
-    long_limit = items[chrom_structure.LONG_LIMIT_INDEX]
+    # Obtain buy limit from chromosome encoding
+    buy_limit = items[chrom_structure.BUY_LIMIT_INDEX]
 
-    # Check if long limit is a valid int
+    # Check if buy limit is a valid int
     try:
-        int(long_limit)
+        int(buy_limit)
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Chromosome : Error decoding Chromosome : Long Limit : {}.".format(long_limit))
+        print("< ERR > : Error decoding chromosome : Buy Limit : {}.".format(buy_limit))
         return None
 
-    # Return long_limit as integer
-    return int(long_limit)
+    # Return buy_limit as integer
+    return int(buy_limit)
 
 
-def decode_short_limit(chrom_encoding):
-    """ Obtain short limit from the encoding """
+def decode_sell_limit(chrom_encoding):
+    """ Obtain sell limit from the encoding """
     # Unwrap encoding
     items = chrom_encoding.split(chrom_structure.ENCODING_KEY)
 
-    # Obtain short limit from chromosome encoding
-    short_limit = items[chrom_structure.SHORT_LIMIT_INDEX]
+    # Obtain sell limit from chromosome encoding
+    sell_limit = items[chrom_structure.SELL_LIMIT_INDEX]
 
-    # Check if short limit is a valid int
+    # Check if sell limit is a valid int
     try:
-        int(short_limit)
+        int(sell_limit)
 
     except ValueError:
         # Otherwise, return NoneType
-        print("< ERR > : Chromosome : Error decoding Chromosome : Short Limit : {}.".format(short_limit))
+        print("< ERR > : Error decoding chromosome : Sell Limit : {}.".format(sell_limit))
         return None
 
-    # Return short_limit as integer
-    return int(short_limit)
+    # Return sell_limit as integer
+    return int(sell_limit)
 
 
 def decode_alleles(chrom_encoding, debug_mode):
@@ -66,14 +66,14 @@ def decode_alleles(chrom_encoding, debug_mode):
     # Unwrap encoding
     items = chrom_encoding.split(chrom_structure.ENCODING_KEY)
 
-    # Obtain long and short limit from chromosome encoding
+    # Obtain buy limit from chromosome encoding
     allele_codes = items[chrom_structure.ALLELE_START:]
 
     # Initialize all alleles
     alleles = list([])
     for encoding in allele_codes:
         # Initialize Allele
-        allele = ale.Allele(encoding=encoding, debug=debug_mode)
+        allele = ale.Allele(encoding, debug_mode)
 
         # Verify Allele
         if allele.initialized:
@@ -81,7 +81,7 @@ def decode_alleles(chrom_encoding, debug_mode):
 
         else:
             # Otherwise, return NoneType
-            print("< ERR > : Chromosome : Error decoding Chromosome : Allele initialization failed : {}.".format(encoding))
+            print("< ERR > : Error decoding chromosome : Allele initialization failed : {}.".format(encoding))
             return None
 
     # Return set of initialized alleles
