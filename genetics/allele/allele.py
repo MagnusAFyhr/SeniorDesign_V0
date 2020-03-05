@@ -281,7 +281,22 @@ class Allele(object):
     """
     Returns A Reaction From The Allele
     """
-    def react(self, input_data):
+    def react(self, close_price, raw_input_data):
+
+        # Convert raw input data
+        input_data = None
+        try:
+            if isinstance(raw_input_data, str):
+                input_data = raw_input_data.strip('][').split(',')
+                input_data = [float(data) for data in input_data]
+            else:
+                input_data = float(raw_input_data)
+
+        except TypeError:
+            print("< ERR > : Allele : Error in Allele reaction, invalid input data! {} : {}".format(
+                raw_input_data, input_data
+            ))
+            return None
 
         # Verify Input Data
         if self._is_debug:
@@ -289,8 +304,8 @@ class Allele(object):
                 if isinstance(input_data, list):
                     for data in input_data:
                         float(data)
-
-                float(input_data)
+                else:
+                    float(input_data)
 
             except ValueError:
                 # Otherwise, return NoneType
@@ -300,25 +315,31 @@ class Allele(object):
         # Determine Reaction
         if isinstance(input_data, list):
 
-            power = ale_rct.react(self, input_data) * self.position
+            power = ale_rct.react(self, close_price, input_data) * self.position
             if self._is_debug:
                 try:
                     int(power)
+                    if power is None:
+                        raise ValueError
+
                 except ValueError:
-                    print("< ERR > : Allele : Error in Allele reaction, invalid special reaction! {}".format(input_data))
+                    print("< ERR > : Allele : Error in Allele reaction, invalid special reaction! {} : {}".format(
+                        self.tech_ind, input_data
+                    ))
             return power
 
         else:
+
             if self.condition == '<':  # Less Than
 
-                if input_data < self.threshold:  # Condition Met
+                if float(input_data) < self.threshold:  # Condition Met
                     return (1 + self.power) * self.position
 
                 return 0  # Condition Not Met
 
             elif self.condition == '>':  # Greater Than
 
-                if input_data > self.threshold:  # Condition Met
+                if float(input_data) > self.threshold:  # Condition Met
                     return (1 + self.power) * self.position
 
                 return 0  # Condition Not Met

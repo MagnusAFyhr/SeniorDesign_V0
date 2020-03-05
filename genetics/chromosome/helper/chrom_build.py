@@ -32,7 +32,7 @@ def random_encoding(allele_encodings=list([])):
         position = ale_dec.decode_position(allele_encoding)
 
         # Obtain power from allele encoding
-        power = ale_dec.decode_power(allele_encoding) + 1
+        power = ale_dec.decode_power(allele_encoding)
 
         # Add/subtract power to corresponding long/short power
         if position == 1:
@@ -50,7 +50,6 @@ def random_encoding(allele_encodings=list([])):
     # Make sure that the larger of the two is the long limit, and smaller is the short limit
     if long_limit < short_limit:
         long_limit, short_limit = short_limit, long_limit
-
 
     # Concatenate items for random encoding
     items = list([0, 0])

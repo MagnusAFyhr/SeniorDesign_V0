@@ -106,10 +106,9 @@ def encode_power(power):
 
     # Check if power is valid
     try:
-        int(power)
-        if 0 <= power <= 9:
+        if 0 <= int(power) <= 9:
             # Return string representation of power
-            return str(power)
+            return str(int(power))
 
     except ValueError:
         # Otherwise, return NoneType

@@ -188,6 +188,7 @@ def trading_metrics(account_history):
         trade_avg_holding_time = trade_net_holding_time / trade_count
 
     long_avg_earnings = 0
+    long_avg_holding_time = 0
     long_pct = 0
     long_win_pct = 0
     long_win_avg_gain = 0
@@ -199,6 +200,7 @@ def trading_metrics(account_history):
     long_lose_avg_holding_time = 0
     if long_count > 0:
         long_avg_earnings = long_net_earnings / long_count
+        long_avg_holding_time = long_net_holding_time / long_count
         long_pct = long_count / trade_count
         if long_win_count > 0:
             long_win_pct = long_win_count / long_count
@@ -212,6 +214,7 @@ def trading_metrics(account_history):
             long_lose_avg_holding_time = long_lose_net_holding_time / long_lose_count
 
     short_avg_earnings = 0
+    short_avg_holding_time = 0
     short_pct = 0
     short_win_pct = 0
     short_win_avg_gain = 0
@@ -223,6 +226,7 @@ def trading_metrics(account_history):
     short_lose_avg_holding_time = 0
     if short_count > 0:
         short_avg_earnings = short_net_earnings / short_count
+        short_avg_holding_time = short_net_holding_time / short_count
         short_pct = short_count / trade_count
         if short_win_count > 0:
             short_win_pct = short_win_count / short_count
@@ -238,6 +242,10 @@ def trading_metrics(account_history):
     # initialize dictionary object for statistics
     trades_stats = {
         "trade_count": trade_count,                                 # long + short count
+        "win_count": long_win_count + short_win_count,              # win long count + win short count
+        "net_gain": long_win_net_gain + short_win_net_gain,
+        "loss_count": long_win_count + short_win_count,             # lose long count + lose short count
+        "net_loss": long_lose_net_loss + short_lose_net_loss,
         "net_earnings": trade_net_earnings,                         # SUM( trades earnings )
         "avg_earnings": trade_avg_earnings,                         # net earnings / total trades
         "avg_holding_time": trade_avg_holding_time,                 # SUM( trade holding time ) / total trades
@@ -246,6 +254,7 @@ def trading_metrics(account_history):
             "count": long_count,                                    # long count
             "net_earnings": long_net_earnings,                      # SUM( longs revenue )
             "avg_earnings": long_avg_earnings,                      # net earnings / long count
+            "avg_holding_time": long_avg_holding_time,              # net holding time / long count
             "long_pct": long_pct,                                   # long count / total trades
             "winners": {
                 "count": long_win_count,                            # winning long count
@@ -272,7 +281,8 @@ def trading_metrics(account_history):
             "count": short_count,                                   # short count
             "net_earnings": short_net_earnings,                     # SUM( shorts revenue )
             "avg_earnings": short_avg_earnings,                     # net earnings / short count
-            "long_pct": short_pct,                                  # short count / total trades
+            "avg_holding_time": short_avg_holding_time,             # net holding time / long count
+            "short_pct": short_pct,                                 # short count / total trades
             "winners": {
                 "count": short_win_count,                           # winning short count
                 "win_pct": short_win_pct,                           # winning short count / total short count

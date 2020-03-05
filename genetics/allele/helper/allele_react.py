@@ -32,7 +32,7 @@ Comments :
 """
 
 
-def __react_AROON(allele, input_data):
+def __react_AROON(allele, close_price, input_data):
     # input_data = [aroon_up, aroon_down]
 
     # reaction
@@ -48,7 +48,7 @@ def __react_AROON(allele, input_data):
     return 0
 
 
-def __react_MACD(allele, input_data):
+def __react_MACD(allele, close_price, input_data):
     # input_data = [macd, macd_signal, macd_hist]
 
     # reaction
@@ -64,7 +64,7 @@ def __react_MACD(allele, input_data):
     return 0
 
 
-def __react_STOCH(allele, input_data):
+def __react_STOCH(allele, close_price,input_data):
     # input_data = [k, d]
 
     # reaction
@@ -80,27 +80,27 @@ def __react_STOCH(allele, input_data):
     return 0
 
 
-def __react_BBANDS(allele, input_data):
-    # input_data = [price, upper_band, middle_band, lower_band]
+def __react_BBANDS(allele, close_price, input_data):
+    # input_data = [upper_band, middle_band, lower_band]
 
     # reaction
     if allele.position == 1:  # long
-        if input_data[0] < input_data[3]:  # price is under lower band; implies oversold
+        if close_price < input_data[2]:  # price is under lower band; implies oversold
             return 1 + allele.power
 
     elif allele.position == -1:  # short
-        if input_data[0] > input_data[1]:  # price is over upper band; implies overbought
+        if close_price > input_data[0]:  # price is over upper band; implies overbought
             return 1 + allele.power
 
     # condition not met
     return 0
 
 
-def __react_MAMA(allele, input_data):
+def __react_MAMA(allele, close_price, input_data):
     # input_data = [mama, fama]
     # https://www.forexstrategieswork.com/mama-mt4-indicator/
 
-    pass
+    return 0
 
 
 reaction_dictionary = {
@@ -116,7 +116,7 @@ reaction_dictionary = {
 }
 
 
-def react(allele, input_data):
+def react(allele, close_price, input_data):
 
     # obtain technical indicator
     tech_ind = allele.tech_ind
@@ -127,7 +127,7 @@ def react(allele, input_data):
         return 0
 
     # obtain unique reaction
-    reaction = reaction_dictionary[tech_ind](allele, input_data)
+    reaction = reaction_dictionary[tech_ind](allele, close_price, input_data)
 
     # verify reaction
 

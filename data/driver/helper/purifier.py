@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
-import numpy as np
-import data.driver.helper.calculator as ti_calc
+import data.driver.helper.calculator as calc
 
 raw_columns = ['Date',
                'Open',
@@ -10,14 +9,6 @@ raw_columns = ['Date',
                'Close',
                'Adj Close',
                'Volume']
-
-pure_columns = ['Date',
-                'Open',
-                'High',
-                'Low',
-                'Close',
-                'Adj Close',
-                'Volume']
 
 
 def get_pure_databook(ticker):
@@ -33,7 +24,7 @@ def get_pure_databook(ticker):
     # then return the pandas 'DataFrame' of the pure csv
     if raw_dataset_exists(ticker):
         raw_df = pd.read_csv("data/raw/{}.csv".format(ticker))
-        pure_df = build_pure_csv(raw_df)
+        pure_df = build_pure_csv(ticker, raw_df)
 
         return pure_df
 
@@ -42,27 +33,16 @@ def get_pure_databook(ticker):
     return None
 
 
-def build_pure_csv(raw_df):
-    # initialize pure dataframe
-    pure_df = pd.DataFrame(columns=pure_columns)
-    pure_df.fillna(0)
+def build_pure_csv(ticker, raw_df):
+    # build the pure dataframe
+    pure_df = calc.build_pure_dataframe(raw_df)
 
-    # for each row of raw data...
-    for index, _ in raw_df.iterrows():
-        # print(raw_row)
-        pure_row = ti_calc.build_pure_row(index, raw_df)
-        pure_df.loc[index] = pure_row
-        if index > 10:
-            break
+    # trim null values off of
 
-    # for each row of pure data...
-    for index, pure_row in pure_df.iterrows():
-        print(pure_row)
+    # write the pure dataframe to a csv in pure directory
+    pure_df.to_csv("data/pure/pure_{}.csv".format(ticker), sep=',', index=False)
 
-    # verify pure dataframe
-    # write new pure dataframe to pure csv in pure directory
-
-    return raw_df
+    return pure_df
 
 
 def pure_dataset_exists(ticker):
@@ -87,7 +67,3 @@ def raw_dataset_exists(ticker):
 
 def get_raw_columns():
     return raw_columns.copy()
-
-
-def get_pure_columns():
-    return pure_columns.copy()

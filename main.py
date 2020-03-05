@@ -91,8 +91,11 @@ Comments :
 # 10 : 9 + Allele & Chromosome Error Checking; Full System Debug Mode : doesn't work
 
 
-from analysis.simulator import simulator as sim
+# from analysis.simulator import simulator as sim
+# simulator = sim.Simulator("MSFT", debug=2)
+# simulator.run()
 
-simulator = sim.Simulator("MSFT", debug=10)
-simulator.run()
+from analysis.experiment import experiment as exp
 
+experiment = exp.Experiment(tickers=["MSFT"], sample_size=1, debug=1)
+experiment.run()

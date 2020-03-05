@@ -112,7 +112,7 @@ class Population:
         # Initialization
         self.size = pop_size
         self.elite_count = int(pop_size * params.POP_ELITE_RATIO)
-        self.citizens = pop_gen.generate_random_population(pop_size, self._debug_mode)
+        self.citizens = pop_gen.generate_normal_population(pop_size, self._debug_mode)
 
         # Setup Debug Mode
         self._debug_mode = debug

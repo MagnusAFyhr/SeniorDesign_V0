@@ -131,7 +131,7 @@ class DataBook:
         for ti in self.book.columns.values.tolist():
             if ti == "Date":
                 continue
-            key = str(i)
+            key = chr(i + 48)
             value = ti
             ti_dict[key] = value
             i += 1
@@ -204,11 +204,11 @@ def verify_databook(book):
     column_ids = book.columns.values.tolist()
     dict_columns = {i: True for i in column_ids}
 
-    pure_column_ids = purifier.get_pure_columns()
-    for i in range(len(pure_column_ids)):
-        if dict_columns[pure_column_ids[i]] is None:
-            print("< ERR > : DataBook : Failed to find column data for {}.".format(pure_column_ids[i]))
-            return False
+    #pure_column_ids = purifier.get_pure_columns()
+    #for i in range(len(pure_column_ids)):
+    #    if dict_columns[pure_column_ids[i]] is None:
+    #        print("< ERR > : DataBook : Failed to find column data for {}.".format(pure_column_ids[i]))
+    #        return False
 
     # Verification Complete!
     return True

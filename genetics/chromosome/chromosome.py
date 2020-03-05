@@ -317,6 +317,7 @@ class Chromosome(object):
         for allele in self.alleles:
             # obtain technical indicator data from row data
             value = row_dict[allele.tech_ind]
+            price = row_dict["Close"]
 
             # verify data
             if self._is_debug:
@@ -328,7 +329,7 @@ class Chromosome(object):
                     return None
 
             # add allele reaction to pressure
-            pressure += allele.react(value)
+            pressure += allele.react(price, value)
 
         # Return Long/Short Reaction
         if pressure > self.long_limit:

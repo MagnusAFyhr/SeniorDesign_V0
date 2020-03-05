@@ -50,7 +50,7 @@ def random_encoding(tech_ind=""):
     power = str(random.randint(0, 9))
 
     # Form random encoding
-    encoding = pos + tech_ind + thresh[0:] + cond + power
+    encoding = pos + tech_ind + thresh[0:] + cond + power  # thresh_len
 
     # Return random encoding
     return encoding

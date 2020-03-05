@@ -16,6 +16,7 @@ Testing :
 """
 import analysis.parameters as params
 from phenetics.individual import individual as indiv
+from genetics.chromosome import chromosome as chrom
 from genetics.allele.helper import allele_build as ale_bui
 from genetics.chromosome.helper import chrom_build as chr_bui
 import random
@@ -57,7 +58,7 @@ def generate_normal_population(pop_size, debug_mode):
             rand_allele_index = random.randint(0, len(normal_allele_pool) - 1)
             chrom_alleles.append(normal_allele_pool.pop(rand_allele_index))
         # initialize & append chromosome
-        chromosome = chr_bui.random_encoding(chrom_alleles)
+        chromosome = chrom.Chromosome(chr_bui.random_encoding(chrom_alleles), debug=debug_mode)
         normal_chromosome_pool.append(chromosome)
 
     # Use Chromosomes To Initialize Individuals

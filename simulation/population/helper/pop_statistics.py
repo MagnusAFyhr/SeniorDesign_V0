@@ -55,7 +55,7 @@ def population_statistics(population):
     mean_fit = sum_fit / pop_size
 
     # get population standard deviation
-    std = population_stand_dev(population, mean_fit)
+    std = population_stand_dev(pop_fit_data, mean_fit)
 
     # get allele and chromosome diversities
     allele_diversity, chromosome_diversity = population_diversity(population)
@@ -63,19 +63,36 @@ def population_statistics(population):
     # get previous population elites' mean fitness
     elites_overall_stats, elites_stats = analyze_elite_performance(population)
 
-    # get elite mean fitness
+    # get elite fitness stats
+    elite_fit_data = list([])
+    sum_elite_fit = 0
+    best_elite_fit = 0
+    worst_elite_fit = 0
     mean_elite_fit = 0
-    if elites_overall_stats is not None:
-        mean_elite_fit = elites_overall_stats["fitness"]
+    elite_std = 0
+    if elites_stats is not None:
+        elite_fit_data.extend([elite_stat["fitness"] for elite_stat in elites_stats])
+
+        sum_elite_fit = sum(elite_fit_data)
+        best_elite_fit = max(elite_fit_data)
+        worst_elite_fit = min(elite_fit_data)
+        mean_elite_fit = sum_elite_fit / len(elite_fit_data)
+        elite_std = population_stand_dev(elite_fit_data, mean_elite_fit)
 
     # create dictionary object
     stats_dict = dict([])
     stats_dict["sum_fit"] = sum_fit
     stats_dict["best_fit"] = best_fit
     stats_dict["worst_fit"] = worst_fit
-    stats_dict["mean_elite_fit"] = mean_elite_fit
     stats_dict["mean_fit"] = mean_fit
-    stats_dict["fit_stdev"] = std
+    stats_dict["std_fit"] = std
+
+    stats_dict["sum_elite_fit"] = sum_elite_fit
+    stats_dict["best_elite_fit"] = best_elite_fit
+    stats_dict["worst_elite_fit"] = worst_elite_fit
+    stats_dict["mean_elite_fit"] = mean_elite_fit
+    stats_dict["std_elite_fit"] = elite_std
+
     stats_dict["allele_sdi"] = allele_diversity
     stats_dict["chrom_sdi"] = chromosome_diversity
     stats_dict["elites_overall_stats"] = elites_overall_stats
@@ -85,14 +102,14 @@ def population_statistics(population):
     return stats_dict
 
 
-def population_stand_dev(population, mean_fitness):
+def population_stand_dev(pop_fitnesses, mean_fitness):
     sum_sq_var = 0
-    for citizen in population:
-        variance = citizen.fitness() - mean_fitness
+    for fitness in pop_fitnesses:
+        variance = fitness - mean_fitness
         sq_var = pow(variance, 2)
         sum_sq_var += sq_var
 
-    variance = sum_sq_var / (len(population) - 1)
+    variance = sum_sq_var / (len(pop_fitnesses) - 1)
     stand_dev = pow(variance, 0.5)
 
     return stand_dev
