@@ -33,8 +33,7 @@ import time
 class Experiment(object):
 
     """
-    Initialize & Verify The Experiment
-    """
+s    """
     def __init__(self, tickers, sample_size, debug=0):
 
         # Assign Tickers
@@ -69,7 +68,7 @@ class Experiment(object):
         sim_count = 0
         runtimes = list([])
         for index, ticker in enumerate(self.tickers):
-            # Provide Some Feedback
+            # Provide Some Feedbackc
             print("<     > : {} : Launching Stock Experiment...".format(
                 ticker
             ))
