@@ -97,5 +97,5 @@ Comments :
 
 from analysis.experiment import experiment as exp
 
-experiment = exp.Experiment(tickers=["MSFT"], sample_size=1, debug=1)
+experiment = exp.Experiment(tickers=["MSFT", "", ], sample_size=30, debug=1)
 experiment.run()
