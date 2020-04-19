@@ -296,6 +296,7 @@ class Allele(object):
             print("< ERR > : Allele : Error in Allele reaction, invalid input data! {} : {}".format(
                 raw_input_data, input_data
             ))
+            print(type(input_data))
             return None
 
         # Verify Input Data

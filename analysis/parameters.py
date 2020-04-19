@@ -12,7 +12,16 @@ TO-DO :
 """
 
 SUPP_TICKERS = [
-    "MSFT",
+    "AMD",
+    "BK",
+    "CI",
+    "DD",
+    "DVN",
+    "ED",
+    "IBM",
+    "KO",
+    "MRO",
+    "PG"
     "TEST"
 ]
 
