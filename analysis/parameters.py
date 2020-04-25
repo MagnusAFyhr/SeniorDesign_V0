@@ -12,8 +12,11 @@ TO-DO :
 """
 
 SUPP_TICKERS = [
+<<<<<<< HEAD
     "MSFT",
     "TEST",
+=======
+>>>>>>> d29cf94316e7c1f36aa8ea01d912703eaa951d78
     "AMD",
     "BK",
     "CI",
@@ -24,7 +27,11 @@ SUPP_TICKERS = [
     "KO",
     "MRO",
     "PG"
+<<<<<<< HEAD
 
+=======
+    "TEST"
+>>>>>>> d29cf94316e7c1f36aa8ea01d912703eaa951d78
 ]
 
 """ SYSTEM LOGGING """

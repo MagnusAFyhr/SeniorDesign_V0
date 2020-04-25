@@ -68,7 +68,7 @@ s    """
         sim_count = 0
         runtimes = list([])
         for index, ticker in enumerate(self.tickers):
-            # Provide Some Feedbackc
+            # Provide Some Feedback
             print("<     > : {} : Launching Stock Experiment...".format(
                 ticker
             ))
