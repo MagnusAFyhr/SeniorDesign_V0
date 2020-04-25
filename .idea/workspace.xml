@@ -2,20 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22b022d7-3a15-403f-b49d-c0fcf9502cc6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data/raw/AMD.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/BK.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/CI.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/DD.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/DVN.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/ED.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/IBM.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/KO.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/MRO.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/raw/PG.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/SeniorDesign_V0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SeniorDesign_V0.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_AMD.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_BK.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_CI.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_DD.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_DVN.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_ED.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_IBM.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_KO.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_MRO.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/pure/pure_PG.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/AMD_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/BK_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/CI_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/DD_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/DVN_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/ED_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/IBM_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/KO_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/MRO_results.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/PG_results.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/parameters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MSFT_results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/results/MSFT_results.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,20 +67,21 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/hw1/hw1" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/data/raw" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data\raw" />
+      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0" />
+      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data\driver\helper\indicators" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data\pure" />
       <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data\raw" />
       <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0" />
       <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\debug" />
       <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\venv" />
-      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0" />
-      <recent name="C:\Users\serxt\PycharmProjects\SeniorDesign_V0\data\driver\helper\indicators" />
     </key>
   </component>
   <component name="RunManager">
@@ -290,22 +300,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="550" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1582147800277" />
-    <state width="963" height="256" key="GridCell.Tab.0.bottom" timestamp="1586304210785">
+    <state width="1366" height="157" key="GridCell.Tab.0.bottom" timestamp="1587579374499">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="963" height="256" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1586304210785" />
-    <state width="963" height="256" key="GridCell.Tab.0.center" timestamp="1586304210785">
+    <state width="1366" height="157" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1587579374499" />
+    <state width="1366" height="157" key="GridCell.Tab.0.center" timestamp="1587579374499">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="963" height="256" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1586304210785" />
-    <state width="963" height="256" key="GridCell.Tab.0.left" timestamp="1586304210785">
+    <state width="1366" height="157" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1587579374499" />
+    <state width="1366" height="157" key="GridCell.Tab.0.left" timestamp="1587579374499">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="963" height="256" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1586304210785" />
-    <state width="963" height="256" key="GridCell.Tab.0.right" timestamp="1586304210785">
+    <state width="1366" height="157" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1587579374499" />
+    <state width="1366" height="157" key="GridCell.Tab.0.right" timestamp="1587579374499">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="963" height="256" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1586304210785" />
+    <state width="1366" height="157" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1587579374499" />
     <state x="202" y="52" key="MergeDialog" timestamp="1582750910237">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -334,10 +344,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="94" y="94" width="1349" height="637" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1536.824@0.0.1536.824" timestamp="1582752378262" />
-    <state x="467" y="237" key="com.intellij.ide.util.TipDialog" timestamp="1586301007131">
+    <state x="467" y="237" key="com.intellij.ide.util.TipDialog" timestamp="1587512732578">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="467" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1586301007131" />
+    <state x="467" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1587512732578" />
     <state x="579" y="330" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1582648924964">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

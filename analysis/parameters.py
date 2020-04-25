@@ -13,7 +13,18 @@ TO-DO :
 
 SUPP_TICKERS = [
     "MSFT",
-    "TEST"
+    "TEST",
+    "AMD",
+    "BK",
+    "CI",
+    "DD",
+    "DVN",
+    "ED",
+    "IBM",
+    "KO",
+    "MRO",
+    "PG"
+
 ]
 
 """ SYSTEM LOGGING """
