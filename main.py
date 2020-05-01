@@ -97,9 +97,5 @@ Comments :
 
 from analysis.experiment import experiment as exp
 
-<<<<<<< HEAD
-experiment = exp.Experiment(tickers=["BK", "CI", "DD", "DVN", "ED", "IBM", "KO", "MRO", "PG"], sample_size=30, debug=1)
-=======
-experiment = exp.Experiment(tickers=["AMD", "BK", "CI", "DD" "DVN", "ED", "IBM", "KO", "MRO", "PG", "MSFT"], sample_size=30, debug=1)
->>>>>>> d29cf94316e7c1f36aa8ea01d912703eaa951d78
+experiment = exp.Experiment(tickers=["BK"], sample_size=1, debug=1)
 experiment.run()
