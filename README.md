@@ -101,11 +101,11 @@ README.md
 ## Running The Program
 Installation :
 ```
-1. What is step 1
-2. What is step 2
-3. What is step 3
-4. What is step 4
-5. What is step 5
+1. Make sure that you have Python 3.7, earlier versions won't work
+2. Run the pip command on "requirements.txt" to install the necessary libraries
+3. Add a csv with OHLCV headers to the /data/raw folder
+4. Edit main.py tickers array to run the program on a csv EX: "MSFT"
+5. The first run of main.py generates the pure csv, the second run will start the simulation
 ```
 Trouble Shooting :
 ```
