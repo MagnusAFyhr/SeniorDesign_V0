@@ -1,8 +1,8 @@
 # Running the program
 1. Clone or download the github repository
 2. Download Python 3.7
-3. Dosadjasd
-https://blog.quantinsti.com/install-ta-lib-python/#windows
+3. Download the necessary libraries from the "requirements.txt" file
+<a href="https://blog.quantinsti.com/install-ta-lib-python/#windows">TALIB installation tutorial</a>
 1. Make sure that you have Python 3.7, earlier versions won't work
 2. Run the pip command on "requirements.txt" to install the necessary libraries
 3. Add a csv with OHLCV headers to the /data/raw folder
